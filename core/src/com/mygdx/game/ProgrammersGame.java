@@ -3,31 +3,78 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector3;
 
 public class ProgrammersGame extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	
+	private static int size = 6;
+	private Field field;
+	private Car[] cars;
+
+	private PerspectiveCamera camera;
+	private Environment environment;
+
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		environment = new Environment();
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
+		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.position.set(size, size, size);
+		camera.lookAt(0,0,0);
+		camera.near = 0.1f;
+		camera.far = 300f;
+		camera.update();
+
+		field = new Field(size);
+		cars = new Car[]{
+				new Car(0, 0, 1, GameColor.RED),
+				new Car(0, size - 1, 1, GameColor.GREEN),
+				new Car(size - 1, 0, 1, GameColor.YELLOW),
+				new Car(size - 1, size - 1, 1, GameColor.BLUE) };
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+		camera.rotateAround(new Vector3(), new Vector3(0, 1, 0),
+				Gdx.graphics.getDeltaTime() * -Gdx.input.getDeltaX() * 5f);
+		camera.update();
+
+		field.render(camera, environment);
+		for (Car car : cars) {
+			car.render(camera, environment);
+		}
 	}
-	
+
+	@Override
+	public void pause() {
+		super.pause();
+	}
+
+	@Override
+	public void resume() {
+		super.resume();
+	}
+
 	@Override
 	public void dispose () {
-		batch.dispose();
-		img.dispose();
+		field.dispose();
+		for (Car car : cars) {
+			car.dispose();
+		}
 	}
 }
