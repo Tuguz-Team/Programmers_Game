@@ -1,37 +1,62 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 
 class Car extends GameObject {
-    Car(final int x, final int y, final int z, final GameColor color) {
-        super(x, y, z);
 
-        Color color_;
+    private Car.Color color;
+
+    public enum Color {
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE
+    }
+
+    Car(final int x, final int y, final int z, final Car.Color color) {
+        super(x, y, z);
+        this.color = color;
+    }
+
+    @Override
+    void loading() {
         switch (color) {
             case RED:
-                color_ = Color.RED;
+                ProgrammersGame.assetManager.load("models/RedCarHard/RedCarHard.obj", Model.class);
                 break;
             case GREEN:
-                color_ = Color.GREEN;
+                ProgrammersGame.assetManager.load("models/GreenCarHard/GreenCarHard.obj", Model.class);
                 break;
             case YELLOW:
-                color_ = Color.YELLOW;
+                ProgrammersGame.assetManager.load("models/YellowCarHard/YellowCarHard.obj", Model.class);
                 break;
             case BLUE:
             default:
-                color_ = Color.BLUE;
+                ProgrammersGame.assetManager.load("models/BlueCarHard/BlueCarHard.obj", Model.class);
         }
+    }
 
-        model = new ModelBuilder().createBox(1, 1, 1,
-                new Material(ColorAttribute.createDiffuse(color_)),
-                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-        modelInstance = new ModelInstance(model);
-        modelInstance.transform.translate(new Vector3(x, z, y).add(Field.getOffset()));
+    @Override
+    void doneLoading() {
+        switch (color) {
+            case RED:
+                model = ProgrammersGame.assetManager.get("models/RedCarHard/RedCarHard.obj", Model.class);
+                break;
+            case GREEN:
+                model = ProgrammersGame.assetManager.get("models/GreenCarHard/GreenCarHard.obj", Model.class);
+                break;
+            case YELLOW:
+                model = ProgrammersGame.assetManager.get("models/YellowCarHard/YellowCarHard.obj", Model.class);
+                break;
+            case BLUE:
+            default:
+                model = ProgrammersGame.assetManager.get("models/BlueCarHard/BlueCarHard.obj", Model.class);
+        }
+        ModelInstance modelInstance = new ModelInstance(model);
+        modelInstance.transform.translate(new Vector3(x * Chunk.width, z * Chunk.height, y * Chunk.width).add(Field.getOffset()));
+        //modelInstance.transform.rotate(new Vector3(0, 1, 0), 90);
+        ProgrammersGame.instances.add(modelInstance);
     }
 }

@@ -5,20 +5,17 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
 abstract class GameObject {
     Model model;
-    ModelInstance modelInstance;
-    private int x, y, z;
+    float x, y, z;
 
-    GameObject(final int x, final int y, final int z) {
+    GameObject(final float x, final float y, final float z) {
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    void render() {
-        ProgrammersGame.modelBatch.begin(ProgrammersGame.camera);
-        ProgrammersGame.modelBatch.render(modelInstance, ProgrammersGame.environment);
-        ProgrammersGame.modelBatch.end();
-    }
+    abstract void loading();
+
+    abstract void doneLoading();
 
     void dispose() {
         model.dispose();
