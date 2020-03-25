@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -11,15 +10,16 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.utils.Array;
 
 public class ProgrammersGame extends ApplicationAdapter {
 
-	final static int size = 9;
+	static int size;
 	private static Field field;
 	private static Car[] cars;
+	static Difficulty difficulty = Difficulty.Easy;
+	static int maxHeight;
 
 	static Array<ModelInstance> instances;
 	static AssetManager assetManager;
@@ -32,6 +32,17 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		switch (difficulty) {
+			case Hard:
+				maxHeight = 3;
+				size = 9;
+				break;
+			case Easy:
+			default:
+				maxHeight = 2;
+				size = 6;
+		}
+
 		instances = new Array<>();
 		assetManager = new AssetManager();
 
@@ -47,17 +58,16 @@ public class ProgrammersGame extends ApplicationAdapter {
 		camera = new PerspectiveCamera(67f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.set(size, size, size);
 		camera.lookAt(0f,0f,0f);
-		camera.near = 1f;
+		camera.near = 0.1f;
 		camera.far = 100f;
-		myGestureDetector.zoom(Float.MAX_VALUE, Float.MAX_VALUE);
 		camera.update();
 
 		field = new Field(size);
 		cars = new Car[] {
-				new Car(0, 0, 1, Car.Color.RED),
-				new Car(0, size - 1, 1, Car.Color.GREEN),
-				new Car(size - 1, 0, 1, Car.Color.YELLOW),
-				new Car(size - 1, size - 1, 1, Car.Color.BLUE) };
+				new Car(0, 0, Field.chunks[0][0].z + 1, Field.chunks[0][0].getBaseColor()),
+				new Car(0, size - 1, Field.chunks[0][size - 1].z + 1, Field.chunks[0][size - 1].getBaseColor()),
+				new Car(size - 1, 0, Field.chunks[size - 1][0].z + 1, Field.chunks[size - 1][0].getBaseColor()),
+				new Car(size - 1, size - 1, Field.chunks[size - 1][size - 1].z + 1, Field.chunks[size - 1][size - 1].getBaseColor()) };
 
 		loading();
 	}
@@ -103,5 +113,10 @@ public class ProgrammersGame extends ApplicationAdapter {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();
+	}
+
+	public enum Difficulty {
+		Easy,
+		Hard
 	}
 }

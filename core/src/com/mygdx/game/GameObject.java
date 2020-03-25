@@ -5,9 +5,10 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
 abstract class GameObject {
     Model model;
-    float x, y, z;
+    ModelInstance modelInstance;
+    int x, y, z;
 
-    GameObject(final float x, final float y, final float z) {
+    GameObject(final int x, final int y, final int z) {
         this.x = x;
         this.y = y;
         this.z = z;

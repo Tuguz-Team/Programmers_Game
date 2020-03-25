@@ -8,8 +8,11 @@ import com.badlogic.gdx.math.Vector3;
 
 public class MyGestureDetector implements GestureDetector.GestureListener {
 
-    private final float MIN_ZOOM = ProgrammersGame.size * Chunk.width + 1;
-    private final float MAX_ZOOM = MIN_ZOOM + 4;
+    private final static float MIN_ZOOM = ProgrammersGame.size * Chunk.width;
+    private final static float MAX_ZOOM = (ProgrammersGame.size + 2) * Chunk.width;
+
+    private final static float MIN_ANGLE = 30f;
+    private final static float MAX_ANGLE = 60f;
 
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
@@ -44,16 +47,16 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
     private float velocityX, velocityY;
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-        deltaX = MathUtils.clamp(deltaX, -100f, 100f);
-        ProgrammersGame.camera.rotateAround(new Vector3(), new Vector3(0f, 1f, 0f),
-                Gdx.graphics.getDeltaTime() * -deltaX * 3f);
+        velocityX = MathUtils.clamp(deltaX, -100f, 100f);
+        ProgrammersGame.camera.rotateAround(new Vector3(),
+                new Vector3(0f, 1f, 0f),
+                Gdx.graphics.getDeltaTime() * -velocityX * 2f);
 
-        deltaY = MathUtils.clamp(deltaY, -100f, 100f);
-        ProgrammersGame.camera.rotateAround(new Vector3(), new Vector3(0f, 1f, 0f).crs(ProgrammersGame.camera.direction),
-                Gdx.graphics.getDeltaTime() * deltaY * 3f);
+        velocityY = MathUtils.clamp(deltaY, -100f, 100f);
+        ProgrammersGame.camera.rotateAround(new Vector3(),
+                new Vector3(0f, 1f, 0f).crs(ProgrammersGame.camera.direction),
+                Gdx.graphics.getDeltaTime() * velocityY * 2f);
 
-        velocityX = deltaX;
-        velocityY = deltaY;
         return (deltaX != 0) && (deltaY != 0);
     }
 
@@ -67,20 +70,38 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
 
     void cameraPosChange() {
         if ((isVelXPositive && velocityX > 0) || (!isVelXPositive && velocityX < 0)) {
-            ProgrammersGame.camera.rotateAround(new Vector3(), new Vector3(0f, 1f, 0f),
-                    Gdx.graphics.getDeltaTime() * -velocityX * 3f);
+            ProgrammersGame.camera.rotateAround(new Vector3(),
+                    new Vector3(0f, 1f, 0f),
+                    Gdx.graphics.getDeltaTime() * -velocityX * 2f);
             velocityX += isVelXPositive
                     ? -Gdx.graphics.getDeltaTime() * 50f
                     : Gdx.graphics.getDeltaTime() * 50f;
         }
 
         if ((isVelYPositive && velocityY > 0) || (!isVelYPositive && velocityY < 0)) {
-            ProgrammersGame.camera.rotateAround(new Vector3(), new Vector3(0f, 1f, 0f).crs(ProgrammersGame.camera.direction),
-                    Gdx.graphics.getDeltaTime() * velocityY * 3f);
+            ProgrammersGame.camera.rotateAround(new Vector3(),
+                    new Vector3(0f, 1f, 0f).crs(ProgrammersGame.camera.direction),
+                    Gdx.graphics.getDeltaTime() * velocityY * 2f);
             velocityY += isVelYPositive
                     ? -Gdx.graphics.getDeltaTime() * 50f
                     : Gdx.graphics.getDeltaTime() * 50f;
         }
+
+        /*
+        float vectorAngle = VectorAngle(new Vector3(0, 1, 0), ProgrammersGame.camera.position);
+        if (vectorAngle < MIN_ANGLE) {
+            ProgrammersGame.camera.rotateAround(new Vector3(),
+                    new Vector3(0f, 1f, 0f).crs(ProgrammersGame.camera.direction),
+                    vectorAngle - MIN_ANGLE);
+        } else if (vectorAngle > MAX_ANGLE) {
+            ProgrammersGame.camera.rotateAround(new Vector3(),
+                    new Vector3(0f, 1f, 0f).crs(ProgrammersGame.camera.direction),
+                    vectorAngle - MAX_ANGLE);
+        }*/
+    }
+
+    private static float VectorAngle(final Vector3 first, final Vector3 second) {
+        return 180f * (float)Math.acos(first.dot(second) / first.len() / second.len()) / (float)Math.PI;
     }
 
     private float distanceOld;

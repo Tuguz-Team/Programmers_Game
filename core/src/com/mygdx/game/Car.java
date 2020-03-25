@@ -3,10 +3,12 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.StringBuilder;
 
 class Car extends GameObject {
 
-    private Car.Color color;
+    private Color color;
+    private String modelFileName;
 
     public enum Color {
         RED,
@@ -15,46 +17,44 @@ class Car extends GameObject {
         BLUE
     }
 
-    Car(final int x, final int y, final int z, final Car.Color color) {
+    Car(final int x, final int y, final int z, final Color color) {
         super(x, y, z);
         this.color = color;
+        StringBuilder stringBuilder = new StringBuilder("Models/");
+        switch (ProgrammersGame.difficulty) {
+            case Hard:
+                stringBuilder.append("Hard");
+                break;
+            case Easy:
+                stringBuilder.append("Easy");
+                break;
+        }
+        stringBuilder.append("Mode/Cars/");
+        switch (color) {
+            case RED:
+                stringBuilder.append("RedCar/RedCar.obj");
+                break;
+            case GREEN:
+                stringBuilder.append("GreenCar/GreenCar.obj");
+                break;
+            case YELLOW:
+                stringBuilder.append("YellowCar/YellowCar.obj");
+                break;
+            case BLUE:
+                stringBuilder.append("BlueCar/BlueCar.obj");
+        }
+        modelFileName = stringBuilder.toString();
     }
 
     @Override
     void loading() {
-        switch (color) {
-            case RED:
-                ProgrammersGame.assetManager.load("models/RedCarHard/RedCarHard.obj", Model.class);
-                break;
-            case GREEN:
-                ProgrammersGame.assetManager.load("models/GreenCarHard/GreenCarHard.obj", Model.class);
-                break;
-            case YELLOW:
-                ProgrammersGame.assetManager.load("models/YellowCarHard/YellowCarHard.obj", Model.class);
-                break;
-            case BLUE:
-            default:
-                ProgrammersGame.assetManager.load("models/BlueCarHard/BlueCarHard.obj", Model.class);
-        }
+        ProgrammersGame.assetManager.load(modelFileName, Model.class);
     }
 
     @Override
     void doneLoading() {
-        switch (color) {
-            case RED:
-                model = ProgrammersGame.assetManager.get("models/RedCarHard/RedCarHard.obj", Model.class);
-                break;
-            case GREEN:
-                model = ProgrammersGame.assetManager.get("models/GreenCarHard/GreenCarHard.obj", Model.class);
-                break;
-            case YELLOW:
-                model = ProgrammersGame.assetManager.get("models/YellowCarHard/YellowCarHard.obj", Model.class);
-                break;
-            case BLUE:
-            default:
-                model = ProgrammersGame.assetManager.get("models/BlueCarHard/BlueCarHard.obj", Model.class);
-        }
-        ModelInstance modelInstance = new ModelInstance(model);
+        model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
+        modelInstance = new ModelInstance(model);
         modelInstance.transform.translate(new Vector3(x * Chunk.width, z * Chunk.height, y * Chunk.width).add(Field.getOffset()));
         //modelInstance.transform.rotate(new Vector3(0, 1, 0), 90);
         ProgrammersGame.instances.add(modelInstance);
