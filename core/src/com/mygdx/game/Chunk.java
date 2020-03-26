@@ -20,7 +20,7 @@ class Chunk extends GameObject {
     boolean northWall, southWall, eastWall, westWall;
 
     private Car.Color baseColor;
-    private Color color;
+    Color color;
     private String modelFileName;
 
     private int getRandomChunkNum() {
@@ -98,11 +98,11 @@ class Chunk extends GameObject {
     void doneLoading() {
         model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
+        modelInstance.transform.translate(new Vector3(x * width, z * height, y * width).add(Field.getOffset()));
         if (baseColor == null) {
             modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(color));
+            modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f * random.nextInt(4));
         }
-        modelInstance.transform.translate(new Vector3(x * width, z * height, y * width).add(Field.getOffset()));
-        modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f * random.nextInt(4));
         ProgrammersGame.instances.add(modelInstance);
     }
 

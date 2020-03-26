@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.StringBuilder;
 
+import static com.badlogic.gdx.math.MathUtils.random;
+
 class Car extends GameObject {
 
     private Color color;
@@ -56,7 +58,7 @@ class Car extends GameObject {
         model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
         modelInstance.transform.translate(new Vector3(x * Chunk.width, z * Chunk.height, y * Chunk.width).add(Field.getOffset()));
-        //modelInstance.transform.rotate(new Vector3(0, 1, 0), 90);
+        modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f * random.nextInt(4));
         ProgrammersGame.instances.add(modelInstance);
     }
 }

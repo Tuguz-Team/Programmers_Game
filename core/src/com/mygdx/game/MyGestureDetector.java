@@ -87,7 +87,6 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
                     : Gdx.graphics.getDeltaTime() * 50f;
         }
 
-        /*
         float vectorAngle = VectorAngle(new Vector3(0, 1, 0), ProgrammersGame.camera.position);
         if (vectorAngle < MIN_ANGLE) {
             ProgrammersGame.camera.rotateAround(new Vector3(),
@@ -97,7 +96,7 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
             ProgrammersGame.camera.rotateAround(new Vector3(),
                     new Vector3(0f, 1f, 0f).crs(ProgrammersGame.camera.direction),
                     vectorAngle - MAX_ANGLE);
-        }*/
+        }
     }
 
     private static float VectorAngle(final Vector3 first, final Vector3 second) {

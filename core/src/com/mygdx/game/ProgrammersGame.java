@@ -18,7 +18,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 	static int size;
 	private static Field field;
 	private static Car[] cars;
-	static Difficulty difficulty = Difficulty.Easy;
+	static Difficulty difficulty = Difficulty.Hard;
 	static int maxHeight;
 
 	static Array<ModelInstance> instances;
