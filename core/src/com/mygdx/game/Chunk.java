@@ -12,9 +12,11 @@ import static com.badlogic.gdx.math.MathUtils.random;
 
 class Chunk extends GameObject {
 
-    private final static int[] chances = { 100, 100, 100, 100, 100, 2, 2, 2, 2, 2 };
+    private final static int[] chances = { 100, 100, 100, 100, 100, 2, 3, 4, 5, 6 };
     final static float width = 1.5f;
     final static float height = 0.6f;
+
+    private static boolean loaded = false;
 
     boolean impulse, hasLife, hasLift;
     boolean northWall, southWall, eastWall, westWall;
@@ -22,49 +24,6 @@ class Chunk extends GameObject {
     private Car.Color baseColor;
     Color color;
     private String modelFileName;
-
-    private int getRandomChunkNum() {
-        Array<Integer> floats = new Array<>();
-        int sum = 0;
-        for (int i = 0; i < chances.length; i++) {
-            floats.add(chances[i]);
-            sum += floats.get(i);
-        }
-        int value = random.nextInt(sum);
-        sum = 0;
-        for (int i = 0; i < chances.length; i++) {
-            sum += chances[i];
-            if (value < sum) {
-                return i + 1;
-            }
-        }
-        return 10;
-    }
-
-    void setBaseColor(Car.Color baseColor) {
-        this.baseColor = baseColor;
-        StringBuilder stringBuilder = new StringBuilder("Models/");
-        if (ProgrammersGame.difficulty == ProgrammersGame.Difficulty.Easy) {
-            stringBuilder.append("Easy");
-        } else {
-            stringBuilder.append("Hard");
-        }
-        stringBuilder.append("Mode/Bases/");
-        switch (baseColor) {
-            case RED:
-                stringBuilder.append("RedBase/RedBase.obj");
-                break;
-            case GREEN:
-                stringBuilder.append("GreenBase/GreenBase.obj");
-                break;
-            case YELLOW:
-                stringBuilder.append("YellowBase/YellowBase.obj");
-                break;
-            case BLUE:
-                stringBuilder.append("BlueBase/BlueBase.obj");
-        }
-        modelFileName = stringBuilder.toString();
-    }
 
     Chunk(final int x, final int y, final int z, final Color color) {
         super(x, y, z);
@@ -91,14 +50,43 @@ class Chunk extends GameObject {
 
     @Override
     void loading() {
-        ProgrammersGame.assetManager.load(modelFileName, Model.class);
+        if (!loaded) {
+            ProgrammersGame.assetManager.load("Models/Terrain/Layer1/Layer1.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/Layer2/Layer2.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/Layer3/Layer3.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/Layer4/Layer4.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/Layer5/Layer5.obj", Model.class);
+
+            ProgrammersGame.assetManager.load("Models/Terrain/LayerBonus1/LayerBonus1.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/LayerBonus2/LayerBonus2.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/LayerBonus3/LayerBonus3.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/LayerBonus4/LayerBonus4.obj", Model.class);
+            ProgrammersGame.assetManager.load("Models/Terrain/LayerBonus5/LayerBonus5.obj", Model.class);
+
+            switch (ProgrammersGame.difficulty) {
+                case Easy:
+                    ProgrammersGame.assetManager.load("Models/EasyMode/Bases/RedBase/RedBase.obj", Model.class);
+                    ProgrammersGame.assetManager.load("Models/EasyMode/Bases/GreenBase/GreenBase.obj", Model.class);
+                    ProgrammersGame.assetManager.load("Models/EasyMode/Bases/YellowBase/YellowBase.obj", Model.class);
+                    ProgrammersGame.assetManager.load("Models/EasyMode/Bases/BlueBase/BlueBase.obj", Model.class);
+                    break;
+                case Hard:
+                    ProgrammersGame.assetManager.load("Models/HardMode/Bases/RedBase/RedBase.obj", Model.class);
+                    ProgrammersGame.assetManager.load("Models/HardMode/Bases/GreenBase/GreenBase.obj", Model.class);
+                    ProgrammersGame.assetManager.load("Models/HardMode/Bases/YellowBase/YellowBase.obj", Model.class);
+                    ProgrammersGame.assetManager.load("Models/HardMode/Bases/BlueBase/BlueBase.obj", Model.class);
+            }
+
+            loaded = true;
+        }
     }
 
     @Override
     void doneLoading() {
         model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
-        modelInstance.transform.translate(new Vector3(x * width, z * height, y * width).add(Field.getOffset()));
+        modelInstance.transform.translate(new Vector3(getX() * width, getZ() * height, getY() * width)
+                .add(Field.getOffset()));
         if (baseColor == null) {
             modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(color));
             modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f * random.nextInt(4));
@@ -106,7 +94,52 @@ class Chunk extends GameObject {
         ProgrammersGame.instances.add(modelInstance);
     }
 
-    public Car.Color getBaseColor() {
+    Car.Color getBaseColor() {
         return baseColor;
+    }
+
+    private int getRandomChunkNum() {
+        Array<Integer> floats = new Array<>();
+        int sum = 0;
+        for (int i = 0; i < chances.length; i++) {
+            floats.add(chances[i]);
+            sum += floats.get(i);
+        }
+        int value = random.nextInt(sum);
+        sum = 0;
+        for (int i = 0; i < chances.length; i++) {
+            sum += chances[i];
+            if (value < sum) {
+                return i + 1;
+            }
+        }
+        return 10;
+    }
+
+    void setBaseColor(Car.Color baseColor) {
+        this.baseColor = baseColor;
+        StringBuilder stringBuilder = new StringBuilder("Models/");
+        switch (ProgrammersGame.difficulty) {
+            case Easy:
+                stringBuilder.append("Easy");
+                break;
+            case Hard:
+                stringBuilder.append("Hard");
+        }
+        stringBuilder.append("Mode/Bases/");
+        switch (baseColor) {
+            case RED:
+                stringBuilder.append("RedBase/RedBase.obj");
+                break;
+            case GREEN:
+                stringBuilder.append("GreenBase/GreenBase.obj");
+                break;
+            case YELLOW:
+                stringBuilder.append("YellowBase/YellowBase.obj");
+                break;
+            case BLUE:
+                stringBuilder.append("BlueBase/BlueBase.obj");
+        }
+        modelFileName = stringBuilder.toString();
     }
 }

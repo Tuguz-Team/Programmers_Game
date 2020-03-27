@@ -19,7 +19,6 @@ public class ProgrammersGame extends ApplicationAdapter {
 	private static Field field;
 	private static Car[] cars;
 	static Difficulty difficulty = Difficulty.Hard;
-	static int maxHeight;
 
 	static Array<ModelInstance> instances;
 	static AssetManager assetManager;
@@ -34,12 +33,9 @@ public class ProgrammersGame extends ApplicationAdapter {
 	public void create () {
 		switch (difficulty) {
 			case Hard:
-				maxHeight = 3;
 				size = 9;
 				break;
 			case Easy:
-			default:
-				maxHeight = 2;
 				size = 6;
 		}
 
@@ -64,19 +60,18 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 		field = new Field(size);
 		cars = new Car[] {
-				new Car(0, 0, Field.chunks[0][0].z + 1, Field.chunks[0][0].getBaseColor()),
-				new Car(0, size - 1, Field.chunks[0][size - 1].z + 1, Field.chunks[0][size - 1].getBaseColor()),
-				new Car(size - 1, 0, Field.chunks[size - 1][0].z + 1, Field.chunks[size - 1][0].getBaseColor()),
-				new Car(size - 1, size - 1, Field.chunks[size - 1][size - 1].z + 1, Field.chunks[size - 1][size - 1].getBaseColor()) };
+				new Car(0, 0, Field.chunks[0][0].getZ() + 1, Field.chunks[0][0].getBaseColor()),
+				new Car(0, size - 1, Field.chunks[0][size - 1].getZ() + 1, Field.chunks[0][size - 1].getBaseColor()),
+				new Car(size - 1, 0, Field.chunks[size - 1][0].getZ() + 1, Field.chunks[size - 1][0].getBaseColor()),
+				new Car(size - 1, size - 1, Field.chunks[size - 1][size - 1].getZ() + 1, Field.chunks[size - 1][size - 1].getBaseColor())
+		};
 
 		loading();
 	}
 
 	private void loading() {
 		field.loading();
-		for (Car car : cars) {
-			car.loading();
-		}
+		cars[0].loading();
 		loading = true;
 	}
 

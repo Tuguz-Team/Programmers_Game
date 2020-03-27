@@ -22,195 +22,205 @@ class Field {
 
     private void generate(final int size) {
         chunks = new Chunk[size][size];
-        if (ProgrammersGame.difficulty == ProgrammersGame.Difficulty.Easy) {
-            // Array initializing
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++)
-                    chunks[i][j] = new Chunk(i, j, 0,
-                            new Color(253 / 255f, 208 / 255f, 2 / 255f, 1f));
-            }
-            // Set position of square 2x2
-            int i_ = random.nextInt(size - 1), j_ = random.nextInt(size - 1);
-            for (int i = i_; i < i_ + 2; i++) {
-                for (int j = j_; j < j_ + 2; j++) {
-                    chunks[i][j].z++;
-                    chunks[i][j].color = new Color(2 / 255f, 168 / 255f, 112 / 255f, 1f);
+        switch (ProgrammersGame.difficulty) {
+            case Easy: {
+                // Array initializing
+                for (int i = 0; i < size; i++) {
+                    for (int j = 0; j < size; j++)
+                        chunks[i][j] = new Chunk(i, j, 0,
+                                new Color(253 / 255f, 208 / 255f, 2 / 255f, 1f));
                 }
-            }
-            // Set position of rectangle 2x4
-            int length, width;
-            Color color = new Color(172 / 255f, 199 / 255f, 44 / 255f, 1f);
-            boolean b;
-            do {
-                b = true;
-                length = random.nextBoolean() ? 2 : 4;
-                width = 6 - length;
-                i_ = random.nextInt(size - length + 1);
-                j_ = random.nextInt(size - width + 1);
-                f: for (int i = i_; i < i_ + length; i++)
-                    for (int j = j_; j < j_ + width; j++)
-                        if (chunks[i][j].z != 0) {
-                            b = false;
-                            break f;
-                        }
-            } while (!b);
-            for (int i = i_; i < i_ + length; i++) {
-                for (int j = j_; j < j_ + width; j++) {
-                    chunks[i][j].z++;
-                    chunks[i][j].color = color;
+                // Set position of square 2x2
+                int i_ = random.nextInt(size - 1), j_ = random.nextInt(size - 1);
+                for (int i = i_; i < i_ + 2; i++) {
+                    for (int j = j_; j < j_ + 2; j++) {
+                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].color = new Color(2 / 255f, 168 / 255f, 112 / 255f, 1f);
+                    }
                 }
-            }
-        } else {
-            // Array initializing
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++)
-                    chunks[i][j] = new Chunk(i, j, 0,
-                            new Color(247 / 255f, 64 / 255f, 103 / 255f, 1f));
-            }
-            // Set position of rectangle 3x6 (height is 2)
-            int i1, j1, length1, width1;
-            do {
-                length1 = random.nextBoolean() ? 6 : 3;
-                width1 = 9 - length1;
-                i1 = random.nextInt(size - length1 + 1);
-                j1 = random.nextInt(size - width1 + 1);
-            } while (i1 != 0 && j1 != 0 && i1 != size - length1 && j1 != size - width1);
-            for (int i = i1; i < i1 + length1; i++) {
-                for (int j = j1; j < j1 + width1; j++) {
-                    chunks[i][j].z += 2;
-                    chunks[i][j].color = new Color(230 / 255f, 96 / 255f, 201 / 255f, 1);
+                // Set position of rectangle 2x4
+                int length, width;
+                Color color = new Color(172 / 255f, 199 / 255f, 44 / 255f, 1f);
+                boolean b;
+                do {
+                    b = true;
+                    length = random.nextBoolean() ? 2 : 4;
+                    width = 6 - length;
+                    i_ = random.nextInt(size - length + 1);
+                    j_ = random.nextInt(size - width + 1);
+                    f:
+                    for (int i = i_; i < i_ + length; i++)
+                        for (int j = j_; j < j_ + width; j++)
+                            if (chunks[i][j].getZ() != 0) {
+                                b = false;
+                                break f;
+                            }
+                } while (!b);
+                for (int i = i_; i < i_ + length; i++) {
+                    for (int j = j_; j < j_ + width; j++) {
+                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].color = color;
+                    }
                 }
+                break;
             }
-            // Set position of rectangle 3x6 (height is 1)
+            case Hard: {
+                // Array initializing
+                for (int i = 0; i < size; i++) {
+                    for (int j = 0; j < size; j++)
+                        chunks[i][j] = new Chunk(i, j, 0,
+                                new Color(247 / 255f, 64 / 255f, 103 / 255f, 1f));
+                }
+                // Set position of rectangle 3x6 (height is 2)
+                int i1, j1, length1, width1;
+                do {
+                    length1 = random.nextBoolean() ? 6 : 3;
+                    width1 = 9 - length1;
+                    i1 = random.nextInt(size - length1 + 1);
+                    j1 = random.nextInt(size - width1 + 1);
+                } while (i1 != 0 && j1 != 0 && i1 != size - length1 && j1 != size - width1);
+                for (int i = i1; i < i1 + length1; i++) {
+                    for (int j = j1; j < j1 + width1; j++) {
+                        chunks[i][j].setZ(chunks[i][j].getZ() + 2);
+                        chunks[i][j].color = new Color(230 / 255f, 96 / 255f, 201 / 255f, 1);
+                    }
+                }
+                // Set position of rectangle 3x6 (height is 1)
+            /*
             System.out.println("length1 = " + length1 +
                     ", width1 = " + width1 +
                     ", i1 = " + i1 +
                     ", j1 = " + j1);
-            int length2 = random.nextBoolean() ? 6 : 3;
-            int width2 = 9 - length2;
-            int i2, j2;
-            if (length2 > width2) {
-                if (length1 > width1) {
-                    i2 = random.nextInt(size - length2 + 1);
-                    if (j1 < 3) {
-                        j2 = (i1 == 0 || i1 == 3)
-                                ? random.nextInt(width1 + 1 - j1) + j1 + width1
-                                : (random.nextBoolean() ? 3 : 6);
-                    } else if (j1 == 3) {
-                        j2 = random.nextBoolean() ? 0 : 6;
+            */
+                int length2 = random.nextBoolean() ? 6 : 3;
+                int width2 = 9 - length2;
+                int i2, j2;
+                if (length2 > width2) {
+                    if (length1 > width1) {
+                        i2 = random.nextInt(size - length2 + 1);
+                        if (j1 < 3) {
+                            j2 = (i1 == 0 || i1 == 3)
+                                    ? random.nextInt(width1 + 1 - j1) + j1 + width1
+                                    : (random.nextBoolean() ? 3 : 6);
+                        } else if (j1 == 3) {
+                            j2 = random.nextBoolean() ? 0 : 6;
+                        } else {
+                            j2 = (i1 == 0 || i1 == 3)
+                                    ? random.nextInt(j1 - width1 + 1)
+                                    : (random.nextBoolean() ? 3 : 6);
+                        }
                     } else {
-                        j2 = (i1 == 0 || i1 == 3)
-                                ? random.nextInt(j1 - width1 + 1)
-                                : (random.nextBoolean() ? 3 : 6);
+                        if (i1 == 0) {
+                            j2 = random.nextInt(size - width2 + 1);
+                            if (j1 == 0) {
+                                i2 = (j2 == 6)
+                                        ? random.nextInt(size - length2 + 1)
+                                        : 3;
+                            } else if (j1 == 3) {
+                                i2 = (j2 == 0)
+                                        ? random.nextInt(size - length2 + 1)
+                                        : 3;
+                            } else {
+                                i2 = 3;
+                            }
+                        } else if (i1 == 6) {
+                            j2 = random.nextInt(size - width2 + 1);
+                            if (j1 == 0) {
+                                i2 = (j2 == 6)
+                                        ? random.nextInt(size - length2 + 1)
+                                        : 0;
+                            } else if (j1 == 3) {
+                                i2 = (j2 == 0)
+                                        ? random.nextInt(size - length2 + 1)
+                                        : 0;
+                            } else {
+                                i2 = 0;
+                            }
+                        } else {
+                            i2 = random.nextInt(size - length2 + 1);
+                            j2 = (j1 == 0) ? 6 : 0;
+                        }
                     }
                 } else {
-                    if (i1 == 0) {
-                        j2 = random.nextInt(size - width2 + 1);
+                    if (length1 > width1) {
                         if (j1 == 0) {
-                            i2 = (j2 == 6)
-                                    ? random.nextInt(size - length2 + 1)
-                                    : 3;
-                        } else if (j1 == 3) {
-                            i2 = (j2 == 0)
-                                    ? random.nextInt(size - length2 + 1)
-                                    : 3;
+                            i2 = random.nextInt(size - length2 + 1);
+                            if (i1 == 0) {
+                                j2 = (i2 == 6)
+                                        ? random.nextInt(size - width2 + 1)
+                                        : 3;
+                            } else if (i1 == 3) {
+                                j2 = (i2 == 0)
+                                        ? random.nextInt(size - width2 + 1)
+                                        : 3;
+                            } else {
+                                j2 = 3;
+                            }
+                        } else if (j1 == 6) {
+                            i2 = random.nextInt(size - length2 + 1);
+                            if (i1 == 0) {
+                                j2 = (i2 == 6)
+                                        ? random.nextInt(size - width2 + 1)
+                                        : 0;
+                            } else if (i1 == 3) {
+                                j2 = (i2 == 0)
+                                        ? random.nextInt(size - width2 + 1)
+                                        : 0;
+                            } else {
+                                j2 = 0;
+                            }
                         } else {
-                            i2 = 3;
-                        }
-                    } else if (i1 == 6) {
-                        j2 = random.nextInt(size - width2 + 1);
-                        if (j1 == 0) {
-                            i2 = (j2 == 6)
-                                    ? random.nextInt(size - length2 + 1)
-                                    : 0;
-                        } else if (j1 == 3) {
-                            i2 = (j2 == 0)
-                                    ? random.nextInt(size - length2 + 1)
-                                    : 0;
-                        } else {
-                            i2 = 0;
+                            j2 = random.nextInt(size - width2 + 1);
+                            i2 = (i1 == 0) ? 6 : 0;
                         }
                     } else {
-                        i2 = random.nextInt(size - length2 + 1);
-                        j2 = (j1 == 0) ? 6 : 0;
+                        j2 = random.nextInt(size - width2 + 1);
+                        if (i1 < 3) {
+                            i2 = (j1 == 0 || j1 == 3)
+                                    ? random.nextInt(length1 + 1 - i1) + i1 + length1
+                                    : (random.nextBoolean() ? 3 : 6);
+                        } else if (i1 == 3) {
+                            i2 = random.nextBoolean() ? 0 : 6;
+                        } else {
+                            i2 = (j1 == 0 || j1 == 3)
+                                    ? random.nextInt(i1 - length1 + 1)
+                                    : (random.nextBoolean() ? 3 : 6);
+                        }
                     }
                 }
-            } else {
-                if (length1 > width1) {
-                    if (j1 == 0) {
-                        i2 = random.nextInt(size - length2 + 1);
-                        if (i1 == 0) {
-                            j2 = (i2 == 6)
-                                    ? random.nextInt(size - width2 + 1)
-                                    : 3;
-                        } else if (i1 == 3) {
-                            j2 = (i2 == 0)
-                                    ? random.nextInt(size - width2 + 1)
-                                    : 3;
-                        } else {
-                            j2 = 3;
-                        }
-                    } else if (j1 == 6) {
-                        i2 = random.nextInt(size - length2 + 1);
-                        if (i1 == 0) {
-                            j2 = (i2 == 6)
-                                    ? random.nextInt(size - width2 + 1)
-                                    : 0;
-                        } else if (i1 == 3) {
-                            j2 = (i2 == 0)
-                                    ? random.nextInt(size - width2 + 1)
-                                    : 0;
-                        } else {
-                            j2 = 0;
-                        }
-                    } else {
-                        j2 = random.nextInt(size - width2 + 1);
-                        i2 = (i1 == 0) ? 6 : 0;
-                    }
-                } else {
-                    j2 = random.nextInt(size - width2 + 1);
-                    if (i1 < 3) {
-                        i2 = (j1 == 0 || j1 == 3)
-                                ? random.nextInt(length1 + 1 - i1) + i1 + length1
-                                : (random.nextBoolean() ? 3 : 6);
-                    } else if (i1 == 3) {
-                        i2 = random.nextBoolean() ? 0 : 6;
-                    } else {
-                        i2 = (j1 == 0 || j1 == 3)
-                                ? random.nextInt(i1 - length1 + 1)
-                                : (random.nextBoolean() ? 3 : 6);
-                    }
-                }
-            }
+            /*
             System.out.println("length2 = " + length2 +
                     ", width2 = " + width2 +
                     ", i2 = " + i2 +
                     ", j2 = " + j2);
-            for (int i = i2; i < i2 + length2; i++) {
-                for (int j = j2; j < j2 + width2; j++) {
-                    chunks[i][j].z++;
-                    chunks[i][j].color = new Color(246 / 255f, 151 / 255f, 85 / 255f, 1);
+            */
+                for (int i = i2; i < i2 + length2; i++) {
+                    for (int j = j2; j < j2 + width2; j++) {
+                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].color = new Color(246 / 255f, 151 / 255f, 85 / 255f, 1);
+                    }
                 }
+                // Set position of square 3x3
+                int i3, j3;
+                boolean b;
+                do {
+                    b = true;
+                    i3 = random.nextInt(size - 2);
+                    j3 = random.nextInt(size - 2);
+                    f:
+                    for (int i = i3; i < i3 + 3; i++)
+                        for (int j = j3; j < j3 + 3; j++)
+                            if (chunks[i][j].getZ() != 0) {
+                                b = false;
+                                break f;
+                            }
+                } while (!b);
+                for (int i = i3; i < i3 + 3; i++)
+                    for (int j = j3; j < j3 + 3; j++) {
+                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].color = new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f);
+                    }
             }
-            // Set position of square 3x3
-            int i3, j3;
-            boolean b;
-            do {
-                b = true;
-                i3 = random.nextInt(size - 2);
-                j3 = random.nextInt(size - 2);
-                f: for (int i = i3; i < i3 + 3; i++)
-                    for (int j = j3; j < j3 + 3; j++)
-                        if (chunks[i][j].z != 0) {
-                            b = false;
-                            break f;
-                        }
-            } while (!b);
-            for (int i = i3; i < i3 + 3; i++)
-                for (int j = j3; j < j3 + 3; j++) {
-                    chunks[i][j].z++;
-                    chunks[i][j].color = new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f);
-                }
         }
 
         Car.Color[] colors = new Car.Color[4];
@@ -281,11 +291,7 @@ class Field {
     }
 
     void loading() {
-        for (Chunk[] chunks : chunks) {
-            for (Chunk chunk : chunks) {
-                chunk.loading();
-            }
-        }
+        chunks[0][0].loading();
         /*
         for (FieldBox fieldBox : fieldBoxes) {
             fieldBox.loading();
