@@ -16,21 +16,21 @@ import com.badlogic.gdx.utils.Array;
 public class ProgrammersGame extends ApplicationAdapter {
 
 	static int size;
-	private static Field field;
-	private static Car[] cars;
+	private Field field;
+	private Car[] cars;
 	static Difficulty difficulty = Difficulty.Hard;
 
 	static Array<ModelInstance> instances;
 	static AssetManager assetManager;
 	private static boolean loading;
 
-	static PerspectiveCamera camera;
+	private static PerspectiveCamera camera;
 	private static Environment environment;
 	private static ModelBatch modelBatch;
 	private static MyGestureDetector myGestureDetector;
 
 	@Override
-	public void create () {
+	public void create() {
 		switch (difficulty) {
 			case Hard:
 				size = 9;
@@ -41,9 +41,6 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 		instances = new Array<>();
 		assetManager = new AssetManager();
-
-		myGestureDetector = new MyGestureDetector();
-		Gdx.input.setInputProcessor(new GestureDetector(myGestureDetector));
 
 		modelBatch = new ModelBatch();
 
@@ -58,12 +55,16 @@ public class ProgrammersGame extends ApplicationAdapter {
 		camera.far = 100f;
 		camera.update();
 
+		myGestureDetector = new MyGestureDetector(camera);
+		Gdx.input.setInputProcessor(new GestureDetector(myGestureDetector));
+
 		field = new Field(size);
 		cars = new Car[] {
-				new Car(0, 0, Field.chunks[0][0].getZ() + 1, Field.chunks[0][0].getBaseColor()),
-				new Car(0, size - 1, Field.chunks[0][size - 1].getZ() + 1, Field.chunks[0][size - 1].getBaseColor()),
-				new Car(size - 1, 0, Field.chunks[size - 1][0].getZ() + 1, Field.chunks[size - 1][0].getBaseColor()),
-				new Car(size - 1, size - 1, Field.chunks[size - 1][size - 1].getZ() + 1, Field.chunks[size - 1][size - 1].getBaseColor())
+				new Car(0, 0, field.chunks[0][0].getZ() + 1, field.chunks[0][0].getBaseColor(), field),
+				new Car(0, size - 1, field.chunks[0][size - 1].getZ() + 1, field.chunks[0][size - 1].getBaseColor(), field),
+				new Car(size - 1, 0, field.chunks[size - 1][0].getZ() + 1, field.chunks[size - 1][0].getBaseColor(), field),
+				new Car(size - 1, size - 1, field.chunks[size - 1][size - 1].getZ() + 1,
+						field.chunks[size - 1][size - 1].getBaseColor(), field)
 		};
 
 		loading();
@@ -71,7 +72,9 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 	private void loading() {
 		field.loading();
-		cars[0].loading();
+        for (Car car : cars) {
+            car.loading();
+        }
 		loading = true;
 	}
 
@@ -84,9 +87,11 @@ public class ProgrammersGame extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {
-		if (loading && assetManager.update())
+	public void render() {
+		if (loading && assetManager.update()) {
 			doneLoading();
+			myGestureDetector.unlockCamera();
+		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -100,11 +105,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 	}
 
 	@Override
-	public void dispose () {
-		field.dispose();
-		for (Car car : cars) {
-			car.dispose();
-		}
+	public void dispose() {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();

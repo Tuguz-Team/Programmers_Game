@@ -19,10 +19,6 @@ abstract class GameObject {
 
     abstract void doneLoading();
 
-    void dispose() {
-        model.dispose();
-    }
-
     int getX() {
         return x;
     }

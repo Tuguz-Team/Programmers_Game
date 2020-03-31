@@ -8,15 +8,15 @@ import static com.badlogic.gdx.math.MathUtils.random;
 class Field {
 
     //private FieldBox[] fieldBoxes = new FieldBox[4];
-    static Chunk[][] chunks;
-    private static Vector3 offset;
+    Chunk[][] chunks;
+    private Vector3 offset;
 
     Field(final int size) {
         offset = new Vector3((1 - size) * Chunk.width / 2f, 0f, (1 - size) * Chunk.width / 2f);
         generate(size);
     }
 
-    static Vector3 getOffset() {
+    Vector3 getOffset() {
         return offset;
     }
 
@@ -28,7 +28,7 @@ class Field {
                 for (int i = 0; i < size; i++) {
                     for (int j = 0; j < size; j++)
                         chunks[i][j] = new Chunk(i, j, 0,
-                                new Color(253 / 255f, 208 / 255f, 2 / 255f, 1f));
+                                new Color(253 / 255f, 208 / 255f, 2 / 255f, 1f), this);
                 }
                 // Set position of square 2x2
                 int i_ = random.nextInt(size - 1), j_ = random.nextInt(size - 1);
@@ -69,7 +69,7 @@ class Field {
                 for (int i = 0; i < size; i++) {
                     for (int j = 0; j < size; j++)
                         chunks[i][j] = new Chunk(i, j, 0,
-                                new Color(247 / 255f, 64 / 255f, 103 / 255f, 1f));
+                                new Color(247 / 255f, 64 / 255f, 103 / 255f, 1f), this);
                 }
                 // Set position of rectangle 3x6 (height is 2)
                 int i1, j1, length1, width1;
@@ -86,12 +86,6 @@ class Field {
                     }
                 }
                 // Set position of rectangle 3x6 (height is 1)
-            /*
-            System.out.println("length1 = " + length1 +
-                    ", width1 = " + width1 +
-                    ", i1 = " + i1 +
-                    ", j1 = " + j1);
-            */
                 int length2 = random.nextBoolean() ? 6 : 3;
                 int width2 = 9 - length2;
                 int i2, j2;
@@ -107,7 +101,7 @@ class Field {
                         } else {
                             j2 = (i1 == 0 || i1 == 3)
                                     ? random.nextInt(j1 - width1 + 1)
-                                    : (random.nextBoolean() ? 3 : 6);
+                                    : (random.nextBoolean() ? 0 : 3);
                         }
                     } else {
                         if (i1 == 0) {
@@ -184,16 +178,10 @@ class Field {
                         } else {
                             i2 = (j1 == 0 || j1 == 3)
                                     ? random.nextInt(i1 - length1 + 1)
-                                    : (random.nextBoolean() ? 3 : 6);
+                                    : (random.nextBoolean() ? 0 : 3);
                         }
                     }
                 }
-            /*
-            System.out.println("length2 = " + length2 +
-                    ", width2 = " + width2 +
-                    ", i2 = " + i2 +
-                    ", j2 = " + j2);
-            */
                 for (int i = i2; i < i2 + length2; i++) {
                     for (int j = j2; j < j2 + width2; j++) {
                         chunks[i][j].setZ(chunks[i][j].getZ() + 1);
@@ -291,7 +279,11 @@ class Field {
     }
 
     void loading() {
-        chunks[0][0].loading();
+        for (Chunk[] chunks : chunks) {
+            for (Chunk chunk : chunks) {
+                chunk.loading();
+            }
+        }
         /*
         for (FieldBox fieldBox : fieldBoxes) {
             fieldBox.loading();
@@ -308,19 +300,6 @@ class Field {
         /*
         for (FieldBox fieldBox : fieldBoxes) {
             fieldBox.doneLoading();
-        }
-        */
-    }
-
-    void dispose() {
-        for (Chunk[] chunks : chunks) {
-            for (Chunk chunk : chunks) {
-                chunk.dispose();
-            }
-        }
-        /*
-        for (FieldBox fieldBox : fieldBoxes) {
-            fieldBox.dispose();
         }
         */
     }

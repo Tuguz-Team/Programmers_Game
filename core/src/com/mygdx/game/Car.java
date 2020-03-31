@@ -9,9 +9,8 @@ import static com.badlogic.gdx.math.MathUtils.random;
 
 class Car extends GameObject {
 
-    private Car.Color color;
-
-    private static boolean loaded = false;
+    private Field field;
+    private String modelFileName;
 
     public enum Color {
         RED,
@@ -20,34 +19,9 @@ class Car extends GameObject {
         BLUE
     }
 
-    Car(final int x, final int y, final int z, final Color color) {
+    Car(final int x, final int y, final int z, final Color color, final Field field) {
         super(x, y, z);
-        this.color = color;
-    }
-
-    @Override
-    void loading() {
-        if (!loaded) {
-            switch (ProgrammersGame.difficulty) {
-                case Easy:
-                    ProgrammersGame.assetManager.load("Models/EasyMode/Cars/RedCar/RedCar.obj", Model.class);
-                    ProgrammersGame.assetManager.load("Models/EasyMode/Cars/GreenCar/GreenCar.obj", Model.class);
-                    ProgrammersGame.assetManager.load("Models/EasyMode/Cars/YellowCar/YellowCar.obj", Model.class);
-                    ProgrammersGame.assetManager.load("Models/EasyMode/Cars/BlueCar/BlueCar.obj", Model.class);
-                    break;
-                case Hard:
-                    ProgrammersGame.assetManager.load("Models/HardMode/Cars/RedCar/RedCar.obj", Model.class);
-                    ProgrammersGame.assetManager.load("Models/HardMode/Cars/GreenCar/GreenCar.obj", Model.class);
-                    ProgrammersGame.assetManager.load("Models/HardMode/Cars/YellowCar/YellowCar.obj", Model.class);
-                    ProgrammersGame.assetManager.load("Models/HardMode/Cars/BlueCar/BlueCar.obj", Model.class);
-            }
-            loaded = true;
-        }
-    }
-
-    @Override
-    void doneLoading() {
-        // Get model name and set model
+        this.field = field;
         StringBuilder stringBuilder = new StringBuilder("Models/");
         switch (ProgrammersGame.difficulty) {
             case Hard:
@@ -70,11 +44,20 @@ class Car extends GameObject {
             case BLUE:
                 stringBuilder.append("BlueCar/BlueCar.obj");
         }
-        model = ProgrammersGame.assetManager.get(stringBuilder.toString(), Model.class);
-        // Set modelInstance
+        modelFileName = stringBuilder.toString();
+    }
+
+    @Override
+    void loading() {
+        ProgrammersGame.assetManager.load(modelFileName, Model.class);
+    }
+
+    @Override
+    void doneLoading() {
+        model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
         modelInstance.transform.translate(new Vector3(getX() * Chunk.width, getZ() * Chunk.height, getY() * Chunk.width)
-                .add(Field.getOffset()));
+                .add(field.getOffset()));
         modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f * random.nextInt(4));
         ProgrammersGame.instances.add(modelInstance);
     }
