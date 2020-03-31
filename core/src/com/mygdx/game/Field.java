@@ -27,14 +27,14 @@ class Field {
                 // Array initializing
                 for (int i = 0; i < size; i++) {
                     for (int j = 0; j < size; j++)
-                        chunks[i][j] = new Chunk(i, j, 0,
+                        chunks[i][j] = new Chunk(i, 0, j,
                                 new Color(253 / 255f, 208 / 255f, 2 / 255f, 1f), this);
                 }
                 // Set position of square 2x2
                 int i_ = random.nextInt(size - 1), j_ = random.nextInt(size - 1);
                 for (int i = i_; i < i_ + 2; i++) {
                     for (int j = j_; j < j_ + 2; j++) {
-                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].setY(chunks[i][j].getY() + 1);
                         chunks[i][j].color = new Color(2 / 255f, 168 / 255f, 112 / 255f, 1f);
                     }
                 }
@@ -51,14 +51,14 @@ class Field {
                     f:
                     for (int i = i_; i < i_ + length; i++)
                         for (int j = j_; j < j_ + width; j++)
-                            if (chunks[i][j].getZ() != 0) {
+                            if (chunks[i][j].getY() != 0) {
                                 b = false;
                                 break f;
                             }
                 } while (!b);
                 for (int i = i_; i < i_ + length; i++) {
                     for (int j = j_; j < j_ + width; j++) {
-                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].setY(chunks[i][j].getY() + 1);
                         chunks[i][j].color = color;
                     }
                 }
@@ -68,7 +68,7 @@ class Field {
                 // Array initializing
                 for (int i = 0; i < size; i++) {
                     for (int j = 0; j < size; j++)
-                        chunks[i][j] = new Chunk(i, j, 0,
+                        chunks[i][j] = new Chunk(i, 0, j,
                                 new Color(247 / 255f, 64 / 255f, 103 / 255f, 1f), this);
                 }
                 // Set position of rectangle 3x6 (height is 2)
@@ -81,7 +81,7 @@ class Field {
                 } while (i1 != 0 && j1 != 0 && i1 != size - length1 && j1 != size - width1);
                 for (int i = i1; i < i1 + length1; i++) {
                     for (int j = j1; j < j1 + width1; j++) {
-                        chunks[i][j].setZ(chunks[i][j].getZ() + 2);
+                        chunks[i][j].setY(chunks[i][j].getY() + 2);
                         chunks[i][j].color = new Color(230 / 255f, 96 / 255f, 201 / 255f, 1);
                     }
                 }
@@ -184,7 +184,7 @@ class Field {
                 }
                 for (int i = i2; i < i2 + length2; i++) {
                     for (int j = j2; j < j2 + width2; j++) {
-                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].setY(chunks[i][j].getY() + 1);
                         chunks[i][j].color = new Color(246 / 255f, 151 / 255f, 85 / 255f, 1);
                     }
                 }
@@ -198,14 +198,14 @@ class Field {
                     f:
                     for (int i = i3; i < i3 + 3; i++)
                         for (int j = j3; j < j3 + 3; j++)
-                            if (chunks[i][j].getZ() != 0) {
+                            if (chunks[i][j].getY() != 0) {
                                 b = false;
                                 break f;
                             }
                 } while (!b);
                 for (int i = i3; i < i3 + 3; i++)
                     for (int j = j3; j < j3 + 3; j++) {
-                        chunks[i][j].setZ(chunks[i][j].getZ() + 1);
+                        chunks[i][j].setY(chunks[i][j].getY() + 1);
                         chunks[i][j].color = new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f);
                     }
             }

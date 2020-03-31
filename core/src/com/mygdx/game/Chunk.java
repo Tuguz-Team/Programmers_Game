@@ -16,11 +16,13 @@ class Chunk extends GameObject {
     final static float width = 1.5f;
     final static float height = 0.6f;
 
-    boolean impulse, hasLife, hasLift;
-    boolean northWall, southWall, eastWall, westWall;
+    boolean wallForward, wallBack, wallLeft, wallRight;
 
     private Car.Color baseColor;
+    Chunk lift;
     Color color;
+    Car car;
+    Array<Life> lives = new Array<>();
     private Field field;
     private String modelFileName;
 
@@ -52,7 +54,7 @@ class Chunk extends GameObject {
     void doneLoading() {
         model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
-        modelInstance.transform.translate(new Vector3(getX() * width, getZ() * height, getY() * width)
+        modelInstance.transform.translate(new Vector3(getX() * width, getY() * height, getZ() * width)
                 .add(field.getOffset()));
         if (baseColor == null) {
             modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(color));

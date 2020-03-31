@@ -31,27 +31,15 @@ abstract class GameObject {
         return z;
     }
 
-    void setX(int x) {
+    void setX(final int x) {
         this.x = x;
-        if (modelInstance != null) {
-            Vector3 position = modelInstance.transform.getTranslation(new Vector3());
-            modelInstance.transform.translate(x, position.y, position.z);
-        }
     }
 
-    void setY(int y) {
+    void setY(final int y) {
         this.y = y;
-        if (modelInstance != null) {
-            Vector3 position = modelInstance.transform.getTranslation(new Vector3());
-            modelInstance.transform.translate(position.x, y, position.z);
-        }
     }
 
-    void setZ(int z) {
+    void setZ(final int z) {
         this.z = z;
-        if (modelInstance != null) {
-            Vector3 position = modelInstance.transform.getTranslation(new Vector3());
-            modelInstance.transform.translate(position.x, position.y, z);
-        }
     }
 }
