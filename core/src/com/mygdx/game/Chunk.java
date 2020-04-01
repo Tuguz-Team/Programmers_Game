@@ -1,12 +1,18 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
+
+import javax.swing.GroupLayout;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
@@ -15,6 +21,7 @@ class Chunk extends GameObject {
     private final static int[] chances = { 100, 2, 100, 2, 100, 2, 100, 2, 100, 2 };
     final static float width = 1.5f;
     final static float height = 0.6f;
+    static BitmapFont bitmapFont = new BitmapFont();
 
     boolean wallForward, wallBack, wallLeft, wallRight;
 
@@ -28,6 +35,7 @@ class Chunk extends GameObject {
 
     Chunk(final int x, final int y, final int z, final Color color, final Field field) {
         super(x, y, z);
+        bitmapFont.getData().setScale(0.1f, 0.15f);
         this.color = color;
         this.field = field;
         if (this.color == null) {
@@ -54,13 +62,24 @@ class Chunk extends GameObject {
     void doneLoading() {
         model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
-        modelInstance.transform.translate(new Vector3(getX() * width, getY() * height, getZ() * width)
+        modelInstance.transform.setTranslation(new Vector3(getX() * width, getY() * height, getZ() * width)
                 .add(field.getOffset()));
         if (baseColor == null) {
             modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(color));
-            modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f * random.nextInt(4));
+            modelInstance.transform.rotate(Vector3.Y, 90f * random.nextInt(4));
         }
         ProgrammersGame.instances.add(modelInstance);
+    }
+
+    void drawLivesCount(SpriteBatch spriteBatch, PerspectiveCamera camera) {
+        Vector3 temp = new Vector3().set(camera.position).sub(
+                getX() * Chunk.width + field.getOffset().x,
+                camera.position.y,
+                getZ() * Chunk.width + field.getOffset().z).nor();
+        Matrix4 textTransform = new Matrix4().setToTranslation(
+                getPosition().add(field.getOffset())).rotate(Vector3.Z, temp);
+        spriteBatch.setProjectionMatrix(new Matrix4().set(camera.combined).mul(textTransform));
+        bitmapFont.draw(spriteBatch, Integer.toString(lives.size), 0, 0);
     }
 
     Car.Color getBaseColor() {

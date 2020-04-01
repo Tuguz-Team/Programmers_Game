@@ -1,7 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
@@ -9,10 +12,14 @@ class Field {
 
     //private FieldBox[] fieldBoxes = new FieldBox[4];
     Chunk[][] chunks;
+    private Array<Life> lives;
     private Vector3 offset;
 
     Field(final int size) {
-        offset = new Vector3((1 - size) * Chunk.width / 2f, 0f, (1 - size) * Chunk.width / 2f);
+        offset = new Vector3(
+                (1 - size) * Chunk.width / 2f,
+                0f,
+                (1 - size) * Chunk.width / 2f);
         generate(size);
     }
 
@@ -61,6 +68,48 @@ class Field {
                         chunks[i][j].setY(chunks[i][j].getY() + 1);
                         chunks[i][j].color = color;
                     }
+                }
+                // Add lives
+                lives = new Array<>(12);
+                for (int i = 0; i < 3; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this));
+                }
+                for (int i = 0; i < 3; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this));
+                }
+                for (int i = 0; i < 3; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this));
+                }
+                for (int i = 0; i < 3; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this));
                 }
                 break;
             }
@@ -208,6 +257,49 @@ class Field {
                         chunks[i][j].setY(chunks[i][j].getY() + 1);
                         chunks[i][j].color = new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f);
                     }
+                // Add lives
+                lives = new Array<>(20);
+                for (int i = 0; i < 5; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this));
+                }
+                for (int i = 0; i < 5; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this));
+                }
+                for (int i = 0; i < 5; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this));
+                }
+                for (int i = 0; i < 5; i++) {
+                    int x, z;
+                    do {
+                        x = random.nextInt(size);
+                        z = random.nextInt(size);
+                    } while (chunks[x][z].lives.size != 0
+                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
+                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
+                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this));
+                }
+                break;
             }
         }
 
@@ -284,6 +376,9 @@ class Field {
                 chunk.loading();
             }
         }
+        for (Life life : lives) {
+            life.loading();
+        }
         /*
         for (FieldBox fieldBox : fieldBoxes) {
             fieldBox.loading();
@@ -297,10 +392,21 @@ class Field {
                 chunk.doneLoading();
             }
         }
+        for (Life life : lives) {
+            life.doneLoading();
+        }
         /*
         for (FieldBox fieldBox : fieldBoxes) {
             fieldBox.doneLoading();
         }
         */
+    }
+
+    void drawUI(SpriteBatch spriteBatch, PerspectiveCamera camera) {
+        for (Chunk[] chunks : chunks) {
+            for (Chunk chunk : chunks) {
+                chunk.drawLivesCount(spriteBatch, camera);
+            }
+        }
     }
 }

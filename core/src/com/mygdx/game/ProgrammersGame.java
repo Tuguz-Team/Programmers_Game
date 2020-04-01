@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -16,18 +17,13 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 
 public class ProgrammersGame extends ApplicationAdapter {
 
-	final static Vector3 forward = new Vector3(0f, 0f, 1f);
-	final static Vector3 back = new Vector3(0f, 0f, -1f);
-	final static Vector3 left = new Vector3(1f, 0f, 0f);
-	final static Vector3 right = new Vector3(-1f, 0f, 0f);
-	final static Vector3 up = new Vector3(0f, 1f, 0f);
-	final static Vector3 down = new Vector3(0f, -1f, 0f);
-
 	static int size;
+
 	private Field field;
 	private Car[] cars;
 	static Difficulty difficulty = Difficulty.Hard;
@@ -39,6 +35,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 	private static PerspectiveCamera camera;
 	private static Environment environment;
 	private static ModelBatch modelBatch;
+	private static SpriteBatch spriteBatch;
 	private static MyGestureDetector myGestureDetector;
 
 	@Override
@@ -55,6 +52,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 		assetManager = new AssetManager();
 
 		modelBatch = new ModelBatch();
+		spriteBatch = new SpriteBatch();
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
@@ -89,7 +87,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 			modelBuilder1.begin();
 			MeshPartBuilder builder1 = modelBuilder1.part("Y", 1, 3, new Material());
 			builder1.setColor(Color.GREEN);
-			end.set(start).add(new Vector3().set(up).scl(3));
+			end.set(start).add(new Vector3(Vector3.Y).scl(3));
 			builder1.line(start.x, start.y, start.z, end.x, end.y, end.z);
 			instances.add(new ModelInstance(modelBuilder1.end()));
 
@@ -97,7 +95,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 			modelBuilder2.begin();
 			MeshPartBuilder builder2 = modelBuilder2.part("X", 1, 3, new Material());
 			builder2.setColor(Color.RED);
-			end.set(start).add(new Vector3().set(left).scl(3));
+			end.set(start).add(new Vector3(Vector3.X).scl(3));
 			builder2.line(start.x, start.y, start.z, end.x, end.y, end.z);
 			instances.add(new ModelInstance(modelBuilder2.end()));
 
@@ -105,7 +103,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 			modelBuilder3.begin();
 			MeshPartBuilder builder3 = modelBuilder3.part("Z", 1, 3, new Material());
 			builder3.setColor(Color.BLUE);
-			end.set(start).add(new Vector3().set(forward).scl(3));
+			end.set(start).add(new Vector3(Vector3.Z).scl(3));
 			builder3.line(start.x, start.y, start.z, end.x, end.y, end.z);
 			instances.add(new ModelInstance(modelBuilder3.end()));
 		}
@@ -132,7 +130,6 @@ public class ProgrammersGame extends ApplicationAdapter {
 		if (loading && assetManager.update()) {
 			doneLoading();
 			myGestureDetector.unlockCamera();
-			//cars[0].stepForwardToFloor();
 		}
 
 		//Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -145,6 +142,10 @@ public class ProgrammersGame extends ApplicationAdapter {
 		modelBatch.begin(camera);
 		modelBatch.render(instances, environment);
 		modelBatch.end();
+
+		spriteBatch.begin();
+		//field.drawUI(spriteBatch, camera);
+		spriteBatch.end();
 	}
 
 	@Override
@@ -152,6 +153,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();
+		Chunk.bitmapFont.dispose();
 	}
 
 	enum Difficulty {

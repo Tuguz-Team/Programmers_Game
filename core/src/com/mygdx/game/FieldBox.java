@@ -50,4 +50,13 @@ public class FieldBox extends GameObject {
                     getY() * Chunk.height, z * Chunk.width).add(field.getOffset()));
         }
     }
+
+    @Override
+    void setPosition(final int x, final int y, final int z) {
+        super.setPosition(x, y, z);
+        if (modelInstance != null) {
+            modelInstance.transform.setTranslation(new Vector3(getX() * Chunk.width,
+                    getY() * Chunk.height, getZ() * Chunk.width).add(field.getOffset()));
+        }
+    }
 }

@@ -12,9 +12,9 @@ class Car extends GameObject implements ICards {
 
     private Field field;
     private String modelFileName;
-    ProgrammersGame.Direction direction;
+    private ProgrammersGame.Direction direction;
 
-    private Array<Life> lives = new Array<>(3);
+    Array<Life> lives = new Array<>(3);
     private Chunk base;
     private boolean compensated;
 
@@ -83,6 +83,15 @@ class Car extends GameObject implements ICards {
     }
 
     @Override
+    void setPosition(final int x, final int y, final int z) {
+        super.setPosition(x, y, z);
+        if (modelInstance != null) {
+            modelInstance.transform.setTranslation(new Vector3(getX() * Chunk.width,
+                    getY() * Chunk.height, getZ() * Chunk.width).add(field.getOffset()));
+        }
+    }
+
+    @Override
     void loading() {
         ProgrammersGame.assetManager.load(modelFileName, Model.class);
     }
@@ -91,8 +100,11 @@ class Car extends GameObject implements ICards {
     void doneLoading() {
         model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
-        modelInstance.transform.translate(new Vector3(getX() * Chunk.width, getY() * Chunk.height, getZ() * Chunk.width)
-                .add(field.getOffset()));
+        modelInstance.transform.setTranslation(new Vector3(
+                getX() * Chunk.width + 0.001f,
+                getY() * Chunk.height + 0.001f,
+                getZ() * Chunk.width + 0.001f
+        ).add(field.getOffset()));
         if (getX() == 0 && getZ() == 0) {
             if (field.chunks[0][0].getY() != field.chunks[0][1].getY()) {
                 direction = ProgrammersGame.Direction.Left;
@@ -132,13 +144,13 @@ class Car extends GameObject implements ICards {
             case Forward:
                 break;
             case Back:
-                modelInstance.transform.rotate(new Vector3(0, 1, 0), 180f);
+                modelInstance.transform.rotate(Vector3.Y, 180f);
                 break;
             case Left:
-                modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f);
+                modelInstance.transform.rotate(Vector3.Y, 90f);
                 break;
             case Right:
-                modelInstance.transform.rotate(new Vector3(0, 1, 0), -90f);
+                modelInstance.transform.rotate(Vector3.Y, -90f);
         }
         ProgrammersGame.instances.add(modelInstance);
     }
@@ -155,10 +167,11 @@ class Car extends GameObject implements ICards {
                         field.chunks[getX()][getZ()].car = null;
                         setZ(getZ() + 1);
                         field.chunks[getX()][getZ()].car = this;
-                        if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3; i++) {
+                        if (field.chunks[getX()][getZ()].lives.size > 0 && lives.size < 3) {
+                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
                                 lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
                                 field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
+                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
                             }
                             return false;
                         }
@@ -179,9 +192,10 @@ class Car extends GameObject implements ICards {
                         setZ(getZ() - 1);
                         field.chunks[getX()][getZ()].car = this;
                         if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3; i++) {
+                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
                                 lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
                                 field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
+                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
                             }
                             return false;
                         }
@@ -202,9 +216,10 @@ class Car extends GameObject implements ICards {
                         setX(getX() + 1);
                         field.chunks[getX()][getZ()].car = this;
                         if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3; i++) {
+                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
                                 lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
                                 field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
+                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
                             }
                             return false;
                         }
@@ -225,9 +240,10 @@ class Car extends GameObject implements ICards {
                         setX(getX() - 1);
                         field.chunks[getX()][getZ()].car = this;
                         if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3; i++) {
+                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
                                 lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
                                 field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
+                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
                             }
                             return false;
                         }
@@ -252,41 +268,57 @@ class Car extends GameObject implements ICards {
             case Forward:
                 if (getZ() != ProgrammersGame.size - 1 &&
                         Math.abs(field.chunks[getX()][getZ() + 1].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    compensated = false;
-                    field.chunks[getX()][getZ()].car = null;
-                    setZ(getZ() + 1);
-                    field.chunks[getX()][getZ()].car = this;
-                    setY(field.chunks[getX()][getZ()].getY() + 1);
+                    if (field.chunks[getX()][getZ() + 1].car == null) {
+                        compensated = false;
+                        field.chunks[getX()][getZ()].car = null;
+                        setZ(getZ() + 1);
+                        field.chunks[getX()][getZ()].car = this;
+                        setY(field.chunks[getX()][getZ()].getY() + 1);
+                    } else {
+                        compensation(field.chunks[getX()][getZ() + 1].car);
+                    }
                 }
                 break;
             case Back:
                 if (getZ() != 0 &&
                         Math.abs(field.chunks[getX()][getZ() - 1].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    compensated = false;
-                    field.chunks[getX()][getZ()].car = null;
-                    setZ(getZ() - 1);
-                    field.chunks[getX()][getZ()].car = this;
-                    setY(field.chunks[getX()][getZ()].getY() + 1);
+                    if (field.chunks[getX()][getZ() - 1].car == null) {
+                        compensated = false;
+                        field.chunks[getX()][getZ()].car = null;
+                        setZ(getZ() - 1);
+                        field.chunks[getX()][getZ()].car = this;
+                        setY(field.chunks[getX()][getZ()].getY() + 1);
+                    } else {
+                        compensation(field.chunks[getX()][getZ() - 1].car);
+                    }
                 }
                 break;
             case Left:
                 if (getX() != ProgrammersGame.size - 1
                         && Math.abs(field.chunks[getX() + 1][getZ()].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    compensated = false;
-                    field.chunks[getX()][getZ()].car = null;
-                    setX(getX() + 1);
-                    field.chunks[getX()][getZ()].car = this;
-                    setY(field.chunks[getX()][getZ()].getY() + 1);
+                    if (field.chunks[getX() + 1][getZ()].car == null) {
+                        compensated = false;
+                        field.chunks[getX()][getZ()].car = null;
+                        setX(getX() + 1);
+                        field.chunks[getX()][getZ()].car = this;
+                        setY(field.chunks[getX()][getZ()].getY() + 1);
+                    } else {
+                        compensation(field.chunks[getX() + 1][getZ()].car);
+                    }
                 }
                 break;
             case Right:
                 if (getX() != 0
                         && Math.abs(field.chunks[getX() - 1][getZ()].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    compensated = false;
-                    field.chunks[getX()][getZ()].car = null;
-                    setX(getX() - 1);
-                    field.chunks[getX()][getZ()].car = this;
-                    setY(field.chunks[getX()][getZ()].getY() + 1);
+                    if (field.chunks[getX() - 1][getZ()].car == null) {
+                        compensated = false;
+                        field.chunks[getX()][getZ()].car = null;
+                        setX(getX() - 1);
+                        field.chunks[getX()][getZ()].car = this;
+                        setY(field.chunks[getX()][getZ()].getY() + 1);
+                    } else {
+                        compensation(field.chunks[getX() - 1][getZ()].car);
+                    }
                 }
         }
     }
@@ -378,14 +410,12 @@ class Car extends GameObject implements ICards {
                                 Chunk base = field.chunks[getX()][impulse].car.base;
                                 field.chunks[getX()][impulse].lives.addAll(car.lives);
                                 car.lives = new Array<>();
-                                car.setX(base.getX());
-                                car.setY(base.getY());
-                                car.setZ(base.getZ());
+                                car.setPosition(base.getX(), base.getY(), base.getZ());
                             }
                             break;
                         } else if (field.chunks[getX()][impulse].lives.size != 0) {
                             for (Life life : field.chunks[getX()][impulse].lives) {
-                                life.setZ(life.getZ() - 1);
+                                life.translate(0, 0, -1);
                             }
                             break;
                         }
@@ -403,14 +433,12 @@ class Car extends GameObject implements ICards {
                                 Chunk base = field.chunks[getX()][impulse].car.base;
                                 field.chunks[getX()][impulse].lives.addAll(car.lives);
                                 car.lives = new Array<>();
-                                car.setX(base.getX());
-                                car.setY(base.getY());
-                                car.setZ(base.getZ());
+                                car.setPosition(base.getX(), base.getY(), base.getZ());
                             }
                             break;
                         } else if (field.chunks[getX()][impulse].lives.size != 0) {
                             for (Life life : field.chunks[getX()][impulse].lives) {
-                                life.setZ(life.getZ() + 1);
+                                life.translate(0, 0, 1);
                             }
                             break;
                         }
@@ -428,14 +456,12 @@ class Car extends GameObject implements ICards {
                                 Chunk base = field.chunks[impulse][getZ()].car.base;
                                 field.chunks[impulse][getZ()].lives.addAll(car.lives);
                                 car.lives = new Array<>();
-                                car.setX(base.getX());
-                                car.setY(base.getY());
-                                car.setZ(base.getZ());
+                                car.setPosition(base.getX(), base.getY(), base.getZ());
                             }
                             break;
                         } else if (field.chunks[impulse][getZ()].lives.size != 0) {
                             for (Life life : field.chunks[impulse][getZ()].lives) {
-                                life.setX(life.getX() - 1);
+                                life.translate(-1, 0, 0);
                             }
                             break;
                         }
@@ -453,14 +479,12 @@ class Car extends GameObject implements ICards {
                                 Chunk base = field.chunks[impulse][getZ()].car.base;
                                 field.chunks[impulse][getZ()].lives.addAll(car.lives);
                                 car.lives = new Array<>();
-                                car.setX(base.getX());
-                                car.setY(base.getY());
-                                car.setZ(base.getZ());
+                                car.setPosition(base.getX(), base.getY(), base.getZ());
                             }
                             break;
                         } else if (field.chunks[impulse][getZ()].lives.size != 0) {
                             for (Life life : field.chunks[impulse][getZ()].lives) {
-                                life.setX(life.getX() + 1);
+                                life.translate(1, 0, 0);
                             }
                             break;
                         }

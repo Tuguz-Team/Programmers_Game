@@ -19,6 +19,16 @@ abstract class GameObject {
 
     abstract void doneLoading();
 
+    void setPosition(final int x, final int y, final int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    Vector3 getPosition() {
+        return new Vector3(x, y, z);
+    }
+
     int getX() {
         return x;
     }

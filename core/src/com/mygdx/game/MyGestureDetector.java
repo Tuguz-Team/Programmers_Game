@@ -15,8 +15,8 @@ class MyGestureDetector implements GestureDetector.GestureListener {
     private final static float MIN_ANGLE = 30f;
     private final static float MAX_ANGLE = 60f;
 
-    private final static float MIN_VELOCITY = -100f;
     private final static float MAX_VELOCITY = 100f;
+    private final static float MIN_VELOCITY = -MAX_VELOCITY;
 
     private PerspectiveCamera camera;
     private boolean locked;
@@ -101,8 +101,8 @@ class MyGestureDetector implements GestureDetector.GestureListener {
                         new Vector3(0f, 1f, 0f),
                         Gdx.graphics.getDeltaTime() * -velocityX * 2f);
                 velocityX += isVelXPositive
-                        ? -Gdx.graphics.getDeltaTime() * 50f
-                        : Gdx.graphics.getDeltaTime() * 50f;
+                        ? -Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2
+                        : Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2;
             }
 
             if ((isVelYPositive && velocityY > 0) || (!isVelYPositive && velocityY < 0)) {
@@ -110,8 +110,8 @@ class MyGestureDetector implements GestureDetector.GestureListener {
                         new Vector3(0f, 1f, 0f).crs(camera.direction),
                         Gdx.graphics.getDeltaTime() * velocityY * 2f);
                 velocityY += isVelYPositive
-                        ? -Gdx.graphics.getDeltaTime() * 50f
-                        : Gdx.graphics.getDeltaTime() * 50f;
+                        ? -Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2
+                        : Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2;
             }
 
             float vectorAngle = VectorAngle(new Vector3(0, 1, 0), camera.position);
@@ -134,7 +134,7 @@ class MyGestureDetector implements GestureDetector.GestureListener {
     }
 
     private static float VectorAngle(final Vector3 first, final Vector3 second) {
-        return 180f * (float)Math.acos(first.dot(second) / first.len() / second.len()) / (float)Math.PI;
+        return (float)(180 * Math.acos(first.dot(second) / first.len() / second.len()) / Math.PI);
     }
 
     private float distanceOld;
