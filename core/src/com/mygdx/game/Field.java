@@ -94,25 +94,25 @@ class Field {
                         i2 = random.nextInt(size - length2 + 1);
                         if (j1 < 3) {
                             j2 = (i1 == 0 || i1 == 3)
-                                    ? random.nextInt(width1 + 1 - j1) + j1 + width1
-                                    : (random.nextBoolean() ? 3 : 6);
+                                    ? j1 + width1
+                                    : 3;
                         } else if (j1 == 3) {
                             j2 = random.nextBoolean() ? 0 : 6;
                         } else {
                             j2 = (i1 == 0 || i1 == 3)
-                                    ? random.nextInt(j1 - width1 + 1)
-                                    : (random.nextBoolean() ? 0 : 3);
+                                    ? j1 - width1
+                                    : 3;
                         }
                     } else {
                         if (i1 == 0) {
                             j2 = random.nextInt(size - width2 + 1);
                             if (j1 == 0) {
                                 i2 = (j2 == 6)
-                                        ? random.nextInt(size - length2 + 1)
+                                        ? random.nextInt(size - length2)
                                         : 3;
                             } else if (j1 == 3) {
                                 i2 = (j2 == 0)
-                                        ? random.nextInt(size - length2 + 1)
+                                        ? random.nextInt(size - length2)
                                         : 3;
                             } else {
                                 i2 = 3;
@@ -121,11 +121,11 @@ class Field {
                             j2 = random.nextInt(size - width2 + 1);
                             if (j1 == 0) {
                                 i2 = (j2 == 6)
-                                        ? random.nextInt(size - length2 + 1)
+                                        ? random.nextInt(size - length2)
                                         : 0;
                             } else if (j1 == 3) {
                                 i2 = (j2 == 0)
-                                        ? random.nextInt(size - length2 + 1)
+                                        ? random.nextInt(size - length2)
                                         : 0;
                             } else {
                                 i2 = 0;
@@ -141,11 +141,11 @@ class Field {
                             i2 = random.nextInt(size - length2 + 1);
                             if (i1 == 0) {
                                 j2 = (i2 == 6)
-                                        ? random.nextInt(size - width2 + 1)
+                                        ? random.nextInt(size - width2)
                                         : 3;
                             } else if (i1 == 3) {
                                 j2 = (i2 == 0)
-                                        ? random.nextInt(size - width2 + 1)
+                                        ? random.nextInt(size - width2)
                                         : 3;
                             } else {
                                 j2 = 3;
@@ -154,11 +154,11 @@ class Field {
                             i2 = random.nextInt(size - length2 + 1);
                             if (i1 == 0) {
                                 j2 = (i2 == 6)
-                                        ? random.nextInt(size - width2 + 1)
+                                        ? random.nextInt(size - width2)
                                         : 0;
                             } else if (i1 == 3) {
                                 j2 = (i2 == 0)
-                                        ? random.nextInt(size - width2 + 1)
+                                        ? random.nextInt(size - width2)
                                         : 0;
                             } else {
                                 j2 = 0;
@@ -171,14 +171,14 @@ class Field {
                         j2 = random.nextInt(size - width2 + 1);
                         if (i1 < 3) {
                             i2 = (j1 == 0 || j1 == 3)
-                                    ? random.nextInt(length1 + 1 - i1) + i1 + length1
-                                    : (random.nextBoolean() ? 3 : 6);
+                                    ? i1 + length1
+                                    : 3;
                         } else if (i1 == 3) {
                             i2 = random.nextBoolean() ? 0 : 6;
                         } else {
                             i2 = (j1 == 0 || j1 == 3)
-                                    ? random.nextInt(i1 - length1 + 1)
-                                    : (random.nextBoolean() ? 0 : 3);
+                                    ? i1 - length1
+                                    : 3;
                         }
                     }
                 }

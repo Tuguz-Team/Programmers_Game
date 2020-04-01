@@ -30,7 +30,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 	static int size;
 	private Field field;
 	private Car[] cars;
-	static Difficulty difficulty = Difficulty.Easy;
+	static Difficulty difficulty = Difficulty.Hard;
 
 	static Array<ModelInstance> instances;
 	static AssetManager assetManager;
@@ -132,7 +132,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 		if (loading && assetManager.update()) {
 			doneLoading();
 			myGestureDetector.unlockCamera();
-			cars[0].stepForwardToFloor();
+			//cars[0].stepForwardToFloor();
 		}
 
 		//Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
