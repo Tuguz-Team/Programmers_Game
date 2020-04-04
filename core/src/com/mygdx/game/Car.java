@@ -86,8 +86,11 @@ class Car extends GameObject implements ICards {
     void setPosition(final int x, final int y, final int z) {
         super.setPosition(x, y, z);
         if (modelInstance != null) {
-            modelInstance.transform.setTranslation(new Vector3(getX() * Chunk.width,
-                    getY() * Chunk.height, getZ() * Chunk.width).add(field.getOffset()));
+            modelInstance.transform.setTranslation(new Vector3(
+                    getX() * Chunk.width + 0.001f,
+                    getY() * Chunk.height + 0.001f,
+                    getZ() * Chunk.width + 0.001f
+            ).add(field.getOffset()));
         }
     }
 
@@ -157,102 +160,75 @@ class Car extends GameObject implements ICards {
 
     @Override
     public boolean stepForward() {
+        boolean isInBounds, isWall;
+        Chunk thisChunk = field.chunks[getX()][getZ()], nextChunk;
+        Procedure move;
         switch (direction) {
             case Forward:
-                if ((getZ() != ProgrammersGame.size - 1)
-                        && (field.chunks[getX()][getZ()].getY() == field.chunks[getX()][getZ() + 1].getY())
-                        && !field.chunks[getX()][getZ()].wallForward) {
-                    if (field.chunks[getX()][getZ() + 1].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+                isInBounds = getZ() != ProgrammersGame.size - 1;
+                nextChunk = field.chunks[getX()][getZ() + 1];
+                isWall = thisChunk.wallForward;
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setZ(getZ() + 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        if (field.chunks[getX()][getZ()].lives.size > 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
-                                lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
-                                field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
-                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
-                            }
-                            return false;
-                        }
-                        return true;
-                    } else {
-                        compensation(field.chunks[getX()][getZ() + 1].car);
-                        return false;
                     }
-                }
+                };
                 break;
             case Back:
-                if ((getZ() != 0)
-                        && (field.chunks[getX()][getZ()].getY() == field.chunks[getX()][getZ() - 1].getY())
-                        && !field.chunks[getX()][getZ()].wallBack) {
-                    if (field.chunks[getX()][getZ() - 1].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+                isInBounds = getZ() != 0;
+                nextChunk = field.chunks[getX()][getZ() - 1];
+                isWall = thisChunk.wallBack;
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setZ(getZ() - 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
-                                lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
-                                field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
-                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
-                            }
-                            return false;
-                        }
-                        return true;
-                    } else {
-                        compensation(field.chunks[getX()][getZ() - 1].car);
-                        return false;
                     }
-                }
+                };
                 break;
             case Left:
-                if ((getX() != ProgrammersGame.size - 1)
-                        && (field.chunks[getX()][getZ()].getY() == field.chunks[getX() + 1][getZ()].getY())
-                        && !field.chunks[getX()][getZ()].wallLeft) {
-                    if (field.chunks[getX() + 1][getZ()].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+                isInBounds = getX() != ProgrammersGame.size - 1;
+                nextChunk = field.chunks[getX() + 1][getZ()];
+                isWall = thisChunk.wallLeft;
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setX(getX() + 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
-                                lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
-                                field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
-                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
-                            }
-                            return false;
-                        }
-                        return true;
-                    } else {
-                        compensation(field.chunks[getX() + 1][getZ()].car);
-                        return false;
                     }
-                }
+                };
                 break;
             case Right:
-                if ((getX() != 0)
-                        && (field.chunks[getX()][getZ()].getY() == field.chunks[getX() - 1][getZ()].getY())
-                        && !field.chunks[getX()][getZ()].wallRight) {
-                    if (field.chunks[getX() - 1][getZ()].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+            default:
+                isInBounds = getX() != 0;
+                nextChunk = field.chunks[getX() - 1][getZ()];
+                isWall = thisChunk.wallRight;
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setX(getX() - 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                            for (int i = lives.size; i <= 3 && field.chunks[getX()][getZ()].lives.size > 0; i++) {
-                                lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
-                                field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
-                                ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
-                            }
-                            return false;
-                        }
-                        return true;
-                    } else {
-                        compensation(field.chunks[getX() - 1][getZ()].car);
-                        return false;
                     }
+                };
+        }
+        if (isInBounds && (thisChunk.getY() == nextChunk.getY()) && !isWall) {
+            if (nextChunk.car == null) {
+                compensated = false;
+                thisChunk.car = null;
+                move.call();
+                nextChunk.car = this;
+                thisChunk = nextChunk;
+                if (thisChunk.lives.size > 0 && lives.size < 3) {
+                    for (int i = lives.size; i <= 3 && !thisChunk.lives.isEmpty(); i++) {
+                        lives.add(thisChunk.lives.get(thisChunk.lives.size - 1));
+                        thisChunk.lives.removeIndex(thisChunk.lives.size - 1);
+                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
+                    }
+                    return false;
                 }
+                return true;
+            } else {
+                compensation(nextChunk.car);
+                return false;
+            }
         }
         return false;
     }
@@ -264,62 +240,69 @@ class Car extends GameObject implements ICards {
 
     @Override
     public void jump() {
+        boolean isInBounds;
+        Chunk thisChunk = field.chunks[getX()][getZ()], nextChunk;
+        Procedure move;
         switch (direction) {
             case Forward:
-                if (getZ() != ProgrammersGame.size - 1 &&
-                        Math.abs(field.chunks[getX()][getZ() + 1].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    if (field.chunks[getX()][getZ() + 1].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+                isInBounds = getZ() != ProgrammersGame.size - 1;
+                nextChunk = field.chunks[getX()][getZ() + 1];
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setZ(getZ() + 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        setY(field.chunks[getX()][getZ()].getY() + 1);
-                    } else {
-                        compensation(field.chunks[getX()][getZ() + 1].car);
                     }
-                }
+                };
                 break;
             case Back:
-                if (getZ() != 0 &&
-                        Math.abs(field.chunks[getX()][getZ() - 1].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    if (field.chunks[getX()][getZ() - 1].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+                isInBounds = getZ() != 0;
+                nextChunk = field.chunks[getX()][getZ() - 1];
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setZ(getZ() - 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        setY(field.chunks[getX()][getZ()].getY() + 1);
-                    } else {
-                        compensation(field.chunks[getX()][getZ() - 1].car);
                     }
-                }
+                };
                 break;
             case Left:
-                if (getX() != ProgrammersGame.size - 1
-                        && Math.abs(field.chunks[getX() + 1][getZ()].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    if (field.chunks[getX() + 1][getZ()].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+                isInBounds = getX() != ProgrammersGame.size - 1;
+                nextChunk = field.chunks[getX() + 1][getZ()];
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setX(getX() + 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        setY(field.chunks[getX()][getZ()].getY() + 1);
-                    } else {
-                        compensation(field.chunks[getX() + 1][getZ()].car);
                     }
-                }
+                };
                 break;
             case Right:
-                if (getX() != 0
-                        && Math.abs(field.chunks[getX() - 1][getZ()].getY() - field.chunks[getX()][getZ()].getY()) != 2) {
-                    if (field.chunks[getX() - 1][getZ()].car == null) {
-                        compensated = false;
-                        field.chunks[getX()][getZ()].car = null;
+            default:
+                isInBounds = getX() != 0;
+                nextChunk = field.chunks[getX() - 1][getZ()];
+                move = new Procedure() {
+                    @Override
+                    public void call() {
                         setX(getX() - 1);
-                        field.chunks[getX()][getZ()].car = this;
-                        setY(field.chunks[getX()][getZ()].getY() + 1);
-                    } else {
-                        compensation(field.chunks[getX() - 1][getZ()].car);
+                    }
+                };
+        }
+        if (isInBounds && Math.abs(nextChunk.getY() - thisChunk.getY()) != 2) {
+            if (nextChunk.car == null) {
+                compensated = false;
+                thisChunk.car = null;
+                move.call();
+                nextChunk.car = this;
+                thisChunk = nextChunk;
+                setY(thisChunk.getY() + 1);
+                if (thisChunk.lives.size > 0 && lives.size < 3) {
+                    for (int i = lives.size; i <= 3 && !thisChunk.lives.isEmpty(); i++) {
+                        lives.add(thisChunk.lives.get(thisChunk.lives.size - 1));
+                        thisChunk.lives.removeIndex(thisChunk.lives.size - 1);
+                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
                     }
                 }
+            } else {
+                compensation(nextChunk.car);
+            }
         }
     }
 
@@ -398,99 +381,97 @@ class Car extends GameObject implements ICards {
     @Override
     public void teleport() {
         int impulse;
-        int height = getY();
+        final int height = getY();
+        boolean isInBounds = true;
+        Chunk nextChunk;
         switch (direction) {
             case Forward:
                 impulse = getZ() + 1;
-                while (impulse < ProgrammersGame.size && field.chunks[getX()][impulse].getY() > height) {
-                    if (field.chunks[getX()][impulse].getY() == height) {
-                        if (field.chunks[getX()][impulse].car != null) {
-                            if (field.chunks[getX()][impulse].car.base.car == null) {
-                                Car car = field.chunks[getX()][impulse].car;
-                                Chunk base = field.chunks[getX()][impulse].car.base;
-                                field.chunks[getX()][impulse].lives.addAll(car.lives);
-                                car.lives = new Array<>();
-                                car.setPosition(base.getX(), base.getY(), base.getZ());
-                            }
-                            break;
-                        } else if (field.chunks[getX()][impulse].lives.size != 0) {
-                            for (Life life : field.chunks[getX()][impulse].lives) {
-                                life.translate(0, 0, -1);
-                            }
-                            break;
-                        }
-                    }
-                    impulse++;
-                }
+                nextChunk = field.chunks[getX()][impulse];
+                isInBounds = impulse < ProgrammersGame.size;
                 break;
             case Back:
                 impulse = getZ() - 1;
-                while (impulse >= 0 && field.chunks[getX()][impulse].getY() > height) {
-                    if (field.chunks[getX()][impulse].getY() == height) {
-                        if (field.chunks[getX()][impulse].car != null) {
-                            if (field.chunks[getX()][impulse].car.base.car == null) {
-                                Car car = field.chunks[getX()][impulse].car;
-                                Chunk base = field.chunks[getX()][impulse].car.base;
-                                field.chunks[getX()][impulse].lives.addAll(car.lives);
-                                car.lives = new Array<>();
-                                car.setPosition(base.getX(), base.getY(), base.getZ());
-                            }
-                            break;
-                        } else if (field.chunks[getX()][impulse].lives.size != 0) {
-                            for (Life life : field.chunks[getX()][impulse].lives) {
-                                life.translate(0, 0, 1);
-                            }
-                            break;
-                        }
-                    }
-                    impulse--;
-                }
+                nextChunk = field.chunks[getX()][impulse];
                 break;
             case Left:
                 impulse = getX() + 1;
-                while (impulse < ProgrammersGame.size && field.chunks[impulse][getZ()].getY() > height) {
-                    if (field.chunks[impulse][getZ()].getY() == height) {
-                        if (field.chunks[impulse][getZ()].car != null) {
-                            if (field.chunks[impulse][getZ()].car.base.car == null) {
-                                Car car = field.chunks[impulse][getZ()].car;
-                                Chunk base = field.chunks[impulse][getZ()].car.base;
-                                field.chunks[impulse][getZ()].lives.addAll(car.lives);
-                                car.lives = new Array<>();
-                                car.setPosition(base.getX(), base.getY(), base.getZ());
-                            }
-                            break;
-                        } else if (field.chunks[impulse][getZ()].lives.size != 0) {
-                            for (Life life : field.chunks[impulse][getZ()].lives) {
-                                life.translate(-1, 0, 0);
-                            }
-                            break;
-                        }
-                    }
-                    impulse++;
-                }
+                nextChunk = field.chunks[impulse][getZ()];
+                isInBounds = impulse < ProgrammersGame.size;
                 break;
             case Right:
+            default:
                 impulse = getX() - 1;
-                while (impulse >= 0 && field.chunks[impulse][getZ()].getY() > height) {
-                    if (field.chunks[impulse][getZ()].getY() == height) {
-                        if (field.chunks[impulse][getZ()].car != null) {
-                            if (field.chunks[impulse][getZ()].car.base.car == null) {
-                                Car car = field.chunks[impulse][getZ()].car;
-                                Chunk base = field.chunks[impulse][getZ()].car.base;
-                                field.chunks[impulse][getZ()].lives.addAll(car.lives);
-                                car.lives = new Array<>();
-                                car.setPosition(base.getX(), base.getY(), base.getZ());
-                            }
+                nextChunk = field.chunks[impulse][getZ()];
+        }
+        while (isInBounds && nextChunk.getY() < height) {
+            switch (direction) {
+                case Forward:
+                case Back:
+                    nextChunk = field.chunks[getX()][impulse];
+                    break;
+                case Right:
+                case Left:
+                default:
+                    nextChunk = field.chunks[impulse][getZ()];
+            }
+            if (nextChunk.getY() == height - 1) {
+                if (nextChunk.car != null) {
+                    if (nextChunk.car.base.car == null) {
+                        Car car = nextChunk.car;
+                        Chunk base = car.base;
+                        for (Life life : car.lives) {
+                            life.setPosition(nextChunk.getX(), nextChunk.getY(), nextChunk.getZ());
+                            ProgrammersGame.instances.add(life.modelInstance);
+                        }
+                        nextChunk.lives.addAll(car.lives);
+                        car.lives.clear();
+                        car.setPosition(base.getX(), base.getY(), base.getZ());
+                    }
+                    break;
+                } else if (!nextChunk.lives.isEmpty()) {
+                    Chunk prevChunk;
+                    switch (direction) {
+                        case Forward:
+                            prevChunk = field.chunks[getX()][impulse - 1];
                             break;
-                        } else if (field.chunks[impulse][getZ()].lives.size != 0) {
-                            for (Life life : field.chunks[impulse][getZ()].lives) {
-                                life.translate(1, 0, 0);
-                            }
+                        case Back:
+                            prevChunk = field.chunks[getX()][impulse + 1];
                             break;
+                        case Left:
+                            prevChunk = field.chunks[impulse - 1][getZ()];
+                            break;
+                        case Right:
+                        default:
+                            prevChunk = field.chunks[impulse + 1][getZ()];
+                    }
+                    for (Life life : nextChunk.lives) {
+                        life.setPosition(prevChunk.getX(), prevChunk.getY() + 1, prevChunk.getZ());
+                    }
+                    prevChunk.lives.addAll(nextChunk.lives);
+                    nextChunk.lives.clear();
+                    if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
+                        for (int i = lives.size; i <= 3 && !field.chunks[getX()][getZ()].lives.isEmpty(); i++) {
+                            lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
+                            field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
+                            ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
                         }
                     }
-                    impulse--;
+                    break;
                 }
+            }
+            switch (direction) {
+                case Forward:
+                case Left:
+                    impulse++;
+                    isInBounds = impulse < ProgrammersGame.size;
+                    break;
+                case Back:
+                case Right:
+                default:
+                    impulse--;
+                    isInBounds = impulse >= 0;
+            }
         }
     }
 

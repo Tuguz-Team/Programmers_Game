@@ -7,6 +7,6 @@ import com.mygdx.game.ProgrammersGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new ProgrammersGame(), config);
+		new LwjglApplication(new ProgrammersGame(ProgrammersGame.Difficulty.Hard), config);
 	}
 }

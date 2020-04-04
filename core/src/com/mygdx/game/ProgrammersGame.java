@@ -6,7 +6,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -17,7 +16,7 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 public class ProgrammersGame extends ApplicationAdapter {
@@ -26,7 +25,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 	private Field field;
 	private Car[] cars;
-	static Difficulty difficulty = Difficulty.Hard;
+	static Difficulty difficulty;
 
 	static Array<ModelInstance> instances;
 	static AssetManager assetManager;
@@ -35,8 +34,12 @@ public class ProgrammersGame extends ApplicationAdapter {
 	private static PerspectiveCamera camera;
 	private static Environment environment;
 	private static ModelBatch modelBatch;
-	private static SpriteBatch spriteBatch;
+	private static UIController uiController;
 	private static MyGestureDetector myGestureDetector;
+
+	public ProgrammersGame(Difficulty difficulty) {
+		ProgrammersGame.difficulty = difficulty;
+	}
 
 	@Override
 	public void create() {
@@ -50,16 +53,15 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 		instances = new Array<>();
 		assetManager = new AssetManager();
-
+		uiController = new UIController(new Skin());
 		modelBatch = new ModelBatch();
-		spriteBatch = new SpriteBatch();
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		camera = new PerspectiveCamera(67f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(size, size, size);
+		camera.position.set(-size, size, -size);
 		camera.lookAt(0f,0f,0f);
 		camera.near = 0.1f;
 		camera.far = 100f;
@@ -143,9 +145,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 		modelBatch.render(instances, environment);
 		modelBatch.end();
 
-		spriteBatch.begin();
-		//field.drawUI(spriteBatch, camera);
-		spriteBatch.end();
+		uiController.draw();
 	}
 
 	@Override
@@ -153,10 +153,10 @@ public class ProgrammersGame extends ApplicationAdapter {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();
-		Chunk.bitmapFont.dispose();
+		uiController.dispose();
 	}
 
-	enum Difficulty {
+	public enum Difficulty {
 		Easy,
 		Hard
 	}

@@ -401,12 +401,4 @@ class Field {
         }
         */
     }
-
-    void drawUI(SpriteBatch spriteBatch, PerspectiveCamera camera) {
-        for (Chunk[] chunks : chunks) {
-            for (Chunk chunk : chunks) {
-                chunk.drawLivesCount(spriteBatch, camera);
-            }
-        }
-    }
 }
