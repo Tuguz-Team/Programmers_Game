@@ -19,12 +19,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
+import static com.badlogic.gdx.math.MathUtils.random;
+
 public class ProgrammersGame extends ApplicationAdapter {
 
-	static int size;
+	private static int size;
+	private static int playersCount;
 
 	private Field field;
-	private Car[] cars;
+	private GameController gameController;
 	static Difficulty difficulty;
 
 	static Array<ModelInstance> instances;
@@ -37,8 +40,13 @@ public class ProgrammersGame extends ApplicationAdapter {
 	private static UIController uiController;
 	private static MyGestureDetector myGestureDetector;
 
-	public ProgrammersGame(Difficulty difficulty) {
+	public ProgrammersGame(final Difficulty difficulty, final int players) {
 		ProgrammersGame.difficulty = difficulty;
+		playersCount = players;
+	}
+
+	static int getSize() {
+		return size;
 	}
 
 	@Override
@@ -71,13 +79,19 @@ public class ProgrammersGame extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(new GestureDetector(myGestureDetector));
 
 		field = new Field(size);
-		cars = new Car[] {
-				new Car(0, field.chunks[0][0].getY() + 1, 0, ((Base)field.chunks[0][0]).getBaseColor(), field),
-				new Car(0, field.chunks[0][size - 1].getY() + 1, size - 1, ((Base)field.chunks[0][size - 1]).getBaseColor(), field),
-				new Car(size - 1, field.chunks[size - 1][0].getY() + 1, 0, ((Base)field.chunks[size - 1][0]).getBaseColor(), field),
-				new Car(size - 1, field.chunks[size - 1][size - 1].getY() + 1, size - 1,
-						((Base)field.chunks[size - 1][size - 1]).getBaseColor(), field)
-		};
+		Player[] players = new Player[playersCount];
+		Array<Base> bases = new Array<>(new Base[] {
+				(Base)field.chunks[0][0], (Base)field.chunks[0][size - 1],
+				(Base)field.chunks[size - 1][0], (Base)field.chunks[size - 1][size - 1]
+		});
+		for (int i = 0; i < players.length; i++) {
+			int index = random.nextInt(bases.size);
+			Base base = bases.get(index);
+			players[i] = new Player(new Car(base.getX(), base.getY() + 1, base.getZ(),
+					base.getBaseColor(), field));
+			bases.removeIndex(index);
+		}
+		gameController = new GameController(players);
 
 		loading();
 
@@ -113,16 +127,16 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 	private void loading() {
 		field.loading();
-        for (Car car : cars) {
-            car.loading();
+        for (Player player : gameController.getPlayers()) {
+            player.getCar().loading();
         }
 		loading = true;
 	}
 
 	private void doneLoading() {
 		field.doneLoading();
-		for (Car car : cars) {
-			car.doneLoading();
+		for (Player player : gameController.getPlayers()) {
+			player.getCar().doneLoading();
 		}
 		loading = false;
 	}

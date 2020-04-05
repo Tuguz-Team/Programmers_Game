@@ -12,7 +12,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new ProgrammersGame(Difficulty.Hard), config);
+		initialize(new ProgrammersGame(Difficulty.Hard, 4), config);
 
 		setImmersiveSticky();
 		getWindow().getDecorView().setOnSystemUiVisibilityChangeListener

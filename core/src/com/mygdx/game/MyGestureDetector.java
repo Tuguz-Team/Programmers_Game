@@ -9,8 +9,10 @@ import com.badlogic.gdx.math.Vector3;
 
 class MyGestureDetector implements GestureDetector.GestureListener {
 
-    private final static float MIN_ZOOM = ProgrammersGame.size * Chunk.width;
-    private final static float MAX_ZOOM = (ProgrammersGame.size + 2) * Chunk.width;
+    private final static int size = ProgrammersGame.getSize();
+
+    private final static float MIN_ZOOM = size * Chunk.width;
+    private final static float MAX_ZOOM = (size + 2) * Chunk.width;
 
     private final static float MIN_ANGLE = 30f;
     private final static float MAX_ANGLE = 60f;

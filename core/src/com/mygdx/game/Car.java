@@ -14,6 +14,8 @@ class Car extends GameObject implements ICards {
     private String modelFileName;
     private Direction direction;
 
+    private static final int size = ProgrammersGame.getSize();
+
     Array<Life> lives = new Array<>(3);
     private Chunk base;
     private boolean compensated;
@@ -116,28 +118,28 @@ class Car extends GameObject implements ICards {
             } else {
                 direction = random.nextBoolean() ? Direction.Forward : Direction.Left;
             }
-        } else if (getX() == 0 && getZ() == ProgrammersGame.size - 1) {
-            if (field.chunks[0][ProgrammersGame.size - 1].getY() != field.chunks[0][ProgrammersGame.size - 2].getY()) {
+        } else if (getX() == 0 && getZ() == size - 1) {
+            if (field.chunks[0][size - 1].getY() != field.chunks[0][size - 2].getY()) {
                 direction = Direction.Left;
-            } else if (field.chunks[0][ProgrammersGame.size - 1].getY() != field.chunks[1][ProgrammersGame.size - 1].getY()) {
+            } else if (field.chunks[0][size - 1].getY() != field.chunks[1][size - 1].getY()) {
                 direction = Direction.Back;
             } else {
                 direction = random.nextBoolean() ? Direction.Back : Direction.Left;
             }
-        } else if (getX() == ProgrammersGame.size - 1 && getZ() == 0) {
-            if (field.chunks[ProgrammersGame.size - 1][0].getY() != field.chunks[ProgrammersGame.size - 2][0].getY()) {
+        } else if (getX() == size - 1 && getZ() == 0) {
+            if (field.chunks[size - 1][0].getY() != field.chunks[size - 2][0].getY()) {
                 direction = Direction.Forward;
-            } else if (field.chunks[ProgrammersGame.size - 1][0].getY() != field.chunks[ProgrammersGame.size - 1][1].getY()) {
+            } else if (field.chunks[size - 1][0].getY() != field.chunks[size - 1][1].getY()) {
                 direction = Direction.Right;
             } else {
                 direction = random.nextBoolean() ? Direction.Forward : Direction.Right;
             }
         } else {
-            if (field.chunks[ProgrammersGame.size - 1][ProgrammersGame.size - 1].getY()
-                    != field.chunks[ProgrammersGame.size - 2][ProgrammersGame.size - 1].getY()) {
+            if (field.chunks[size - 1][size - 1].getY()
+                    != field.chunks[size - 2][size - 1].getY()) {
                 direction = Direction.Back;
-            } else if (field.chunks[ProgrammersGame.size - 1][ProgrammersGame.size - 1].getY()
-                    != field.chunks[ProgrammersGame.size - 1][ProgrammersGame.size - 2].getY()) {
+            } else if (field.chunks[size - 1][size - 1].getY()
+                    != field.chunks[size - 1][size - 2].getY()) {
                 direction = Direction.Right;
             } else {
                 direction = random.nextBoolean() ? Direction.Back : Direction.Right;
@@ -165,7 +167,7 @@ class Car extends GameObject implements ICards {
         Procedure move;
         switch (direction) {
             case Forward:
-                isInBounds = getZ() != ProgrammersGame.size - 1;
+                isInBounds = getZ() != size - 1;
                 nextChunk = field.chunks[getX()][getZ() + 1];
                 isWall = thisChunk.wallForward;
                 move = new Procedure() {
@@ -187,7 +189,7 @@ class Car extends GameObject implements ICards {
                 };
                 break;
             case Left:
-                isInBounds = getX() != ProgrammersGame.size - 1;
+                isInBounds = getX() != size - 1;
                 nextChunk = field.chunks[getX() + 1][getZ()];
                 isWall = thisChunk.wallLeft;
                 move = new Procedure() {
@@ -245,7 +247,7 @@ class Car extends GameObject implements ICards {
         Procedure move;
         switch (direction) {
             case Forward:
-                isInBounds = getZ() != ProgrammersGame.size - 1;
+                isInBounds = getZ() != size - 1;
                 nextChunk = field.chunks[getX()][getZ() + 1];
                 move = new Procedure() {
                     @Override
@@ -265,7 +267,7 @@ class Car extends GameObject implements ICards {
                 };
                 break;
             case Left:
-                isInBounds = getX() != ProgrammersGame.size - 1;
+                isInBounds = getX() != size - 1;
                 nextChunk = field.chunks[getX() + 1][getZ()];
                 move = new Procedure() {
                     @Override
@@ -388,7 +390,7 @@ class Car extends GameObject implements ICards {
             case Forward:
                 impulse = getZ() + 1;
                 nextChunk = field.chunks[getX()][impulse];
-                isInBounds = impulse < ProgrammersGame.size;
+                isInBounds = impulse < size;
                 break;
             case Back:
                 impulse = getZ() - 1;
@@ -397,7 +399,7 @@ class Car extends GameObject implements ICards {
             case Left:
                 impulse = getX() + 1;
                 nextChunk = field.chunks[impulse][getZ()];
-                isInBounds = impulse < ProgrammersGame.size;
+                isInBounds = impulse < size;
                 break;
             case Right:
             default:
@@ -464,7 +466,7 @@ class Car extends GameObject implements ICards {
                 case Forward:
                 case Left:
                     impulse++;
-                    isInBounds = impulse < ProgrammersGame.size;
+                    isInBounds = impulse < size;
                     break;
                 case Back:
                 case Right:
