@@ -3,9 +3,9 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Disposable;
 
-class UIController {
+class UIController implements Disposable {
 
     private Stage stage;
     private Skin skin;
@@ -23,7 +23,7 @@ class UIController {
         spriteBatch.end();
     }
 
-    void dispose() {
+    public void dispose() {
         stage.dispose();
         skin.dispose();
         spriteBatch.dispose();

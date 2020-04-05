@@ -155,16 +155,4 @@ public class ProgrammersGame extends ApplicationAdapter {
 		assetManager.dispose();
 		uiController.dispose();
 	}
-
-	public enum Difficulty {
-		Easy,
-		Hard
-	}
-
-	enum Direction {
-		Forward,
-		Back,
-		Left,
-		Right
-	}
 }

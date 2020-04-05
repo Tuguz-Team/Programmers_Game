@@ -12,7 +12,7 @@ class Car extends GameObject implements ICards {
 
     private Field field;
     private String modelFileName;
-    private ProgrammersGame.Direction direction;
+    private Direction direction;
 
     Array<Life> lives = new Array<>(3);
     private Chunk base;
@@ -110,37 +110,37 @@ class Car extends GameObject implements ICards {
         ).add(field.getOffset()));
         if (getX() == 0 && getZ() == 0) {
             if (field.chunks[0][0].getY() != field.chunks[0][1].getY()) {
-                direction = ProgrammersGame.Direction.Left;
+                direction = Direction.Left;
             } else if (field.chunks[0][0].getY() != field.chunks[1][0].getY()) {
-                direction = ProgrammersGame.Direction.Forward;
+                direction = Direction.Forward;
             } else {
-                direction = random.nextBoolean() ? ProgrammersGame.Direction.Forward : ProgrammersGame.Direction.Left;
+                direction = random.nextBoolean() ? Direction.Forward : Direction.Left;
             }
         } else if (getX() == 0 && getZ() == ProgrammersGame.size - 1) {
             if (field.chunks[0][ProgrammersGame.size - 1].getY() != field.chunks[0][ProgrammersGame.size - 2].getY()) {
-                direction = ProgrammersGame.Direction.Left;
+                direction = Direction.Left;
             } else if (field.chunks[0][ProgrammersGame.size - 1].getY() != field.chunks[1][ProgrammersGame.size - 1].getY()) {
-                direction = ProgrammersGame.Direction.Back;
+                direction = Direction.Back;
             } else {
-                direction = random.nextBoolean() ? ProgrammersGame.Direction.Back : ProgrammersGame.Direction.Left;
+                direction = random.nextBoolean() ? Direction.Back : Direction.Left;
             }
         } else if (getX() == ProgrammersGame.size - 1 && getZ() == 0) {
             if (field.chunks[ProgrammersGame.size - 1][0].getY() != field.chunks[ProgrammersGame.size - 2][0].getY()) {
-                direction = ProgrammersGame.Direction.Forward;
+                direction = Direction.Forward;
             } else if (field.chunks[ProgrammersGame.size - 1][0].getY() != field.chunks[ProgrammersGame.size - 1][1].getY()) {
-                direction = ProgrammersGame.Direction.Right;
+                direction = Direction.Right;
             } else {
-                direction = random.nextBoolean() ? ProgrammersGame.Direction.Forward : ProgrammersGame.Direction.Right;
+                direction = random.nextBoolean() ? Direction.Forward : Direction.Right;
             }
         } else {
             if (field.chunks[ProgrammersGame.size - 1][ProgrammersGame.size - 1].getY()
                     != field.chunks[ProgrammersGame.size - 2][ProgrammersGame.size - 1].getY()) {
-                direction = ProgrammersGame.Direction.Back;
+                direction = Direction.Back;
             } else if (field.chunks[ProgrammersGame.size - 1][ProgrammersGame.size - 1].getY()
                     != field.chunks[ProgrammersGame.size - 1][ProgrammersGame.size - 2].getY()) {
-                direction = ProgrammersGame.Direction.Right;
+                direction = Direction.Right;
             } else {
-                direction = random.nextBoolean() ? ProgrammersGame.Direction.Back : ProgrammersGame.Direction.Right;
+                direction = random.nextBoolean() ? Direction.Back : Direction.Right;
             }
         }
         switch (direction) {
@@ -311,16 +311,16 @@ class Car extends GameObject implements ICards {
         modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f);
         switch (direction) {
             case Forward:
-                direction = ProgrammersGame.Direction.Left;
+                direction = Direction.Left;
                 break;
             case Back:
-                direction = ProgrammersGame.Direction.Right;
+                direction = Direction.Right;
                 break;
             case Left:
-                direction = ProgrammersGame.Direction.Back;
+                direction = Direction.Back;
                 break;
             case Right:
-                direction = ProgrammersGame.Direction.Forward;
+                direction = Direction.Forward;
         }
     }
 
@@ -329,16 +329,16 @@ class Car extends GameObject implements ICards {
         modelInstance.transform.rotate(new Vector3(0, 1, 0), -90f);
         switch (direction) {
             case Forward:
-                direction = ProgrammersGame.Direction.Right;
+                direction = Direction.Right;
                 break;
             case Back:
-                direction = ProgrammersGame.Direction.Left;
+                direction = Direction.Left;
                 break;
             case Left:
-                direction = ProgrammersGame.Direction.Forward;
+                direction = Direction.Forward;
                 break;
             case Right:
-                direction = ProgrammersGame.Direction.Back;
+                direction = Direction.Back;
         }
     }
 
@@ -347,16 +347,16 @@ class Car extends GameObject implements ICards {
         modelInstance.transform.rotate(new Vector3(0, 1, 0), 180f);
         switch (direction) {
             case Forward:
-                direction = ProgrammersGame.Direction.Back;
+                direction = Direction.Back;
                 break;
             case Back:
-                direction = ProgrammersGame.Direction.Forward;
+                direction = Direction.Forward;
                 break;
             case Left:
-                direction = ProgrammersGame.Direction.Right;
+                direction = Direction.Right;
                 break;
             case Right:
-                direction = ProgrammersGame.Direction.Left;
+                direction = Direction.Left;
         }
     }
 
