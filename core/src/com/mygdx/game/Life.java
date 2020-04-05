@@ -11,7 +11,7 @@ class Life extends GameObject {
     private Field field;
 
     private Model typeModel;
-    private String typeModelName;
+    private String typeModelFileName;
 
     Life(final int x, final int y, final int z, final Type type, final Field field) {
         super(x, y, z);
@@ -34,19 +34,19 @@ class Life extends GameObject {
                 number = 4;
         }
         stringBuilder.append(number).append("/LifeObject").append(number).append(".obj");
-        typeModelName = stringBuilder.toString();
+        typeModelFileName = stringBuilder.toString();
     }
 
     @Override
     void loading() {
         ProgrammersGame.assetManager.load("Models/LifeObjects/LifeObject0/LifeObject0.obj", Model.class);
-        ProgrammersGame.assetManager.load(typeModelName, Model.class);
+        ProgrammersGame.assetManager.load(typeModelFileName, Model.class);
     }
 
     @Override
     void doneLoading() {
         model = ProgrammersGame.assetManager.get("Models/LifeObjects/LifeObject0/LifeObject0.obj", Model.class);
-        typeModel = ProgrammersGame.assetManager.get(typeModelName, Model.class);
+        typeModel = ProgrammersGame.assetManager.get(typeModelFileName, Model.class);
         modelInstance = new ModelInstance(model);
         modelInstance.transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.002f,

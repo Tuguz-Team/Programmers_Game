@@ -22,17 +22,13 @@ class Chunk extends GameObject {
     Color color;
     Car car;
     Array<Life> lives = new Array<>();
-    private Car.Color baseColor;
-    private Field field;
+    Field field;
     private String modelFileName;
 
     Chunk(final int x, final int y, final int z, final Color color, final Field field) {
         super(x, y, z);
         this.color = color;
         this.field = field;
-        if (this.color == null) {
-            this.color = new Color(random.nextFloat(), random.nextFloat(), random.nextFloat(), 1);
-        }
         StringBuilder stringBuilder = new StringBuilder("Models/Terrain/Layer");
         int nextInt = getRandomChunkIndex();
         if (nextInt % 2 == 0) {
@@ -54,17 +50,14 @@ class Chunk extends GameObject {
     void doneLoading() {
         model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
         modelInstance = new ModelInstance(model);
-        modelInstance.transform.setTranslation(new Vector3(getX() * width, getY() * height, getZ() * width)
-                .add(field.getOffset()));
-        if (baseColor == null) {
-            modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(color));
-            modelInstance.transform.rotate(Vector3.Y, 90f * random.nextInt(4));
-        }
+        modelInstance.transform.setTranslation(new Vector3(
+                getX() * width,
+                getY() * height,
+                getZ() * width
+        ).add(field.getOffset()));
+        modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(color));
+        modelInstance.transform.rotate(Vector3.Y, 90f * random.nextInt(4));
         ProgrammersGame.instances.add(modelInstance);
-    }
-
-    Car.Color getBaseColor() {
-        return baseColor;
     }
 
     private int getRandomChunkIndex() {
@@ -83,32 +76,5 @@ class Chunk extends GameObject {
             }
         }
         return 9;
-    }
-
-    void setBaseColor(final Car.Color baseColor) {
-        this.baseColor = baseColor;
-        StringBuilder stringBuilder = new StringBuilder("Models/");
-        switch (ProgrammersGame.difficulty) {
-            case Easy:
-                stringBuilder.append("Easy");
-                break;
-            case Hard:
-                stringBuilder.append("Hard");
-        }
-        stringBuilder.append("Mode/Bases/");
-        switch (baseColor) {
-            case RED:
-                stringBuilder.append("RedBase/RedBase.obj");
-                break;
-            case GREEN:
-                stringBuilder.append("GreenBase/GreenBase.obj");
-                break;
-            case YELLOW:
-                stringBuilder.append("YellowBase/YellowBase.obj");
-                break;
-            case BLUE:
-                stringBuilder.append("BlueBase/BlueBase.obj");
-        }
-        modelFileName = stringBuilder.toString();
     }
 }

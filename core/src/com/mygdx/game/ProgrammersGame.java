@@ -72,11 +72,11 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 		field = new Field(size);
 		cars = new Car[] {
-				new Car(0, field.chunks[0][0].getY() + 1, 0, field.chunks[0][0].getBaseColor(), field),
-				new Car(0, field.chunks[0][size - 1].getY() + 1, size - 1, field.chunks[0][size - 1].getBaseColor(), field),
-				new Car(size - 1, field.chunks[size - 1][0].getY() + 1, 0, field.chunks[size - 1][0].getBaseColor(), field),
+				new Car(0, field.chunks[0][0].getY() + 1, 0, ((Base)field.chunks[0][0]).getBaseColor(), field),
+				new Car(0, field.chunks[0][size - 1].getY() + 1, size - 1, ((Base)field.chunks[0][size - 1]).getBaseColor(), field),
+				new Car(size - 1, field.chunks[size - 1][0].getY() + 1, 0, ((Base)field.chunks[size - 1][0]).getBaseColor(), field),
 				new Car(size - 1, field.chunks[size - 1][size - 1].getY() + 1, size - 1,
-						field.chunks[size - 1][size - 1].getBaseColor(), field)
+						((Base)field.chunks[size - 1][size - 1]).getBaseColor(), field)
 		};
 
 		loading();

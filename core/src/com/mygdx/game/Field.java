@@ -337,10 +337,10 @@ class Field {
                     }
             }
         }
-        chunks[0][0].setBaseColor(colors[0]);
-        chunks[0][size - 1].setBaseColor(colors[1]);
-        chunks[size - 1][0].setBaseColor(colors[2]);
-        chunks[size - 1][size - 1].setBaseColor(colors[3]);
+        chunks[0][0] = new Base(0, 0, 0, null,this, colors[0]);
+        chunks[0][size - 1] = new Base(0, 0, size - 1, null, this, colors[1]);
+        chunks[size - 1][0] = new Base(size - 1, 0, 0, null, this, colors[2]);
+        chunks[size - 1][size - 1] = new Base(size - 1, 0, size - 1, null, this, colors[3]);
         /*
         final float width = Chunk.width / 4;
         final float length = size * Chunk.width + 2 * width;

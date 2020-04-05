@@ -2,9 +2,9 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.math.Vector3;
 
 abstract class GameObject {
+
     Model model;
     ModelInstance modelInstance;
     private int x, y, z;
@@ -23,10 +23,6 @@ abstract class GameObject {
         this.x = x;
         this.y = y;
         this.z = z;
-    }
-
-    Vector3 getPosition() {
-        return new Vector3(x, y, z);
     }
 
     int getX() {
