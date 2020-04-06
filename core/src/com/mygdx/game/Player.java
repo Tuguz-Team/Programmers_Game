@@ -1,15 +1,23 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.utils.Array;
+
 class Player implements ICards {
 
     private Car car;
+    private Array<Life> lives;
 
     Player(final Car car) {
         this.car = car;
+        lives = new Array<>();
     }
 
     Car getCar() {
         return car;
+    }
+
+    Array<Life> getLives() {
+        return lives;
     }
 
     @Override

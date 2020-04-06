@@ -81,8 +81,8 @@ public class ProgrammersGame extends ApplicationAdapter {
 		field = new Field(size);
 		Player[] players = new Player[playersCount];
 		Array<Base> bases = new Array<>(new Base[] {
-				(Base)field.chunks[0][0], (Base)field.chunks[0][size - 1],
-				(Base)field.chunks[size - 1][0], (Base)field.chunks[size - 1][size - 1]
+				(Base)field.getChunks()[0][0], (Base)field.getChunks()[0][size - 1],
+				(Base)field.getChunks()[size - 1][0], (Base)field.getChunks()[size - 1][size - 1]
 		});
 		for (int i = 0; i < players.length; i++) {
 			int index = random.nextInt(bases.size);
@@ -91,7 +91,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 					base.getBaseColor(), field));
 			bases.removeIndex(index);
 		}
-		gameController = new GameController(players);
+		gameController = new GameController(players, field);
 
 		loading();
 

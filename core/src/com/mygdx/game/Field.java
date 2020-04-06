@@ -2,15 +2,13 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
 class Field {
 
     //private FieldBox[] fieldBoxes = new FieldBox[4];
-    Chunk[][] chunks;
-    private Array<Life> lives;
+    private Chunk[][] chunks;
     private Vector3 offset;
 
     Field(final int size) {
@@ -23,6 +21,10 @@ class Field {
 
     Vector3 getOffset() {
         return offset;
+    }
+
+    Chunk[][] getChunks() {
+        return chunks;
     }
 
     private void generate(final int size) {
@@ -40,7 +42,7 @@ class Field {
                 for (int i = i_; i < i_ + 2; i++) {
                     for (int j = j_; j < j_ + 2; j++) {
                         chunks[i][j].setY(chunks[i][j].getY() + 1);
-                        chunks[i][j].color = new Color(2 / 255f, 168 / 255f, 112 / 255f, 1f);
+                        chunks[i][j].setColor(new Color(2 / 255f, 168 / 255f, 112 / 255f, 1f));
                     }
                 }
                 // Set position of rectangle 2x4
@@ -64,50 +66,49 @@ class Field {
                 for (int i = i_; i < i_ + length; i++) {
                     for (int j = j_; j < j_ + width; j++) {
                         chunks[i][j].setY(chunks[i][j].getY() + 1);
-                        chunks[i][j].color = color;
+                        chunks[i][j].setColor(color);
                     }
                 }
                 // Add lives
-                lives = new Array<>(12);
                 for (int i = 0; i < 3; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this);
                 }
                 for (int i = 0; i < 3; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this);
                 }
                 for (int i = 0; i < 3; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this);
                 }
                 for (int i = 0; i < 3; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this);
                 }
                 break;
             }
@@ -129,7 +130,7 @@ class Field {
                 for (int i = i1; i < i1 + length1; i++) {
                     for (int j = j1; j < j1 + width1; j++) {
                         chunks[i][j].setY(chunks[i][j].getY() + 2);
-                        chunks[i][j].color = new Color(230 / 255f, 96 / 255f, 201 / 255f, 1);
+                        chunks[i][j].setColor(new Color(230 / 255f, 96 / 255f, 201 / 255f, 1));
                     }
                 }
                 // Set position of rectangle 3x6 (height is 1)
@@ -232,7 +233,7 @@ class Field {
                 for (int i = i2; i < i2 + length2; i++) {
                     for (int j = j2; j < j2 + width2; j++) {
                         chunks[i][j].setY(chunks[i][j].getY() + 1);
-                        chunks[i][j].color = new Color(246 / 255f, 151 / 255f, 85 / 255f, 1);
+                        chunks[i][j].setColor(new Color(246 / 255f, 151 / 255f, 85 / 255f, 1));
                     }
                 }
                 // Set position of square 3x3
@@ -250,52 +251,83 @@ class Field {
                                 break f;
                             }
                 } while (!b);
-                for (int i = i3; i < i3 + 3; i++)
+                for (int i = i3; i < i3 + 3; i++) {
                     for (int j = j3; j < j3 + 3; j++) {
                         chunks[i][j].setY(chunks[i][j].getY() + 1);
-                        chunks[i][j].color = new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f);
+                        chunks[i][j].setColor(new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f));
                     }
+                }
+                // Add lifts
+                Direction direction1, direction2;
+                int temp = 0;
+                do direction1 = Direction.getRandom();
+                while (liftNotGenerated(size, i1, j1, length1, width1, direction1)
+                        && temp++ < 10);
+                temp = 0;
+                do direction2 = Direction.getRandom();
+                while (direction1 == direction2
+                        || liftNotGenerated(size, i1, j1, length1, width1, direction2)
+                        && temp++ < 10);
+
+                temp = 0;
+                do direction1 = Direction.getRandom();
+                while (liftNotGenerated(size, i2, j2, length2, width2, direction1)
+                        && temp++ < 10);
+                temp = 0;
+                do direction2 = Direction.getRandom();
+                while (direction1 == direction2
+                        || liftNotGenerated(size, i2, j2, length2, width2, direction2)
+                        && temp++ < 10);
+
+                temp = 0;
+                do direction1 = Direction.getRandom();
+                while (liftNotGenerated(size, i3, j3, 3, 3, direction1)
+                        && temp++ < 10);
+                temp = 0;
+                do direction2 = Direction.getRandom();
+                while (direction1 == direction2
+                        || liftNotGenerated(size, i3, j3, 3, 3, direction2)
+                        && temp++ < 10);
                 // Add lives
-                lives = new Array<>(20);
                 for (int i = 0; i < 5; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this);
                 }
                 for (int i = 0; i < 5; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this);
                 }
                 for (int i = 0; i < 5; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this);
                 }
                 for (int i = 0; i < 5; i++) {
                     int x, z;
                     do {
                         x = random.nextInt(size);
                         z = random.nextInt(size);
-                    } while (chunks[x][z].lives.size != 0
+                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    lives.add(new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this));
+                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this);
                 }
                 break;
             }
@@ -337,11 +369,11 @@ class Field {
                     }
             }
         }
-        chunks[0][0] = new Base(0, chunks[0][0].getY(), 0, null, this, colors[0]);
-        chunks[0][size - 1] = new Base(0, chunks[0][size - 1].getY(), size - 1, null, this, colors[1]);
-        chunks[size - 1][0] = new Base(size - 1, chunks[size - 1][0].getY(), 0, null, this, colors[2]);
+        chunks[0][0] = new Base(0, chunks[0][0].getY(), 0, this, colors[0]);
+        chunks[0][size - 1] = new Base(0, chunks[0][size - 1].getY(), size - 1, this, colors[1]);
+        chunks[size - 1][0] = new Base(size - 1, chunks[size - 1][0].getY(), 0, this, colors[2]);
         chunks[size - 1][size - 1] = new Base(size - 1, chunks[size - 1][size - 1].getY(), size - 1,
-                null, this, colors[3]);
+                this, colors[3]);
         /*
         final float width = Chunk.width / 4;
         final float length = size * Chunk.width + 2 * width;
@@ -369,14 +401,107 @@ class Field {
         */
     }
 
+    private boolean liftNotGenerated(final int size, final int i, final int j,
+                                     final int length, final int width, final Direction direction) {
+        int temp = 0;
+        switch (direction) {
+            case Forward:
+                if (j + width < size) {
+                    int iTemp;
+                    do {
+                        if (++temp > 10)
+                            return true;
+                        iTemp = random.nextInt(length) + i;
+                        for (int k = i; k < i + length; k++) {
+                            if (chunks[k][j + width].equals(chunks[k][j + width - 1].getLift())
+                                    && chunks[k][j + width].getY() == chunks[iTemp][j + width].getY() )
+                                return true;
+                        }
+                    }
+                    while (chunks[iTemp][j + width - 1].getY() == chunks[iTemp][j + width].getY()
+                            || chunks[iTemp][j + width - 1].getLift() != null
+                            || chunks[iTemp][j + width].getLift() != null
+                            || (j + width == 8 && (iTemp == 8 || iTemp == 0)));
+                    chunks[iTemp][j + width - 1].setLift(chunks[iTemp][j + width]);
+                    chunks[iTemp][j + width].setLift(chunks[iTemp][j + width - 1]);
+                    return false;
+                }
+                return true;
+            case Back:
+                if (j > 0) {
+                    int iTemp;
+                    do {
+                        if (++temp > 10)
+                            return true;
+                        iTemp = random.nextInt(length) + i;
+                        for (int k = i; k < i + length; k++) {
+                            if (chunks[k][j - 1].equals(chunks[k][j].getLift())
+                                    && chunks[k][j - 1].getY() == chunks[iTemp][j - 1].getY() )
+                                return true;
+                        }
+                    }
+                    while (chunks[iTemp][j].getY() == chunks[iTemp][j - 1].getY()
+                            || chunks[iTemp][j].getLift() != null
+                            || chunks[iTemp][j - 1].getLift() != null
+                            || (j == 1 && (iTemp == 8 || iTemp == 0)));
+                    chunks[iTemp][j].setLift(chunks[iTemp][j - 1]);
+                    chunks[iTemp][j - 1].setLift(chunks[iTemp][j]);
+                    return false;
+                }
+                return true;
+            case Left:
+                if (i + length < size) {
+                    int jTemp;
+                    do {
+                        if (++temp > 10)
+                            return true;
+                        jTemp = random.nextInt(width) + j;
+                        for (int k = j; k < j + width; k++) {
+                            if (chunks[i + length][k].equals(chunks[i + length - 1][k].getLift())
+                                    && chunks[i + length][k].getY() == chunks[i + length][jTemp].getY() )
+                                return true;
+                        }
+                    }
+                    while (chunks[i + length - 1][jTemp].getY() == chunks[i + length][jTemp].getY()
+                            || chunks[i + length - 1][jTemp].getLift() != null
+                            || chunks[i + length][jTemp].getLift() != null
+                            || (i + length == 8 && (jTemp == 8 || jTemp == 0)));
+                    chunks[i + length - 1][jTemp].setLift(chunks[i + length][jTemp]);
+                    chunks[i + length][jTemp].setLift(chunks[i + length - 1][jTemp]);
+                    return false;
+                }
+                return true;
+            case Right:
+            default:
+                if (i > 0) {
+                    int jTemp;
+                    do {
+                        if (++temp > 10)
+                            return true;
+                        jTemp = random.nextInt(width) + j;
+                        for (int k = j; k < j + width; k++) {
+                            if (chunks[i - 1][k].equals(chunks[i][k].getLift())
+                                    && chunks[i - 1][k].getY() == chunks[i - 1][jTemp].getY() )
+                                return true;
+                        }
+                    }
+                    while (chunks[i][jTemp].getY() == chunks[i - 1][jTemp].getY()
+                            || chunks[i][jTemp].getLift() != null
+                            || chunks[i - 1][jTemp].getLift() != null
+                            || (i == 1 && (jTemp == 8 || jTemp == 0)));
+                    chunks[i][jTemp].setLift(chunks[i - 1][jTemp]);
+                    chunks[i - 1][jTemp].setLift(chunks[i][jTemp]);
+                    return false;
+                }
+                return true;
+        }
+    }
+
     void loading() {
         for (Chunk[] chunks : chunks) {
             for (Chunk chunk : chunks) {
                 chunk.loading();
             }
-        }
-        for (Life life : lives) {
-            life.loading();
         }
         /*
         for (FieldBox fieldBox : fieldBoxes) {
@@ -390,9 +515,6 @@ class Field {
             for (Chunk chunk : chunks) {
                 chunk.doneLoading();
             }
-        }
-        for (Life life : lives) {
-            life.doneLoading();
         }
         /*
         for (FieldBox fieldBox : fieldBoxes) {

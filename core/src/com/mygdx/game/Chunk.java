@@ -18,12 +18,40 @@ class Chunk extends GameObject {
 
     boolean wallForward, wallBack, wallLeft, wallRight;
 
-    Chunk lift;
-    Color color;
-    Car car;
-    Array<Life> lives = new Array<>();
-    Field field;
+    private Chunk lift;
+    private Color color;
+    private Car car;
+    private Array<Life> lives = new Array<>();
+    private Field field;
     private String modelFileName;
+
+    Chunk getLift() {
+        return lift;
+    }
+
+    void setLift(final Chunk lift) {
+        this.lift = lift;
+    }
+
+    void setColor(final Color color) {
+        this.color = color;
+    }
+
+    Field getField() {
+        return field;
+    }
+
+    Car getCar() {
+        return car;
+    }
+
+    void setCar(final Car car) {
+        this.car = car;
+    }
+
+    Array<Life> getLives() {
+        return lives;
+    }
 
     Chunk(final int x, final int y, final int z, final Color color, final Field field) {
         super(x, y, z);
@@ -44,20 +72,26 @@ class Chunk extends GameObject {
     @Override
     void loading() {
         ProgrammersGame.assetManager.load(modelFileName, Model.class);
+        for (Life life : lives) {
+            life.loading();
+        }
     }
 
     @Override
     void doneLoading() {
-        model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
-        modelInstance = new ModelInstance(model);
-        modelInstance.transform.setTranslation(new Vector3(
+        setModel(ProgrammersGame.assetManager.get(modelFileName, Model.class));
+        setModelInstance(new ModelInstance(getModel()));
+        getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
                 getY() * height,
                 getZ() * width
         ).add(field.getOffset()));
-        modelInstance.materials.get(0).set(ColorAttribute.createDiffuse(color));
-        modelInstance.transform.rotate(Vector3.Y, 90f * random.nextInt(4));
-        ProgrammersGame.instances.add(modelInstance);
+        getModelInstance().materials.get(0).set(ColorAttribute.createDiffuse(color));
+        getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
+        ProgrammersGame.instances.add(getModelInstance());
+        for (Life life : lives) {
+            life.doneLoading();
+        }
     }
 
     private int getRandomChunkIndex() {

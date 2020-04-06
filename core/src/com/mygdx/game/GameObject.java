@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
 abstract class GameObject {
 
-    Model model;
-    ModelInstance modelInstance;
+    private Model model;
+    private ModelInstance modelInstance;
     private int x, y, z;
 
     GameObject(final int x, final int y, final int z) {
@@ -47,5 +47,21 @@ abstract class GameObject {
 
     void setZ(final int z) {
         this.z = z;
+    }
+
+    Model getModel() {
+        return model;
+    }
+
+    void setModel(Model model) {
+        this.model = model;
+    }
+
+    ModelInstance getModelInstance() {
+        return modelInstance;
+    }
+
+    void setModelInstance(ModelInstance modelInstance) {
+        this.modelInstance = modelInstance;
     }
 }

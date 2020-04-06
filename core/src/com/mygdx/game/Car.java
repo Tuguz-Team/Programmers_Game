@@ -16,7 +16,7 @@ class Car extends GameObject implements ICards {
 
     private static final int size = ProgrammersGame.getSize();
 
-    Array<Life> lives = new Array<>(3);
+    private Array<Life> lives = new Array<>(3);
     private Chunk base;
     private boolean compensated;
 
@@ -30,8 +30,8 @@ class Car extends GameObject implements ICards {
     Car(final int x, final int y, final int z, final Color color, final Field field) {
         super(x, y, z);
         this.field = field;
-        this.base = field.chunks[getX()][getZ()];
-        field.chunks[getX()][getZ()].car = this;
+        this.base = field.getChunks()[getX()][getZ()];
+        field.getChunks()[getX()][getZ()].setCar(this);
         StringBuilder stringBuilder = new StringBuilder("Models/");
         switch (ProgrammersGame.difficulty) {
             case Hard:
@@ -57,11 +57,15 @@ class Car extends GameObject implements ICards {
         modelFileName = stringBuilder.toString();
     }
 
+    Array<Life> getLives() {
+        return lives;
+    }
+
     @Override
     void setX(final int x) {
         super.setX(x);
-        if (modelInstance != null) {
-            modelInstance.transform.setTranslation(new Vector3(x * Chunk.width,
+        if (getModelInstance() != null) {
+            getModelInstance().transform.setTranslation(new Vector3(x * Chunk.width,
                     getY() * Chunk.height, getZ() * Chunk.width).add(field.getOffset()));
         }
     }
@@ -69,8 +73,8 @@ class Car extends GameObject implements ICards {
     @Override
     void setY(final int y) {
         super.setY(y);
-        if (modelInstance != null) {
-            modelInstance.transform.setTranslation(new Vector3(getX() * Chunk.width,
+        if (getModelInstance() != null) {
+            getModelInstance().transform.setTranslation(new Vector3(getX() * Chunk.width,
                     y * Chunk.height, getZ() * Chunk.width).add(field.getOffset()));
         }
     }
@@ -78,8 +82,8 @@ class Car extends GameObject implements ICards {
     @Override
     void setZ(final int z) {
         super.setZ(z);
-        if (modelInstance != null) {
-            modelInstance.transform.setTranslation(new Vector3(getX() * Chunk.width,
+        if (getModelInstance() != null) {
+            getModelInstance().transform.setTranslation(new Vector3(getX() * Chunk.width,
                     getY() * Chunk.height, z * Chunk.width).add(field.getOffset()));
         }
     }
@@ -87,8 +91,8 @@ class Car extends GameObject implements ICards {
     @Override
     void setPosition(final int x, final int y, final int z) {
         super.setPosition(x, y, z);
-        if (modelInstance != null) {
-            modelInstance.transform.setTranslation(new Vector3(
+        if (getModelInstance() != null) {
+            getModelInstance().transform.setTranslation(new Vector3(
                     getX() * Chunk.width + 0.001f,
                     getY() * Chunk.height + 0.001f,
                     getZ() * Chunk.width + 0.001f
@@ -103,43 +107,43 @@ class Car extends GameObject implements ICards {
 
     @Override
     void doneLoading() {
-        model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
-        modelInstance = new ModelInstance(model);
-        modelInstance.transform.setTranslation(new Vector3(
+        setModel(ProgrammersGame.assetManager.get(modelFileName, Model.class));
+        setModelInstance(new ModelInstance(getModel()));
+        getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.001f,
                 getY() * Chunk.height + 0.001f,
                 getZ() * Chunk.width + 0.001f
         ).add(field.getOffset()));
         if (getX() == 0 && getZ() == 0) {
-            if (field.chunks[0][0].getY() != field.chunks[0][1].getY()) {
+            if (field.getChunks()[0][0].getY() != field.getChunks()[0][1].getY()) {
                 direction = Direction.Left;
-            } else if (field.chunks[0][0].getY() != field.chunks[1][0].getY()) {
+            } else if (field.getChunks()[0][0].getY() != field.getChunks()[1][0].getY()) {
                 direction = Direction.Forward;
             } else {
                 direction = random.nextBoolean() ? Direction.Forward : Direction.Left;
             }
         } else if (getX() == 0 && getZ() == size - 1) {
-            if (field.chunks[0][size - 1].getY() != field.chunks[0][size - 2].getY()) {
+            if (field.getChunks()[0][size - 1].getY() != field.getChunks()[0][size - 2].getY()) {
                 direction = Direction.Left;
-            } else if (field.chunks[0][size - 1].getY() != field.chunks[1][size - 1].getY()) {
+            } else if (field.getChunks()[0][size - 1].getY() != field.getChunks()[1][size - 1].getY()) {
                 direction = Direction.Back;
             } else {
                 direction = random.nextBoolean() ? Direction.Back : Direction.Left;
             }
         } else if (getX() == size - 1 && getZ() == 0) {
-            if (field.chunks[size - 1][0].getY() != field.chunks[size - 2][0].getY()) {
+            if (field.getChunks()[size - 1][0].getY() != field.getChunks()[size - 2][0].getY()) {
                 direction = Direction.Forward;
-            } else if (field.chunks[size - 1][0].getY() != field.chunks[size - 1][1].getY()) {
+            } else if (field.getChunks()[size - 1][0].getY() != field.getChunks()[size - 1][1].getY()) {
                 direction = Direction.Right;
             } else {
                 direction = random.nextBoolean() ? Direction.Forward : Direction.Right;
             }
         } else {
-            if (field.chunks[size - 1][size - 1].getY()
-                    != field.chunks[size - 2][size - 1].getY()) {
+            if (field.getChunks()[size - 1][size - 1].getY()
+                    != field.getChunks()[size - 2][size - 1].getY()) {
                 direction = Direction.Back;
-            } else if (field.chunks[size - 1][size - 1].getY()
-                    != field.chunks[size - 1][size - 2].getY()) {
+            } else if (field.getChunks()[size - 1][size - 1].getY()
+                    != field.getChunks()[size - 1][size - 2].getY()) {
                 direction = Direction.Right;
             } else {
                 direction = random.nextBoolean() ? Direction.Back : Direction.Right;
@@ -149,26 +153,26 @@ class Car extends GameObject implements ICards {
             case Forward:
                 break;
             case Back:
-                modelInstance.transform.rotate(Vector3.Y, 180f);
+                getModelInstance().transform.rotate(Vector3.Y, 180f);
                 break;
             case Left:
-                modelInstance.transform.rotate(Vector3.Y, 90f);
+                getModelInstance().transform.rotate(Vector3.Y, 90f);
                 break;
             case Right:
-                modelInstance.transform.rotate(Vector3.Y, -90f);
+                getModelInstance().transform.rotate(Vector3.Y, -90f);
         }
-        ProgrammersGame.instances.add(modelInstance);
+        ProgrammersGame.instances.add(getModelInstance());
     }
 
     @Override
     public boolean stepForward() {
         boolean isInBounds, isWall;
-        Chunk thisChunk = field.chunks[getX()][getZ()], nextChunk;
+        Chunk thisChunk = field.getChunks()[getX()][getZ()], nextChunk;
         Procedure move;
         switch (direction) {
             case Forward:
                 isInBounds = getZ() != size - 1;
-                nextChunk = field.chunks[getX()][getZ() + 1];
+                nextChunk = field.getChunks()[getX()][getZ() + 1];
                 isWall = thisChunk.wallForward;
                 move = new Procedure() {
                     @Override
@@ -179,7 +183,7 @@ class Car extends GameObject implements ICards {
                 break;
             case Back:
                 isInBounds = getZ() != 0;
-                nextChunk = field.chunks[getX()][getZ() - 1];
+                nextChunk = field.getChunks()[getX()][getZ() - 1];
                 isWall = thisChunk.wallBack;
                 move = new Procedure() {
                     @Override
@@ -190,7 +194,7 @@ class Car extends GameObject implements ICards {
                 break;
             case Left:
                 isInBounds = getX() != size - 1;
-                nextChunk = field.chunks[getX() + 1][getZ()];
+                nextChunk = field.getChunks()[getX() + 1][getZ()];
                 isWall = thisChunk.wallLeft;
                 move = new Procedure() {
                     @Override
@@ -202,7 +206,7 @@ class Car extends GameObject implements ICards {
             case Right:
             default:
                 isInBounds = getX() != 0;
-                nextChunk = field.chunks[getX() - 1][getZ()];
+                nextChunk = field.getChunks()[getX() - 1][getZ()];
                 isWall = thisChunk.wallRight;
                 move = new Procedure() {
                     @Override
@@ -212,23 +216,23 @@ class Car extends GameObject implements ICards {
                 };
         }
         if (isInBounds && (thisChunk.getY() == nextChunk.getY()) && !isWall) {
-            if (nextChunk.car == null) {
+            if (nextChunk.getCar() == null) {
                 compensated = false;
-                thisChunk.car = null;
+                thisChunk.setCar(null);
                 move.call();
-                nextChunk.car = this;
+                nextChunk.setCar(this);
                 thisChunk = nextChunk;
-                if (thisChunk.lives.size > 0 && lives.size < 3) {
-                    for (int i = lives.size; i <= 3 && !thisChunk.lives.isEmpty(); i++) {
-                        lives.add(thisChunk.lives.get(thisChunk.lives.size - 1));
-                        thisChunk.lives.removeIndex(thisChunk.lives.size - 1);
-                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
+                if (thisChunk.getLives().size > 0 && lives.size < 3) {
+                    for (int i = lives.size; i <= 3 && !thisChunk.getLives().isEmpty(); i++) {
+                        lives.add(thisChunk.getLives().get(thisChunk.getLives().size - 1));
+                        thisChunk.getLives().removeIndex(thisChunk.getLives().size - 1);
+                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
                     }
                     return false;
                 }
                 return true;
             } else {
-                compensation(nextChunk.car);
+                compensation(nextChunk.getCar());
                 return false;
             }
         }
@@ -243,12 +247,12 @@ class Car extends GameObject implements ICards {
     @Override
     public void jump() {
         boolean isInBounds;
-        Chunk thisChunk = field.chunks[getX()][getZ()], nextChunk;
+        Chunk thisChunk = field.getChunks()[getX()][getZ()], nextChunk;
         Procedure move;
         switch (direction) {
             case Forward:
                 isInBounds = getZ() != size - 1;
-                nextChunk = field.chunks[getX()][getZ() + 1];
+                nextChunk = field.getChunks()[getX()][getZ() + 1];
                 move = new Procedure() {
                     @Override
                     public void call() {
@@ -258,7 +262,7 @@ class Car extends GameObject implements ICards {
                 break;
             case Back:
                 isInBounds = getZ() != 0;
-                nextChunk = field.chunks[getX()][getZ() - 1];
+                nextChunk = field.getChunks()[getX()][getZ() - 1];
                 move = new Procedure() {
                     @Override
                     public void call() {
@@ -268,7 +272,7 @@ class Car extends GameObject implements ICards {
                 break;
             case Left:
                 isInBounds = getX() != size - 1;
-                nextChunk = field.chunks[getX() + 1][getZ()];
+                nextChunk = field.getChunks()[getX() + 1][getZ()];
                 move = new Procedure() {
                     @Override
                     public void call() {
@@ -279,7 +283,7 @@ class Car extends GameObject implements ICards {
             case Right:
             default:
                 isInBounds = getX() != 0;
-                nextChunk = field.chunks[getX() - 1][getZ()];
+                nextChunk = field.getChunks()[getX() - 1][getZ()];
                 move = new Procedure() {
                     @Override
                     public void call() {
@@ -288,29 +292,29 @@ class Car extends GameObject implements ICards {
                 };
         }
         if (isInBounds && Math.abs(nextChunk.getY() - thisChunk.getY()) != 2) {
-            if (nextChunk.car == null) {
+            if (nextChunk.getCar() == null) {
                 compensated = false;
-                thisChunk.car = null;
+                thisChunk.setCar(null);
                 move.call();
-                nextChunk.car = this;
+                nextChunk.setCar(this);
                 thisChunk = nextChunk;
                 setY(thisChunk.getY() + 1);
-                if (thisChunk.lives.size > 0 && lives.size < 3) {
-                    for (int i = lives.size; i <= 3 && !thisChunk.lives.isEmpty(); i++) {
-                        lives.add(thisChunk.lives.get(thisChunk.lives.size - 1));
-                        thisChunk.lives.removeIndex(thisChunk.lives.size - 1);
-                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
+                if (thisChunk.getLives().size > 0 && lives.size < 3) {
+                    for (int i = lives.size; i <= 3 && !thisChunk.getLives().isEmpty(); i++) {
+                        lives.add(thisChunk.getLives().get(thisChunk.getLives().size - 1));
+                        thisChunk.getLives().removeIndex(thisChunk.getLives().size - 1);
+                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
                     }
                 }
             } else {
-                compensation(nextChunk.car);
+                compensation(nextChunk.getCar());
             }
         }
     }
 
     @Override
     public void turn90Left() {
-        modelInstance.transform.rotate(new Vector3(0, 1, 0), 90f);
+        getModelInstance().transform.rotate(new Vector3(0, 1, 0), 90f);
         switch (direction) {
             case Forward:
                 direction = Direction.Left;
@@ -328,7 +332,7 @@ class Car extends GameObject implements ICards {
 
     @Override
     public void turn90Right() {
-        modelInstance.transform.rotate(new Vector3(0, 1, 0), -90f);
+        getModelInstance().transform.rotate(new Vector3(0, 1, 0), -90f);
         switch (direction) {
             case Forward:
                 direction = Direction.Right;
@@ -346,7 +350,7 @@ class Car extends GameObject implements ICards {
 
     @Override
     public void turn180() {
-        modelInstance.transform.rotate(new Vector3(0, 1, 0), 180f);
+        getModelInstance().transform.rotate(new Vector3(0, 1, 0), 180f);
         switch (direction) {
             case Forward:
                 direction = Direction.Back;
@@ -389,74 +393,74 @@ class Car extends GameObject implements ICards {
         switch (direction) {
             case Forward:
                 impulse = getZ() + 1;
-                nextChunk = field.chunks[getX()][impulse];
+                nextChunk = field.getChunks()[getX()][impulse];
                 isInBounds = impulse < size;
                 break;
             case Back:
                 impulse = getZ() - 1;
-                nextChunk = field.chunks[getX()][impulse];
+                nextChunk = field.getChunks()[getX()][impulse];
                 break;
             case Left:
                 impulse = getX() + 1;
-                nextChunk = field.chunks[impulse][getZ()];
+                nextChunk = field.getChunks()[impulse][getZ()];
                 isInBounds = impulse < size;
                 break;
             case Right:
             default:
                 impulse = getX() - 1;
-                nextChunk = field.chunks[impulse][getZ()];
+                nextChunk = field.getChunks()[impulse][getZ()];
         }
         while (isInBounds && nextChunk.getY() < height) {
             switch (direction) {
                 case Forward:
                 case Back:
-                    nextChunk = field.chunks[getX()][impulse];
+                    nextChunk = field.getChunks()[getX()][impulse];
                     break;
                 case Right:
                 case Left:
                 default:
-                    nextChunk = field.chunks[impulse][getZ()];
+                    nextChunk = field.getChunks()[impulse][getZ()];
             }
             if (nextChunk.getY() == height - 1) {
-                if (nextChunk.car != null) {
-                    if (nextChunk.car.base.car == null) {
-                        Car car = nextChunk.car;
+                if (nextChunk.getCar() != null) {
+                    if (nextChunk.getCar().base.getCar() == null) {
+                        Car car = nextChunk.getCar();
                         Chunk base = car.base;
                         for (Life life : car.lives) {
                             life.setPosition(nextChunk.getX(), nextChunk.getY(), nextChunk.getZ());
-                            ProgrammersGame.instances.add(life.modelInstance);
+                            ProgrammersGame.instances.add(life.getModelInstance());
                         }
-                        nextChunk.lives.addAll(car.lives);
+                        nextChunk.getLives().addAll(car.lives);
                         car.lives.clear();
                         car.setPosition(base.getX(), base.getY(), base.getZ());
                     }
                     break;
-                } else if (!nextChunk.lives.isEmpty()) {
+                } else if (!nextChunk.getLives().isEmpty()) {
                     Chunk prevChunk;
                     switch (direction) {
                         case Forward:
-                            prevChunk = field.chunks[getX()][impulse - 1];
+                            prevChunk = field.getChunks()[getX()][impulse - 1];
                             break;
                         case Back:
-                            prevChunk = field.chunks[getX()][impulse + 1];
+                            prevChunk = field.getChunks()[getX()][impulse + 1];
                             break;
                         case Left:
-                            prevChunk = field.chunks[impulse - 1][getZ()];
+                            prevChunk = field.getChunks()[impulse - 1][getZ()];
                             break;
                         case Right:
                         default:
-                            prevChunk = field.chunks[impulse + 1][getZ()];
+                            prevChunk = field.getChunks()[impulse + 1][getZ()];
                     }
-                    for (Life life : nextChunk.lives) {
+                    for (Life life : nextChunk.getLives()) {
                         life.setPosition(prevChunk.getX(), prevChunk.getY() + 1, prevChunk.getZ());
                     }
-                    prevChunk.lives.addAll(nextChunk.lives);
-                    nextChunk.lives.clear();
-                    if (field.chunks[getX()][getZ()].lives.size != 0 && lives.size < 3) {
-                        for (int i = lives.size; i <= 3 && !field.chunks[getX()][getZ()].lives.isEmpty(); i++) {
-                            lives.add(field.chunks[getX()][getZ()].lives.get(field.chunks[getX()][getZ()].lives.size - 1));
-                            field.chunks[getX()][getZ()].lives.removeIndex(field.chunks[getX()][getZ()].lives.size - 1);
-                            ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).modelInstance, false);
+                    prevChunk.getLives().addAll(nextChunk.getLives());
+                    nextChunk.getLives().clear();
+                    if (field.getChunks()[getX()][getZ()].getLives().size != 0 && lives.size < 3) {
+                        for (int i = lives.size; i <= 3 && !field.getChunks()[getX()][getZ()].getLives().isEmpty(); i++) {
+                            lives.add(field.getChunks()[getX()][getZ()].getLives().get(field.getChunks()[getX()][getZ()].getLives().size - 1));
+                            field.getChunks()[getX()][getZ()].getLives().removeIndex(field.getChunks()[getX()][getZ()].getLives().size - 1);
+                            ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
                         }
                     }
                     break;
@@ -477,12 +481,13 @@ class Car extends GameObject implements ICards {
         }
     }
 
-    private void compensation(Car other) {
+    void compensation(Car other) {
         if (!compensated) {
             if (lives.size < 3 && other.lives.size > 0) {
                 lives.add(other.lives.get(other.lives.size - 1));
                 other.lives.removeIndex(other.lives.size - 1);
             }
+            other.compensated = true;
             compensated = true;
         }
     }

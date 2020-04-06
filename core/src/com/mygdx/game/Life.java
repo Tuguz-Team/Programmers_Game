@@ -16,7 +16,7 @@ class Life extends GameObject {
     Life(final int x, final int y, final int z, final Type type, final Field field) {
         super(x, y, z);
         this.field = field;
-        field.chunks[getX()][getZ()].lives.add(this);
+        field.getChunks()[getX()][getZ()].getLives().add(this);
         StringBuilder stringBuilder = new StringBuilder("Models/LifeObjects/LifeObject");
         int number;
         switch (type) {
@@ -45,22 +45,22 @@ class Life extends GameObject {
 
     @Override
     void doneLoading() {
-        model = ProgrammersGame.assetManager.get("Models/LifeObjects/LifeObject0/LifeObject0.obj", Model.class);
+        setModel(ProgrammersGame.assetManager.get("Models/LifeObjects/LifeObject0/LifeObject0.obj", Model.class));
         typeModel = ProgrammersGame.assetManager.get(typeModelFileName, Model.class);
-        modelInstance = new ModelInstance(model);
-        modelInstance.transform.setTranslation(new Vector3(
+        setModelInstance(new ModelInstance(getModel()));
+        getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.002f,
                 getY() * Chunk.height + 0.002f,
                 getZ() * Chunk.width + 0.002f
         ).add(field.getOffset()));
-        ProgrammersGame.instances.add(modelInstance);
+        ProgrammersGame.instances.add(getModelInstance());
     }
 
     @Override
     void setPosition(int x, int y, int z) {
         super.setPosition(x, y, z);
-        if (modelInstance != null) {
-            modelInstance.transform.setTranslation(new Vector3(
+        if (getModelInstance() != null) {
+            getModelInstance().transform.setTranslation(new Vector3(
                     getX() * Chunk.width + 0.002f,
                     getY() * Chunk.height + 0.002f,
                     getZ() * Chunk.width + 0.002f

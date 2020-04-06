@@ -1,6 +1,5 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
@@ -9,12 +8,12 @@ import com.badlogic.gdx.utils.StringBuilder;
 
 class Base extends Chunk {
 
-    Array<Car.Color> labColors;
+    private Array<Car.Color> labColors;
     private String modelFileName;
     private Car.Color baseColor;
 
-    Base(final int x, final int y, final int z, final Color color, final Field field, final Car.Color baseColor) {
-        super(x, y, z, color, field);
+    Base(final int x, final int y, final int z, final Field field, final Car.Color baseColor) {
+        super(x, y, z, null, field);
         this.baseColor = baseColor;
         StringBuilder stringBuilder = new StringBuilder("Models/");
         switch (ProgrammersGame.difficulty) {
@@ -55,14 +54,14 @@ class Base extends Chunk {
 
     @Override
     void doneLoading() {
-        model = ProgrammersGame.assetManager.get(modelFileName, Model.class);
-        modelInstance = new ModelInstance(model);
-        modelInstance.transform.setTranslation(new Vector3(
+        setModel(ProgrammersGame.assetManager.get(modelFileName, Model.class));
+        setModelInstance(new ModelInstance(getModel()));
+        getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
                 getY() * height,
                 getZ() * width
-        ).add(field.getOffset()));
-        ProgrammersGame.instances.add(modelInstance);
+        ).add(getField().getOffset()));
+        ProgrammersGame.instances.add(getModelInstance());
     }
 
     Car.Color getBaseColor() {
