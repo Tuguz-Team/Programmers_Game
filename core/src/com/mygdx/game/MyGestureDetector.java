@@ -132,6 +132,8 @@ class MyGestureDetector implements GestureDetector.GestureListener {
                         new Vector3(0f, 1f, 0f).crs(camera.direction),
                         VectorAngle(new Vector3(0, 1, 0), camera.position) * 2);
             }
+
+            camera.lookAt(0f, 0f, 0f);
         }
     }
 
