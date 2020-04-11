@@ -57,20 +57,24 @@ class Chunk extends GameObject {
         super(x, y, z);
         this.color = color;
         this.field = field;
-        StringBuilder stringBuilder = new StringBuilder("Models/Terrain/Layer");
-        int nextInt = getRandomChunkIndex();
-        if (nextInt % 2 == 0) {
-            nextInt = (nextInt >> 1) + 1;
-            stringBuilder.append(nextInt).append("/Layer").append(nextInt).append(".obj");
-        } else {
-            nextInt = (nextInt >> 1) + 1;
-            stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
-        }
-        modelFileName = stringBuilder.toString();
     }
 
     @Override
     void loading() {
+        if (lift != null && lift.getY() < getY()) {
+            modelFileName = "Models/Terrain/Lift/Lift.obj";
+        } else {
+            StringBuilder stringBuilder = new StringBuilder("Models/Terrain/Layer");
+            int nextInt = getRandomChunkIndex();
+            if (nextInt % 2 == 0) {
+                nextInt = (nextInt >> 1) + 1;
+                stringBuilder.append(nextInt).append("/Layer").append(nextInt).append(".obj");
+            } else {
+                nextInt = (nextInt >> 1) + 1;
+                stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
+            }
+            modelFileName = stringBuilder.toString();
+        }
         ProgrammersGame.assetManager.load(modelFileName, Model.class);
         for (Life life : lives) {
             life.loading();
@@ -87,7 +91,17 @@ class Chunk extends GameObject {
                 getZ() * width
         ).add(field.getOffset()));
         getModelInstance().materials.get(0).set(ColorAttribute.createDiffuse(color));
-        getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
+        if (lift != null && lift.getY() < getY()) {
+            if (lift.getX() < getX()) {
+                getModelInstance().transform.rotate(Vector3.Y, -90f);
+            } else if (lift.getX() > getX()) {
+                getModelInstance().transform.rotate(Vector3.Y, 90f);
+            } else if (lift.getZ() < getZ()) {
+                getModelInstance().transform.rotate(Vector3.Y, 180f);
+            }
+        } else {
+            getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
+        }
         ProgrammersGame.instances.add(getModelInstance());
         for (Life life : lives) {
             life.doneLoading();

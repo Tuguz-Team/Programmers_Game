@@ -23,6 +23,7 @@ class UIController implements Disposable {
         spriteBatch.end();
     }
 
+    @Override
     public void dispose() {
         stage.dispose();
         skin.dispose();

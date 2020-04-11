@@ -32,13 +32,13 @@ public class ProgrammersGame extends ApplicationAdapter {
 
 	static Array<ModelInstance> instances;
 	static AssetManager assetManager;
-	private static boolean loading;
+	private boolean loading;
 
-	private static PerspectiveCamera camera;
-	private static Environment environment;
-	private static ModelBatch modelBatch;
-	private static UIController uiController;
-	private static MyGestureDetector myGestureDetector;
+	private PerspectiveCamera camera;
+	private Environment environment;
+	private ModelBatch modelBatch;
+	private UIController uiController;
+	private MyGestureDetector myGestureDetector;
 
 	public ProgrammersGame(final Difficulty difficulty, final int players) {
 		ProgrammersGame.difficulty = difficulty;
@@ -86,9 +86,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 		});
 		for (int i = 0; i < players.length; i++) {
 			int index = random.nextInt(bases.size);
-			Base base = bases.get(index);
-			players[i] = new Player(new Car(base.getX(), base.getY() + 1, base.getZ(),
-					base.getBaseColor(), field));
+			players[i] = new Player(new Car(bases.get(index), players[i]));
 			bases.removeIndex(index);
 		}
 		gameController = new GameController(players, field);

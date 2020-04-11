@@ -78,7 +78,7 @@ class Field {
                     } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this);
+                    new Life(chunks[x][z], Life.Type.Yellow);
                 }
                 for (int i = 0; i < 3; i++) {
                     int x, z;
@@ -88,7 +88,7 @@ class Field {
                     } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this);
+                    new Life(chunks[x][z], Life.Type.Purple);
                 }
                 for (int i = 0; i < 3; i++) {
                     int x, z;
@@ -98,7 +98,7 @@ class Field {
                     } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this);
+                    new Life(chunks[x][z], Life.Type.Green);
                 }
                 for (int i = 0; i < 3; i++) {
                     int x, z;
@@ -108,7 +108,7 @@ class Field {
                     } while (chunks[x][z].getLives().size != 0
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this);
+                    new Life(chunks[x][z], Life.Type.Blue);
                 }
                 break;
             }
@@ -297,7 +297,7 @@ class Field {
                     } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Yellow, this);
+                    new Life(chunks[x][z], Life.Type.Yellow);
                 }
                 for (int i = 0; i < 5; i++) {
                     int x, z;
@@ -307,7 +307,7 @@ class Field {
                     } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Purple, this);
+                    new Life(chunks[x][z], Life.Type.Purple);
                 }
                 for (int i = 0; i < 5; i++) {
                     int x, z;
@@ -317,7 +317,7 @@ class Field {
                     } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Green, this);
+                    new Life(chunks[x][z], Life.Type.Green);
                 }
                 for (int i = 0; i < 5; i++) {
                     int x, z;
@@ -327,7 +327,7 @@ class Field {
                     } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
                             || (x == 0 && z == 0) || (x == 0 && z == size - 1)
                             || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(x, chunks[x][z].getY() + 1, z, Life.Type.Blue, this);
+                    new Life(chunks[x][z], Life.Type.Blue);
                 }
                 break;
             }

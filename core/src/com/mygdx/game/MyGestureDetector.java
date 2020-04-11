@@ -137,8 +137,8 @@ class MyGestureDetector implements GestureDetector.GestureListener {
         }
     }
 
-    private static float VectorAngle(final Vector3 first, final Vector3 second) {
-        return (float)(180 * Math.acos(first.dot(second) / first.len() / second.len()) / Math.PI);
+    private float VectorAngle(final Vector3 first, final Vector3 second) {
+        return (float)(Math.acos(first.dot(second) / first.len() / second.len()) * 180f / Math.PI);
     }
 
     private float distanceOld;

@@ -9,14 +9,16 @@ class Life extends GameObject {
     final static float width = 0.9f, height = 0.2f;
 
     private Field field;
+    private Type type;
 
     private Model typeModel;
     private String typeModelFileName;
 
-    Life(final int x, final int y, final int z, final Type type, final Field field) {
-        super(x, y, z);
-        this.field = field;
-        field.getChunks()[getX()][getZ()].getLives().add(this);
+    Life(final Chunk chunk, final Type type) {
+        super(chunk.getX(), chunk.getY() + 1, chunk.getZ());
+        this.field = chunk.getField();
+        this.type = type;
+        chunk.getLives().add(this);
         StringBuilder stringBuilder = new StringBuilder("Models/LifeObjects/LifeObject");
         int number;
         switch (type) {
@@ -66,6 +68,23 @@ class Life extends GameObject {
                     getZ() * Chunk.width + 0.002f
             ).add(field.getOffset()));
         }
+    }
+
+    @Override
+    void setPosition(GameObject other) {
+        super.setPosition(other);
+        setY(getY() + 1);
+        if (getModelInstance() != null) {
+            getModelInstance().transform.setTranslation(new Vector3(
+                    getX() * Chunk.width + 0.002f,
+                    getY() * Chunk.height + 0.002f,
+                    getZ() * Chunk.width + 0.002f
+            ).add(field.getOffset()));
+        }
+    }
+
+    Type getType() {
+        return type;
     }
 
     enum Type {

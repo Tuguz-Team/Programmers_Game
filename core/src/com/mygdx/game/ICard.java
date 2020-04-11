@@ -1,6 +1,6 @@
 package com.mygdx.game;
 
-interface ICards {
+interface ICard {
 
     boolean stepForward();
 

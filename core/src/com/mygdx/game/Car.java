@@ -8,14 +8,15 @@ import com.badlogic.gdx.utils.StringBuilder;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-class Car extends GameObject implements ICards {
+class Car extends GameObject implements ICard {
 
-    private Field field;
     private String modelFileName;
     private Direction direction;
 
     private static final int size = ProgrammersGame.getSize();
 
+    private Field field;
+    private Player player;
     private Array<Life> lives = new Array<>(3);
     private Chunk base;
     private boolean compensated;
@@ -27,11 +28,12 @@ class Car extends GameObject implements ICards {
         BLUE
     }
 
-    Car(final int x, final int y, final int z, final Color color, final Field field) {
-        super(x, y, z);
-        this.field = field;
-        this.base = field.getChunks()[getX()][getZ()];
-        field.getChunks()[getX()][getZ()].setCar(this);
+    Car(final Base base, final Player player) {
+        super(base.getX(), base.getY() + 1, base.getZ());
+        this.field = base.getField();
+        this.base = base;
+        this.player = player;
+        base.setCar(this);
         StringBuilder stringBuilder = new StringBuilder("Models/");
         switch (ProgrammersGame.difficulty) {
             case Hard:
@@ -41,7 +43,7 @@ class Car extends GameObject implements ICards {
                 stringBuilder.append("Easy");
         }
         stringBuilder.append("Mode/Cars/");
-        switch (color) {
+        switch (base.getBaseColor()) {
             case RED:
                 stringBuilder.append("RedCar/RedCar.obj");
                 break;
@@ -55,6 +57,10 @@ class Car extends GameObject implements ICards {
                 stringBuilder.append("BlueCar/BlueCar.obj");
         }
         modelFileName = stringBuilder.toString();
+    }
+
+    Player getPlayer() {
+        return player;
     }
 
     Array<Life> getLives() {
@@ -91,6 +97,19 @@ class Car extends GameObject implements ICards {
     @Override
     void setPosition(final int x, final int y, final int z) {
         super.setPosition(x, y, z);
+        if (getModelInstance() != null) {
+            getModelInstance().transform.setTranslation(new Vector3(
+                    getX() * Chunk.width + 0.001f,
+                    getY() * Chunk.height + 0.001f,
+                    getZ() * Chunk.width + 0.001f
+            ).add(field.getOffset()));
+        }
+    }
+
+    @Override
+    void setPosition(GameObject other) {
+        super.setPosition(other);
+        setY(getY() + 1);
         if (getModelInstance() != null) {
             getModelInstance().transform.setTranslation(new Vector3(
                     getX() * Chunk.width + 0.001f,
@@ -222,12 +241,8 @@ class Car extends GameObject implements ICards {
                 move.call();
                 nextChunk.setCar(this);
                 thisChunk = nextChunk;
-                if (thisChunk.getLives().size > 0 && lives.size < 3) {
-                    for (int i = lives.size; i <= 3 && !thisChunk.getLives().isEmpty(); i++) {
-                        lives.add(thisChunk.getLives().get(thisChunk.getLives().size - 1));
-                        thisChunk.getLives().removeIndex(thisChunk.getLives().size - 1);
-                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
-                    }
+                if (!thisChunk.getLives().isEmpty() && lives.size < 3) {
+                    addLivesFrom(field.getChunks()[getX()][getZ()]);
                     return false;
                 }
                 return true;
@@ -299,13 +314,7 @@ class Car extends GameObject implements ICards {
                 nextChunk.setCar(this);
                 thisChunk = nextChunk;
                 setY(thisChunk.getY() + 1);
-                if (thisChunk.getLives().size > 0 && lives.size < 3) {
-                    for (int i = lives.size; i <= 3 && !thisChunk.getLives().isEmpty(); i++) {
-                        lives.add(thisChunk.getLives().get(thisChunk.getLives().size - 1));
-                        thisChunk.getLives().removeIndex(thisChunk.getLives().size - 1);
-                        ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
-                    }
-                }
+                addLivesFrom(field.getChunks()[getX()][getZ()]);
             } else {
                 compensation(nextChunk.getCar());
             }
@@ -427,12 +436,12 @@ class Car extends GameObject implements ICards {
                         Car car = nextChunk.getCar();
                         Chunk base = car.base;
                         for (Life life : car.lives) {
-                            life.setPosition(nextChunk.getX(), nextChunk.getY(), nextChunk.getZ());
+                            life.setPosition(nextChunk);
                             ProgrammersGame.instances.add(life.getModelInstance());
                         }
                         nextChunk.getLives().addAll(car.lives);
                         car.lives.clear();
-                        car.setPosition(base.getX(), base.getY(), base.getZ());
+                        car.setPosition(base);
                     }
                     break;
                 } else if (!nextChunk.getLives().isEmpty()) {
@@ -452,17 +461,11 @@ class Car extends GameObject implements ICards {
                             prevChunk = field.getChunks()[impulse + 1][getZ()];
                     }
                     for (Life life : nextChunk.getLives()) {
-                        life.setPosition(prevChunk.getX(), prevChunk.getY() + 1, prevChunk.getZ());
+                        life.setPosition(prevChunk);
                     }
                     prevChunk.getLives().addAll(nextChunk.getLives());
                     nextChunk.getLives().clear();
-                    if (field.getChunks()[getX()][getZ()].getLives().size != 0 && lives.size < 3) {
-                        for (int i = lives.size; i <= 3 && !field.getChunks()[getX()][getZ()].getLives().isEmpty(); i++) {
-                            lives.add(field.getChunks()[getX()][getZ()].getLives().get(field.getChunks()[getX()][getZ()].getLives().size - 1));
-                            field.getChunks()[getX()][getZ()].getLives().removeIndex(field.getChunks()[getX()][getZ()].getLives().size - 1);
-                            ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
-                        }
-                    }
+                    addLivesFrom(field.getChunks()[getX()][getZ()]);
                     break;
                 }
             }
@@ -489,6 +492,25 @@ class Car extends GameObject implements ICards {
             }
             other.compensated = true;
             compensated = true;
+        }
+    }
+
+    private void addLivesFrom(final Chunk chunk) {
+        for (int i = lives.size; i < 3 && !chunk.getLives().isEmpty(); i++) {
+            lives.add(chunk.getLives().get(chunk.getLives().size - 1));
+            chunk.getLives().removeIndex(chunk.getLives().size - 1);
+            ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
+        }
+        // if [chunk] is base:
+        if ((chunk.getX() == 0 && chunk.getZ() == 0)
+                || (chunk.getX() == ProgrammersGame.getSize() - 1 && chunk.getZ() == 0)
+                || (chunk.getX() == 0 && chunk.getZ() == ProgrammersGame.getSize() - 1)
+                || (chunk.getX() == ProgrammersGame.getSize() - 1 && chunk.getZ() == ProgrammersGame.getSize() - 1)) {
+            player.getLives().addAll(lives);
+            for (Life life : lives) {
+                player.addScore(life.getType());
+            }
+            lives.clear();
         }
     }
 }
