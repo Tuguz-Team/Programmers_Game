@@ -10,15 +10,14 @@ import static com.badlogic.gdx.math.MathUtils.random;
 
 class Car extends GameObject implements ICard {
 
-    private String modelFileName;
-    private Direction direction;
-
     private static final int size = ProgrammersGame.getSize();
 
-    private Field field;
-    private Player player;
-    private Array<Life> lives = new Array<>(3);
-    private Chunk base;
+    private final Field field;
+    private final Player player;
+    private final Array<Life> lives = new Array<>(3);
+    private final Base base;
+
+    private Direction direction;
     private boolean compensated;
 
     enum Color {
@@ -56,7 +55,7 @@ class Car extends GameObject implements ICard {
             case BLUE:
                 stringBuilder.append("BlueCar/BlueCar.obj");
         }
-        modelFileName = stringBuilder.toString();
+        setModelFileName(stringBuilder.toString());
     }
 
     Player getPlayer() {
@@ -121,12 +120,12 @@ class Car extends GameObject implements ICard {
 
     @Override
     void loading() {
-        ProgrammersGame.assetManager.load(modelFileName, Model.class);
+        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
     }
 
     @Override
     void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(modelFileName, Model.class));
+        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.001f,
@@ -314,7 +313,7 @@ class Car extends GameObject implements ICard {
                 nextChunk.setCar(this);
                 thisChunk = nextChunk;
                 setY(thisChunk.getY() + 1);
-                addLivesFrom(field.getChunks()[getX()][getZ()]);
+                addLivesFrom(thisChunk);
             } else {
                 compensation(nextChunk.getCar());
             }
@@ -484,9 +483,9 @@ class Car extends GameObject implements ICard {
         }
     }
 
-    void compensation(Car other) {
+    void compensation(final Car other) {
         if (!compensated) {
-            if (lives.size < 3 && other.lives.size > 0) {
+            if (lives.size < 3 && !other.lives.isEmpty()) {
                 lives.add(other.lives.get(other.lives.size - 1));
                 other.lives.removeIndex(other.lives.size - 1);
             }
@@ -502,10 +501,8 @@ class Car extends GameObject implements ICard {
             ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
         }
         // if [chunk] is base:
-        if ((chunk.getX() == 0 && chunk.getZ() == 0)
-                || (chunk.getX() == ProgrammersGame.getSize() - 1 && chunk.getZ() == 0)
-                || (chunk.getX() == 0 && chunk.getZ() == ProgrammersGame.getSize() - 1)
-                || (chunk.getX() == ProgrammersGame.getSize() - 1 && chunk.getZ() == ProgrammersGame.getSize() - 1)) {
+        if (chunk instanceof Base
+                && ((Base)chunk).getLabColors().contains(base.getBaseColor(), true)) {
             player.getLives().addAll(lives);
             for (Life life : lives) {
                 player.addScore(life.getType());

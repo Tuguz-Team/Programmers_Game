@@ -20,7 +20,7 @@ class MyGestureDetector implements GestureDetector.GestureListener {
     private final static float MAX_VELOCITY = 100f;
     private final static float MIN_VELOCITY = -MAX_VELOCITY;
 
-    private PerspectiveCamera camera;
+    private final PerspectiveCamera camera;
     private boolean locked;
 
     MyGestureDetector(final PerspectiveCamera camera) {

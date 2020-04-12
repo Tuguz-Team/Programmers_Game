@@ -2,7 +2,7 @@ package com.mygdx.game;
 
 class Card {
 
-    private Type type;
+    private final Type type;
 
     Card(final Type type) {
         this.type = type;

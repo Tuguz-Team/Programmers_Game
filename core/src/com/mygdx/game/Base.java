@@ -8,9 +8,8 @@ import com.badlogic.gdx.utils.StringBuilder;
 
 class Base extends Chunk {
 
-    private Array<Car.Color> labColors;
-    private String modelFileName;
-    private Car.Color baseColor;
+    private final Array<Car.Color> labColors;
+    private final Car.Color baseColor;
 
     Base(final int x, final int y, final int z, final Field field, final Car.Color baseColor) {
         super(x, y, z, null, field);
@@ -23,6 +22,7 @@ class Base extends Chunk {
                 labColors.addAll(Car.Color.RED, Car.Color.GREEN, Car.Color.YELLOW, Car.Color.BLUE);
                 break;
             case Hard:
+            default:
                 stringBuilder.append("Hard");
                 labColors = new Array<>(2);
         }
@@ -44,17 +44,17 @@ class Base extends Chunk {
                 stringBuilder.append("BlueBase/BlueBase.obj");
                 labColors.addAll(Car.Color.RED, Car.Color.GREEN);
         }
-        modelFileName = stringBuilder.toString();
+        setModelFileName(stringBuilder.toString());
     }
 
     @Override
     void loading() {
-        ProgrammersGame.assetManager.load(modelFileName, Model.class);
+        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
     }
 
     @Override
     void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(modelFileName, Model.class));
+        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
@@ -66,5 +66,9 @@ class Base extends Chunk {
 
     Car.Color getBaseColor() {
         return baseColor;
+    }
+
+    Array<Car.Color> getLabColors() {
+        return labColors;
     }
 }

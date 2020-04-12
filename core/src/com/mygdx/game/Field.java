@@ -8,15 +8,17 @@ import static com.badlogic.gdx.math.MathUtils.random;
 class Field {
 
     //private FieldBox[] fieldBoxes = new FieldBox[4];
-    private Chunk[][] chunks;
-    private Vector3 offset;
+    private static final int size = ProgrammersGame.getSize();
+    private final Chunk[][] chunks;
+    private final Vector3 offset;
 
-    Field(final int size) {
+    Field() {
         offset = new Vector3(
                 (1 - size) * Chunk.width / 2f,
                 0f,
                 (1 - size) * Chunk.width / 2f);
-        generate(size);
+        chunks = new Chunk[size][size];
+        generateField();
     }
 
     Vector3 getOffset() {
@@ -27,8 +29,7 @@ class Field {
         return chunks;
     }
 
-    private void generate(final int size) {
-        chunks = new Chunk[size][size];
+    private void generateField() {
         switch (ProgrammersGame.difficulty) {
             case Easy: {
                 // Array initializing
@@ -69,47 +70,8 @@ class Field {
                         chunks[i][j].setColor(color);
                     }
                 }
-                // Add lives
-                for (int i = 0; i < 3; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (chunks[x][z].getLives().size != 0
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Yellow);
-                }
-                for (int i = 0; i < 3; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (chunks[x][z].getLives().size != 0
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Purple);
-                }
-                for (int i = 0; i < 3; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (chunks[x][z].getLives().size != 0
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Green);
-                }
-                for (int i = 0; i < 3; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (chunks[x][z].getLives().size != 0
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Blue);
-                }
+                generateBases();
+                generateLives();
                 break;
             }
             case Hard: {
@@ -257,82 +219,44 @@ class Field {
                         chunks[i][j].setColor(new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f));
                     }
                 }
-                // Add lifts
-                Direction direction1, direction2;
-                int temp = 0;
-                do direction1 = Direction.getRandom();
-                while (liftNotGenerated(size, i1, j1, length1, width1, direction1)
-                        && temp++ < 10);
-                temp = 0;
-                do direction2 = Direction.getRandom();
-                while (direction1 == direction2
-                        || liftNotGenerated(size, i1, j1, length1, width1, direction2)
-                        && temp++ < 10);
-
-                temp = 0;
-                do direction1 = Direction.getRandom();
-                while (liftNotGenerated(size, i2, j2, length2, width2, direction1)
-                        && temp++ < 10);
-                temp = 0;
-                do direction2 = Direction.getRandom();
-                while (direction1 == direction2
-                        || liftNotGenerated(size, i2, j2, length2, width2, direction2)
-                        && temp++ < 10);
-
-                temp = 0;
-                do direction1 = Direction.getRandom();
-                while (liftNotGenerated(size, i3, j3, 3, 3, direction1)
-                        && temp++ < 10);
-                temp = 0;
-                do direction2 = Direction.getRandom();
-                while (direction1 == direction2
-                        || liftNotGenerated(size, i3, j3, 3, 3, direction2)
-                        && temp++ < 10);
-                // Add lives
-                for (int i = 0; i < 5; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Yellow);
+                generateBases();
+                for (int i = 0; i < 2; i++) {
+                    generateLifts(i1, j1, length1, width1);
+                    generateLifts(i2, j2, length2, width2);
+                    generateLifts(i3, j3, 3, 3);
                 }
-                for (int i = 0; i < 5; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Purple);
-                }
-                for (int i = 0; i < 5; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Green);
-                }
-                for (int i = 0; i < 5; i++) {
-                    int x, z;
-                    do {
-                        x = random.nextInt(size);
-                        z = random.nextInt(size);
-                    } while (!chunks[x][z].getLives().isEmpty() || chunks[x][z].getLift() != null
-                            || (x == 0 && z == 0) || (x == 0 && z == size - 1)
-                            || (x == size - 1 && z == 0) || x == size - 1 && z == size - 1);
-                    new Life(chunks[x][z], Life.Type.Blue);
-                }
+                generateLives();
                 break;
             }
         }
+        /*
+        final float width = Chunk.width / 4;
+        final float length = size * Chunk.width + 2 * width;
+        final float height = Chunk.height * ProgrammersGame.maxHeight;
+        fieldBoxes[0] = new FieldBox(-Chunk.width / 2 - width / 2, (size - 1) / 2f * Chunk.width, height / 2 - Chunk.height / 2,
+                new ModelBuilder().createBox(width, height, length,
+                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
+        );
+        fieldBoxes[1] = new FieldBox((size - 1) / 2f * Chunk.width, -Chunk.width / 2 - width / 2, height / 2 - Chunk.height / 2,
+                new ModelBuilder().createBox(length, height, width,
+                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
+                );
+        fieldBoxes[2] = new FieldBox(size * Chunk.width - Chunk.width / 2 + width / 2, (size - 1) / 2f * Chunk.width, height / 2 - Chunk.height / 2,
+                new ModelBuilder().createBox(width, height, length,
+                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
+        );
+        fieldBoxes[3] = new FieldBox((size - 1) / 2f * Chunk.width, size * Chunk.width - Chunk.width / 2 + width / 2, height / 2 - Chunk.height / 2,
+                new ModelBuilder().createBox(length, height, width,
+                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
+        );
+        */
+    }
 
+    private void generateBases() {
         Car.Color[] colors = new Car.Color[4];
         boolean[] b = new boolean[4];
         int i = 0;
@@ -374,35 +298,17 @@ class Field {
         chunks[size - 1][0] = new Base(size - 1, chunks[size - 1][0].getY(), 0, this, colors[2]);
         chunks[size - 1][size - 1] = new Base(size - 1, chunks[size - 1][size - 1].getY(), size - 1,
                 this, colors[3]);
-        /*
-        final float width = Chunk.width / 4;
-        final float length = size * Chunk.width + 2 * width;
-        final float height = Chunk.height * ProgrammersGame.maxHeight;
-        fieldBoxes[0] = new FieldBox(-Chunk.width / 2 - width / 2, (size - 1) / 2f * Chunk.width, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(width, height, length,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-        );
-        fieldBoxes[1] = new FieldBox((size - 1) / 2f * Chunk.width, -Chunk.width / 2 - width / 2, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(length, height, width,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-                );
-        fieldBoxes[2] = new FieldBox(size * Chunk.width - Chunk.width / 2 + width / 2, (size - 1) / 2f * Chunk.width, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(width, height, length,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-        );
-        fieldBoxes[3] = new FieldBox((size - 1) / 2f * Chunk.width, size * Chunk.width - Chunk.width / 2 + width / 2, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(length, height, width,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-        );
-        */
     }
 
-    private boolean liftNotGenerated(final int size, final int i, final int j,
-                                     final int length, final int width, final Direction direction) {
+    private void generateLifts(final int i, final int j, final int length, final int width) {
+        Direction direction;
+        int temp = 0;
+        do direction = Direction.getRandom();
+        while (liftNotGenerated(i, j, length, width, direction) && (temp++ < 10));
+    }
+
+    private boolean liftNotGenerated(final int i, final int j, final int length, final int width,
+                                     final Direction direction) {
         int temp = 0;
         switch (direction) {
             case Forward:
@@ -414,7 +320,7 @@ class Field {
                         iTemp = random.nextInt(length) + i;
                         for (int k = i; k < i + length; k++) {
                             if (chunks[k][j + width].equals(chunks[k][j + width - 1].getLift())
-                                    && chunks[k][j + width].getY() == chunks[iTemp][j + width].getY() )
+                                    && chunks[k][j + width].getY() == chunks[iTemp][j + width].getY())
                                 return true;
                         }
                     }
@@ -436,7 +342,7 @@ class Field {
                         iTemp = random.nextInt(length) + i;
                         for (int k = i; k < i + length; k++) {
                             if (chunks[k][j - 1].equals(chunks[k][j].getLift())
-                                    && chunks[k][j - 1].getY() == chunks[iTemp][j - 1].getY() )
+                                    && chunks[k][j - 1].getY() == chunks[iTemp][j - 1].getY())
                                 return true;
                         }
                     }
@@ -458,7 +364,7 @@ class Field {
                         jTemp = random.nextInt(width) + j;
                         for (int k = j; k < j + width; k++) {
                             if (chunks[i + length][k].equals(chunks[i + length - 1][k].getLift())
-                                    && chunks[i + length][k].getY() == chunks[i + length][jTemp].getY() )
+                                    && chunks[i + length][k].getY() == chunks[i + length][jTemp].getY())
                                 return true;
                         }
                     }
@@ -481,7 +387,7 @@ class Field {
                         jTemp = random.nextInt(width) + j;
                         for (int k = j; k < j + width; k++) {
                             if (chunks[i - 1][k].equals(chunks[i][k].getLift())
-                                    && chunks[i - 1][k].getY() == chunks[i - 1][jTemp].getY() )
+                                    && chunks[i - 1][k].getY() == chunks[i - 1][jTemp].getY())
                                 return true;
                         }
                     }
@@ -494,6 +400,30 @@ class Field {
                     return false;
                 }
                 return true;
+        }
+    }
+
+    private void generateLives() {
+        int end;
+        switch (ProgrammersGame.difficulty) {
+            case Easy:
+                end = 3;
+                break;
+            case Hard:
+            default:
+                end = 5;
+        }
+        int x, z;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < end; j++) {
+                do {
+                    x = random.nextInt(size);
+                    z = random.nextInt(size);
+                } while (!chunks[x][z].getLives().isEmpty()
+                        || chunks[x][z].getLift() != null
+                        || chunks[x][z] instanceof Base);
+                new Life(chunks[x][z], Life.Type.fromInt(i));
+            }
         }
     }
 

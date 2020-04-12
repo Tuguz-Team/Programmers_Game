@@ -6,9 +6,9 @@ class Player {
 
     private int score;
 
-    private Car car;
-    private Array<Life> lives;
-    private Array<Card> cards;
+    private final Car car;
+    private final Array<Life> lives;
+    private final Array<Card> cards;
 
     Player(final Car car) {
         this.car = car;

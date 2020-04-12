@@ -9,6 +9,7 @@ abstract class GameObject {
     private Model model;
     private ModelInstance modelInstance;
     private int x, y, z;
+    private String modelFileName;
 
     GameObject(final int x, final int y, final int z) {
         this.x = x;
@@ -89,5 +90,13 @@ abstract class GameObject {
 
     private static float VectorAngle(final Vector3 first, final Vector3 second) {
         return (float)(Math.acos(first.dot(second) / first.len() / second.len()) * 180f / Math.PI);
+    }
+
+    String getModelFileName() {
+        return modelFileName;
+    }
+
+    void setModelFileName(String modelFileName) {
+        this.modelFileName = modelFileName;
     }
 }

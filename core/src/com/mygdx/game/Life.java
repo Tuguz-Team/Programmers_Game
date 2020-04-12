@@ -8,8 +8,8 @@ class Life extends GameObject {
 
     final static float width = 0.9f, height = 0.2f;
 
-    private Field field;
-    private Type type;
+    private final Field field;
+    private final Type type;
 
     private Model typeModel;
     private String typeModelFileName;
@@ -37,17 +37,18 @@ class Life extends GameObject {
         }
         stringBuilder.append(number).append("/LifeObject").append(number).append(".obj");
         typeModelFileName = stringBuilder.toString();
+        setModelFileName("Models/LifeObjects/LifeObject0/LifeObject0.obj");
     }
 
     @Override
     void loading() {
-        ProgrammersGame.assetManager.load("Models/LifeObjects/LifeObject0/LifeObject0.obj", Model.class);
+        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
         ProgrammersGame.assetManager.load(typeModelFileName, Model.class);
     }
 
     @Override
     void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get("Models/LifeObjects/LifeObject0/LifeObject0.obj", Model.class));
+        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
         typeModel = ProgrammersGame.assetManager.get(typeModelFileName, Model.class);
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
@@ -91,6 +92,19 @@ class Life extends GameObject {
         Yellow,
         Purple,
         Green,
-        Blue
+        Blue;
+
+        static Type fromInt(final int num) {
+            switch (num % 4) {
+                case 0:
+                    return Yellow;
+                case 1:
+                    return Purple;
+                case 2:
+                    return Green;
+                default:
+                    return Blue;
+            }
+        }
     }
 }

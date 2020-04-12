@@ -7,9 +7,9 @@ import static com.badlogic.gdx.math.MathUtils.random;
 class GameController {
 
     private Player thisPlayer;
-    private Player[] players;
-    private Field field;
-    private Array<Card> cards;
+    private final Player[] players;
+    private final Field field;
+    private final Array<Card> cards;
 
     GameController(final Player[] players, final Field field) {
         this.players = players;

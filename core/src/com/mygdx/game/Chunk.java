@@ -21,8 +21,8 @@ class Chunk extends GameObject {
     private Chunk lift;
     private Color color;
     private Car car;
-    private Array<Life> lives = new Array<>();
-    private Field field;
+    private final Array<Life> lives = new Array<>();
+    private final Field field;
     private String modelFileName;
 
     Chunk getLift() {

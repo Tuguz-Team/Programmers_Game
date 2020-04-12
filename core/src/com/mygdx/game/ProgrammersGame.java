@@ -78,7 +78,7 @@ public class ProgrammersGame extends ApplicationAdapter {
 		myGestureDetector = new MyGestureDetector(camera);
 		Gdx.input.setInputProcessor(new GestureDetector(myGestureDetector));
 
-		field = new Field(size);
+		field = new Field();
 		Player[] players = new Player[playersCount];
 		Array<Base> bases = new Array<>(new Base[] {
 				(Base)field.getChunks()[0][0], (Base)field.getChunks()[0][size - 1],
