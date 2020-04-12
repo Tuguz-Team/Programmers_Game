@@ -319,17 +319,18 @@ class Field {
                             return true;
                         iTemp = random.nextInt(length) + i;
                         for (int k = i; k < i + length; k++) {
-                            if (chunks[k][j + width].equals(chunks[k][j + width - 1].getLift())
-                                    && chunks[k][j + width].getY() == chunks[iTemp][j + width].getY())
+                            if (chunks[k][j + width - 1] instanceof Lift) {
                                 return true;
+                            }
                         }
                     }
-                    while (chunks[iTemp][j + width - 1].getY() == chunks[iTemp][j + width].getY()
-                            || chunks[iTemp][j + width - 1].getLift() != null
+                    while (chunks[iTemp][j + width - 1].getY() <= chunks[iTemp][j + width].getY()
                             || chunks[iTemp][j + width].getLift() != null
                             || (j + width == 8 && (iTemp == 8 || iTemp == 0)));
-                    chunks[iTemp][j + width - 1].setLift(chunks[iTemp][j + width]);
-                    chunks[iTemp][j + width].setLift(chunks[iTemp][j + width - 1]);
+                    chunks[iTemp][j + width - 1] = new Lift(
+                            chunks[iTemp][j + width - 1],
+                            chunks[iTemp][j + width]
+                    );
                     return false;
                 }
                 return true;
@@ -341,17 +342,18 @@ class Field {
                             return true;
                         iTemp = random.nextInt(length) + i;
                         for (int k = i; k < i + length; k++) {
-                            if (chunks[k][j - 1].equals(chunks[k][j].getLift())
-                                    && chunks[k][j - 1].getY() == chunks[iTemp][j - 1].getY())
+                            if (chunks[k][j] instanceof Lift) {
                                 return true;
+                            }
                         }
                     }
-                    while (chunks[iTemp][j].getY() == chunks[iTemp][j - 1].getY()
-                            || chunks[iTemp][j].getLift() != null
+                    while (chunks[iTemp][j].getY() <= chunks[iTemp][j - 1].getY()
                             || chunks[iTemp][j - 1].getLift() != null
                             || (j == 1 && (iTemp == 8 || iTemp == 0)));
-                    chunks[iTemp][j].setLift(chunks[iTemp][j - 1]);
-                    chunks[iTemp][j - 1].setLift(chunks[iTemp][j]);
+                    chunks[iTemp][j] = new Lift(
+                            chunks[iTemp][j],
+                            chunks[iTemp][j - 1]
+                    );
                     return false;
                 }
                 return true;
@@ -363,17 +365,18 @@ class Field {
                             return true;
                         jTemp = random.nextInt(width) + j;
                         for (int k = j; k < j + width; k++) {
-                            if (chunks[i + length][k].equals(chunks[i + length - 1][k].getLift())
-                                    && chunks[i + length][k].getY() == chunks[i + length][jTemp].getY())
+                            if (chunks[i + length - 1][k] instanceof Lift) {
                                 return true;
+                            }
                         }
                     }
-                    while (chunks[i + length - 1][jTemp].getY() == chunks[i + length][jTemp].getY()
-                            || chunks[i + length - 1][jTemp].getLift() != null
+                    while (chunks[i + length - 1][jTemp].getY() <= chunks[i + length][jTemp].getY()
                             || chunks[i + length][jTemp].getLift() != null
                             || (i + length == 8 && (jTemp == 8 || jTemp == 0)));
-                    chunks[i + length - 1][jTemp].setLift(chunks[i + length][jTemp]);
-                    chunks[i + length][jTemp].setLift(chunks[i + length - 1][jTemp]);
+                    chunks[i + length - 1][jTemp] = new Lift(
+                            chunks[i + length - 1][jTemp],
+                            chunks[i + length][jTemp]
+                    );
                     return false;
                 }
                 return true;
@@ -386,17 +389,18 @@ class Field {
                             return true;
                         jTemp = random.nextInt(width) + j;
                         for (int k = j; k < j + width; k++) {
-                            if (chunks[i - 1][k].equals(chunks[i][k].getLift())
-                                    && chunks[i - 1][k].getY() == chunks[i - 1][jTemp].getY())
+                            if (chunks[i][k] instanceof Lift) {
                                 return true;
+                            }
                         }
                     }
-                    while (chunks[i][jTemp].getY() == chunks[i - 1][jTemp].getY()
-                            || chunks[i][jTemp].getLift() != null
+                    while (chunks[i][jTemp].getY() <= chunks[i - 1][jTemp].getY()
                             || chunks[i - 1][jTemp].getLift() != null
                             || (i == 1 && (jTemp == 8 || jTemp == 0)));
-                    chunks[i][jTemp].setLift(chunks[i - 1][jTemp]);
-                    chunks[i - 1][jTemp].setLift(chunks[i][jTemp]);
+                    chunks[i][jTemp] = new Lift(
+                            chunks[i][jTemp],
+                            chunks[i - 1][jTemp]
+                    );
                     return false;
                 }
                 return true;

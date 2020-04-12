@@ -23,7 +23,6 @@ class Chunk extends GameObject {
     private Car car;
     private final Array<Life> lives = new Array<>();
     private final Field field;
-    private String modelFileName;
 
     Chunk getLift() {
         return lift;
@@ -31,6 +30,10 @@ class Chunk extends GameObject {
 
     void setLift(final Chunk lift) {
         this.lift = lift;
+    }
+
+    Color getColor() {
+        return color;
     }
 
     void setColor(final Color color) {
@@ -61,21 +64,17 @@ class Chunk extends GameObject {
 
     @Override
     void loading() {
-        if (lift != null && lift.getY() < getY()) {
-            modelFileName = "Models/Terrain/Lift/Lift.obj";
+        StringBuilder stringBuilder = new StringBuilder("Models/Terrain/Layer");
+        int nextInt = getRandomChunkIndex();
+        if (nextInt % 2 == 0) {
+            nextInt = (nextInt >> 1) + 1;
+            stringBuilder.append(nextInt).append("/Layer").append(nextInt).append(".obj");
         } else {
-            StringBuilder stringBuilder = new StringBuilder("Models/Terrain/Layer");
-            int nextInt = getRandomChunkIndex();
-            if (nextInt % 2 == 0) {
-                nextInt = (nextInt >> 1) + 1;
-                stringBuilder.append(nextInt).append("/Layer").append(nextInt).append(".obj");
-            } else {
-                nextInt = (nextInt >> 1) + 1;
-                stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
-            }
-            modelFileName = stringBuilder.toString();
+            nextInt = (nextInt >> 1) + 1;
+            stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
         }
-        ProgrammersGame.assetManager.load(modelFileName, Model.class);
+        setModelFileName(stringBuilder.toString());
+        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
         for (Life life : lives) {
             life.loading();
         }
@@ -83,7 +82,7 @@ class Chunk extends GameObject {
 
     @Override
     void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(modelFileName, Model.class));
+        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
@@ -91,17 +90,7 @@ class Chunk extends GameObject {
                 getZ() * width
         ).add(field.getOffset()));
         getModelInstance().materials.get(0).set(ColorAttribute.createDiffuse(color));
-        if (lift != null && lift.getY() < getY()) {
-            if (lift.getX() < getX()) {
-                getModelInstance().transform.rotate(Vector3.Y, -90f);
-            } else if (lift.getX() > getX()) {
-                getModelInstance().transform.rotate(Vector3.Y, 90f);
-            } else if (lift.getZ() < getZ()) {
-                getModelInstance().transform.rotate(Vector3.Y, 180f);
-            }
-        } else {
-            getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
-        }
+        getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
         ProgrammersGame.instances.add(getModelInstance());
         for (Life life : lives) {
             life.doneLoading();
@@ -109,11 +98,11 @@ class Chunk extends GameObject {
     }
 
     private int getRandomChunkIndex() {
-        Array<Integer> floats = new Array<>();
+        Array<Integer> integers = new Array<>();
         int sum = 0;
         for (int i = 0; i < chances.length; i++) {
-            floats.add(chances[i]);
-            sum += floats.get(i);
+            integers.add(chances[i]);
+            sum += integers.get(i);
         }
         int value = random.nextInt(sum + 1);
         sum = 0;
