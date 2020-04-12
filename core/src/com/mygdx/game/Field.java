@@ -8,7 +8,7 @@ import static com.badlogic.gdx.math.MathUtils.random;
 class Field {
 
     //private FieldBox[] fieldBoxes = new FieldBox[4];
-    private static final int size = ProgrammersGame.getSize();
+    private final int size = ProgrammersGame.getSize();
     private final Chunk[][] chunks;
     private final Vector3 offset;
 
@@ -27,6 +27,10 @@ class Field {
 
     Chunk[][] getChunks() {
         return chunks;
+    }
+
+    int getSize() {
+        return size;
     }
 
     private void generateField() {
@@ -226,6 +230,7 @@ class Field {
                     generateLifts(i3, j3, 3, 3);
                 }
                 generateLives();
+                generateWalls();
                 break;
             }
         }
@@ -423,10 +428,53 @@ class Field {
                 do {
                     x = random.nextInt(size);
                     z = random.nextInt(size);
-                } while (!chunks[x][z].getLives().isEmpty()
+                } while ((x < 2 && (z < 2 || z > 6)) || (x > 6 && (z < 2 || z > 6))
+                        || !chunks[x][z].getLives().isEmpty()
                         || chunks[x][z].getLift() != null
-                        || chunks[x][z] instanceof Base);
+                        || chunks[x][z] instanceof Base
+                        || chunks[x][z].getLivesCount() > 1);
                 new Life(chunks[x][z], Life.Type.fromInt(i));
+            }
+        }
+    }
+
+    private void generateWalls() {
+        int count;
+        switch (ProgrammersGame.difficulty) {
+            case Easy:
+                count = random.nextInt(5) + 10;
+                break;
+            case Hard:
+            default:
+                count = random.nextInt(11) + 20;
+        }
+        int x, z;
+        Direction direction;
+        Wall wall;
+        while (count-- > 0) {
+            do {
+                x = random.nextInt(size);
+                z = random.nextInt(size);
+                direction = Direction.getRandom();
+            } while (!chunks[x][z].canPlaceWall(direction));
+            wall = new Wall(chunks[x][z], direction);
+            switch (direction) {
+                case Forward:
+                    chunks[x][z].setWallForward(wall);
+                    if (z + 1 < size) chunks[x][z + 1].setWallBack(wall);
+                    break;
+                case Back:
+                    chunks[x][z].setWallBack(wall);
+                    if (z - 1 > 0) chunks[x][z - 1].setWallForward(wall);
+                    break;
+                case Left:
+                    chunks[x][z].setWallLeft(wall);
+                    if (x + 1 < size) chunks[x + 1][z].setWallRight(wall);
+                    break;
+                case Right:
+                default:
+                    chunks[x][z].setWallRight(wall);
+                    if (x - 1 > 0) chunks[x - 1][z].setWallLeft(wall);
             }
         }
     }

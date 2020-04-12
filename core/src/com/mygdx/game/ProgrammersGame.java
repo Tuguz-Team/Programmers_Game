@@ -146,8 +146,8 @@ public class ProgrammersGame extends ApplicationAdapter {
 			myGestureDetector.unlockCamera();
 		}
 
-		//Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		//Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		myGestureDetector.cameraPosChange();
