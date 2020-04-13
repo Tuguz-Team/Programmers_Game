@@ -1,21 +1,22 @@
-package com.mygdx.game;
+package com.programmers.game_objects;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
+import com.programmers.game.Field;
 
-class Base extends Chunk {
+public final class Base extends Chunk {
 
     private final Array<Car.Color> labColors;
     private final Car.Color baseColor;
 
-    Base(final int x, final int y, final int z, final Field field, final Car.Color baseColor) {
+    public Base(final int x, final int y, final int z, final Field field, final Car.Color baseColor) {
         super(x, y, z, null, field);
         this.baseColor = baseColor;
         StringBuilder stringBuilder = new StringBuilder("Models/");
-        switch (ProgrammersGame.difficulty) {
+        switch (getProgrammersGame().getDifficulty()) {
             case Easy:
                 stringBuilder.append("Easy");
                 labColors = new Array<>(4);
@@ -48,27 +49,27 @@ class Base extends Chunk {
     }
 
     @Override
-    void loading() {
-        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
+    public void loading() {
+        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
     }
 
     @Override
-    void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
+    public void doneLoading() {
+        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
                 getY() * height,
                 getZ() * width
         ).add(getField().getOffset()));
-        ProgrammersGame.instances.add(getModelInstance());
+        getProgrammersGame().getInstances().add(getModelInstance());
     }
 
-    Car.Color getBaseColor() {
+    public Car.Color getBaseColor() {
         return baseColor;
     }
 
-    Array<Car.Color> getLabColors() {
+    public Array<Car.Color> getLabColors() {
         return labColors;
     }
 }

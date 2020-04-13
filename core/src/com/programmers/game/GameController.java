@@ -1,10 +1,13 @@
-package com.mygdx.game;
+package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
 
+import com.programmers.enums.Difficulty;
+import com.programmers.game_objects.Chunk;
+
 import static com.badlogic.gdx.math.MathUtils.random;
 
-class GameController {
+final class GameController {
 
     private Player thisPlayer;
     private final Player[] players;
@@ -29,7 +32,7 @@ class GameController {
         for (int i = 0; i < 6; i++)
             cards.add(new Card(Card.Type.Turn180));
         // Add Cycles and Teleports
-        if (ProgrammersGame.difficulty == Difficulty.Hard) {
+        if (field.getProgrammersGame().getDifficulty() == com.programmers.enums.Difficulty.Hard) {
             cards.ensureCapacity(16);
             for (int i = 0; i < 5; i++)
                 cards.add(new Card(Card.Type.Cycle2));
@@ -63,8 +66,8 @@ class GameController {
 
     Player getWinner() {
         for (Player player : players) {
-            if ((ProgrammersGame.difficulty == Difficulty.Easy && player.getScore() >= 7)
-                    || (ProgrammersGame.difficulty == Difficulty.Hard && player.getScore() >= 9)) {
+            if ((field.getProgrammersGame().getDifficulty() == com.programmers.enums.Difficulty.Easy && player.getScore() >= 7)
+                    || (field.getProgrammersGame().getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {
                 return player;
             }
         }

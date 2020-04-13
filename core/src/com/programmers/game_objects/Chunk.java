@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.programmers.game_objects;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -7,93 +7,90 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
+import com.programmers.enums.Direction;
+import com.programmers.game.Field;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-class Chunk extends GameObject {
+public class Chunk extends GameObject {
 
-    private final static int[] chances = { 100, 2, 100, 2, 100, 2, 100, 2, 100, 2 };
-    final static float width = 1.5f;
-    final static float height = 0.6f;
+    private final static int[] fieldChances = { 100, 2, 100, 2, 100, 2, 100, 2, 100, 2 };
+    public final static float width = 1.5f, height = 0.6f;
 
-    private Wall wallForward;
-    private Wall wallBack;
-    private Wall wallLeft;
-    private Wall wallRight;
-
+    private Wall wallForward, wallBack, wallLeft, wallRight;
     private Chunk lift;
     private Color color;
     private Car car;
     private final Array<Life> lives = new Array<>();
     private final Field field;
 
-    Chunk(final int x, final int y, final int z, final Color color, final Field field) {
-        super(x, y, z);
+    public Chunk(final int x, final int y, final int z, final Color color, final Field field) {
+        super(x, y, z, field.getProgrammersGame());
         this.color = color;
         this.field = field;
     }
 
-    Chunk getLift() {
+    public Chunk getLift() {
         return lift;
     }
 
-    void setLift(final Chunk lift) {
+    public void setLift(final Chunk lift) {
         this.lift = lift;
     }
 
-    Color getColor() {
+    public Color getColor() {
         return color;
     }
 
-    void setColor(final Color color) {
+    public void setColor(final Color color) {
         this.color = color;
     }
 
-    Field getField() {
+    public Field getField() {
         return field;
     }
 
-    Car getCar() {
+    public Car getCar() {
         return car;
     }
 
-    void setCar(final Car car) {
+    public void setCar(final Car car) {
         this.car = car;
     }
 
-    Array<Life> getLives() {
+    public Array<Life> getLives() {
         return lives;
     }
 
-    Wall getWallForward() {
+    public Wall getWallForward() {
         return wallForward;
     }
 
-    void setWallForward(Wall wallForward) {
+    public void setWallForward(Wall wallForward) {
         this.wallForward = wallForward;
     }
 
-    Wall getWallBack() {
+    public Wall getWallBack() {
         return wallBack;
     }
 
-    void setWallBack(Wall wallBack) {
+    public void setWallBack(Wall wallBack) {
         this.wallBack = wallBack;
     }
 
-    Wall getWallLeft() {
+    public Wall getWallLeft() {
         return wallLeft;
     }
 
-    void setWallLeft(Wall wallLeft) {
+    public void setWallLeft(Wall wallLeft) {
         this.wallLeft = wallLeft;
     }
 
-    Wall getWallRight() {
+    public Wall getWallRight() {
         return wallRight;
     }
 
-    void setWallRight(Wall wallRight) {
+    public void setWallRight(Wall wallRight) {
         this.wallRight = wallRight;
     }
 
@@ -120,39 +117,38 @@ class Chunk extends GameObject {
         return temp;
     }
 
-    int getLivesCount() {
-        int temp = 0;
-        for (int i = getX() - 1; i <= getX() + 1; i++) {
-            for (int j = getZ() - 1; j <= getZ() + 1; j++) {
-                if (i >= 0 && i < field.getSize()
-                        && j >= 0 && j < field.getSize()) {
-                    temp += field.getChunks()[i][j].getLives().size;
-                }
-            }
-        }
-        return temp;
-    }
-
-    boolean canPlaceWall(final Direction direction) {
+    public boolean canPlaceWall(final Direction direction) {
         Chunk other;
         switch (direction) {
             case Forward:
+                if (hasWall(Direction.Back)) {
+                    return false;
+                }
                 if (getZ() < field.getSize() - 1) {
                     other = field.getChunks()[getX()][getZ() + 1];
                     break;
                 } else return false;
             case Back:
+                if (hasWall(Direction.Forward)) {
+                    return false;
+                }
                 if (getZ() > 0) {
                     other = field.getChunks()[getX()][getZ() - 1];
                     break;
                 } else return false;
             case Left:
+                if (hasWall(Direction.Right)) {
+                    return false;
+                }
                 if (getX() < field.getSize() - 1) {
                     other = field.getChunks()[getX() + 1][getZ()];
                     break;
                 } else return false;
             case Right:
             default:
+                if (hasWall(Direction.Left)) {
+                    return false;
+                }
                 if (getX() > 0) {
                     other = field.getChunks()[getX() - 1][getZ()];
                 } else return false;
@@ -161,14 +157,14 @@ class Chunk extends GameObject {
                 && getLift() == null
                 && !hasWall(direction)
                 && getWallCount() < 2
-                && !other.hasWall(Direction.Left)
+                && !other.hasWall(direction)
                 && !(other instanceof Base)
                 && (other.getY() == getY())
                 && other.getWallCount() < 2;
     }
 
     @Override
-    void loading() {
+    public void loading() {
         StringBuilder stringBuilder = new StringBuilder("Models/Terrain/Layer");
         int nextInt = getRandomChunkIndex();
         if (nextInt % 2 == 0) {
@@ -179,7 +175,7 @@ class Chunk extends GameObject {
             stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
         }
         setModelFileName(stringBuilder.toString());
-        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
+        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
         for (Life life : lives) {
             life.loading();
         }
@@ -190,8 +186,8 @@ class Chunk extends GameObject {
     }
 
     @Override
-    void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
+    public void doneLoading() {
+        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
@@ -200,7 +196,7 @@ class Chunk extends GameObject {
         ).add(field.getOffset()));
         getModelInstance().materials.get(0).set(ColorAttribute.createDiffuse(color));
         getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
-        ProgrammersGame.instances.add(getModelInstance());
+        getProgrammersGame().getInstances().add(getModelInstance());
         for (Life life : lives) {
             life.doneLoading();
         }
@@ -213,14 +209,14 @@ class Chunk extends GameObject {
     private int getRandomChunkIndex() {
         Array<Integer> integers = new Array<>();
         int sum = 0;
-        for (int i = 0; i < chances.length; i++) {
-            integers.add(chances[i]);
+        for (int i = 0; i < fieldChances.length; i++) {
+            integers.add(fieldChances[i]);
             sum += integers.get(i);
         }
         int value = random.nextInt(sum + 1);
         sum = 0;
-        for (int i = 0; i < chances.length; i++) {
-            sum += chances[i];
+        for (int i = 0; i < fieldChances.length; i++) {
+            sum += fieldChances[i];
             if (value <= sum) {
                 return i;
             }

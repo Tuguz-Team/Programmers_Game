@@ -1,15 +1,13 @@
-package com.mygdx.game;
+package com.programmers.enums;
 
-import static com.badlogic.gdx.math.MathUtils.random;
-
-enum Direction {
+public enum Direction {
     Forward,
     Back,
     Left,
     Right;
 
-    static Direction getRandom() {
-        int temp = random.nextInt(4);
+    public static Direction getRandom() {
+        int temp = com.badlogic.gdx.math.MathUtils.random.nextInt(4);
         switch (temp) {
             case 0:
                 return Forward;

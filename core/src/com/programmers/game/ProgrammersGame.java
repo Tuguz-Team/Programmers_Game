@@ -1,6 +1,6 @@
-package com.mygdx.game;
+package com.programmers.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
@@ -19,19 +19,23 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
+import com.programmers.enums.Difficulty;
+import com.programmers.game_objects.Base;
+import com.programmers.game_objects.Car;
+
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public class ProgrammersGame extends ApplicationAdapter {
+public class ProgrammersGame extends Game {
 
-	private static int size;
-	private static int playersCount;
+	private int size;
+	private int playersCount;
 
 	private Field field;
 	private GameController gameController;
-	static Difficulty difficulty;
+	private com.programmers.enums.Difficulty difficulty;
 
-	static Array<ModelInstance> instances;
-	static AssetManager assetManager;
+	private Array<ModelInstance> instances;
+	private AssetManager assetManager;
 	private boolean loading;
 
 	private PerspectiveCamera camera;
@@ -40,13 +44,29 @@ public class ProgrammersGame extends ApplicationAdapter {
 	private UIController uiController;
 	private MyGestureDetector myGestureDetector;
 
-	public ProgrammersGame(final Difficulty difficulty, final int players) {
-		ProgrammersGame.difficulty = difficulty;
+	public ProgrammersGame(final com.programmers.enums.Difficulty difficulty, final int players) {
+		this.difficulty = difficulty;
 		playersCount = players;
 	}
 
-	static int getSize() {
+	public int getSize() {
 		return size;
+	}
+
+	public Array<ModelInstance> getInstances() {
+		return instances;
+	}
+
+	public int getPlayersCount() {
+		return playersCount;
+	}
+
+	public Difficulty getDifficulty() {
+		return difficulty;
+	}
+
+	public AssetManager getAssetManager() {
+		return assetManager;
 	}
 
 	@Override
@@ -75,10 +95,10 @@ public class ProgrammersGame extends ApplicationAdapter {
 		camera.far = 100f;
 		camera.update();
 
-		myGestureDetector = new MyGestureDetector(camera);
+		myGestureDetector = new MyGestureDetector(camera, this);
 		Gdx.input.setInputProcessor(new GestureDetector(myGestureDetector));
 
-		field = new Field();
+		field = new Field(this);
 		Player[] players = new Player[playersCount];
 		Array<Base> bases = new Array<>(new Base[] {
 				(Base)field.getChunks()[0][0], (Base)field.getChunks()[0][size - 1],

@@ -1,18 +1,29 @@
-package com.mygdx.game;
+package com.programmers.game;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.programmers.enums.Direction;
+import com.programmers.game_objects.Base;
+import com.programmers.game_objects.Car;
+import com.programmers.game_objects.Chunk;
+import com.programmers.game_objects.Life;
+import com.programmers.game_objects.Lift;
+import com.programmers.game_objects.Wall;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-class Field {
+public final class Field {
 
-    //private FieldBox[] fieldBoxes = new FieldBox[4];
-    private final int size = ProgrammersGame.getSize();
+    private final int size;
+    private ProgrammersGame programmersGame;
     private final Chunk[][] chunks;
     private final Vector3 offset;
 
-    Field() {
+    Field(final ProgrammersGame programmersGame) {
+        this.programmersGame = programmersGame;
+        size = programmersGame.getSize();
         offset = new Vector3(
                 (1 - size) * Chunk.width / 2f,
                 0f,
@@ -21,27 +32,26 @@ class Field {
         generateField();
     }
 
-    Vector3 getOffset() {
+    public Vector3 getOffset() {
         return offset;
     }
 
-    Chunk[][] getChunks() {
+    public Chunk[][] getChunks() {
         return chunks;
     }
 
-    int getSize() {
+    public ProgrammersGame getProgrammersGame() {
+        return programmersGame;
+    }
+
+    public int getSize() {
         return size;
     }
 
     private void generateField() {
-        switch (ProgrammersGame.difficulty) {
+        switch (programmersGame.getDifficulty()) {
             case Easy: {
-                // Array initializing
-                for (int i = 0; i < size; i++) {
-                    for (int j = 0; j < size; j++)
-                        chunks[i][j] = new Chunk(i, 0, j,
-                                new Color(253 / 255f, 208 / 255f, 2 / 255f, 1f), this);
-                }
+                initializing(253 / 255f, 208 / 255f, 2 / 255f);
                 // Set position of square 2x2
                 int i_ = random.nextInt(size - 1), j_ = random.nextInt(size - 1);
                 for (int i = i_; i < i_ + 2; i++) {
@@ -74,17 +84,14 @@ class Field {
                         chunks[i][j].setColor(color);
                     }
                 }
+                // Generate game objects
                 generateBases();
                 generateLives();
+                generateWalls();
                 break;
             }
             case Hard: {
-                // Array initializing
-                for (int i = 0; i < size; i++) {
-                    for (int j = 0; j < size; j++)
-                        chunks[i][j] = new Chunk(i, 0, j,
-                                new Color(247 / 255f, 64 / 255f, 103 / 255f, 1f), this);
-                }
+                initializing(247 / 255f, 64 / 255f, 103 / 255f);
                 // Set position of rectangle 3x6 (height is 2)
                 int i1, j1, length1, width1;
                 do {
@@ -223,42 +230,26 @@ class Field {
                         chunks[i][j].setColor(new Color(240 / 255f, 203 / 255f, 90 / 255f, 1f));
                     }
                 }
+                // Generate game objects
                 generateBases();
+                generateLives();
                 for (int i = 0; i < 2; i++) {
                     generateLifts(i1, j1, length1, width1);
                     generateLifts(i2, j2, length2, width2);
                     generateLifts(i3, j3, 3, 3);
                 }
-                generateLives();
                 generateWalls();
                 break;
             }
         }
-        /*
-        final float width = Chunk.width / 4;
-        final float length = size * Chunk.width + 2 * width;
-        final float height = Chunk.height * ProgrammersGame.maxHeight;
-        fieldBoxes[0] = new FieldBox(-Chunk.width / 2 - width / 2, (size - 1) / 2f * Chunk.width, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(width, height, length,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-        );
-        fieldBoxes[1] = new FieldBox((size - 1) / 2f * Chunk.width, -Chunk.width / 2 - width / 2, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(length, height, width,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-                );
-        fieldBoxes[2] = new FieldBox(size * Chunk.width - Chunk.width / 2 + width / 2, (size - 1) / 2f * Chunk.width, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(width, height, length,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-        );
-        fieldBoxes[3] = new FieldBox((size - 1) / 2f * Chunk.width, size * Chunk.width - Chunk.width / 2 + width / 2, height / 2 - Chunk.height / 2,
-                new ModelBuilder().createBox(length, height, width,
-                        new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-                        VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal)
-        );
-        */
+    }
+
+    private void initializing(float r, float g, float b) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++)
+                chunks[i][j] = new Chunk(i, 0, j,
+                        new Color(r, g, b, 1f), this);
+        }
     }
 
     private void generateBases() {
@@ -267,35 +258,10 @@ class Field {
         int i = 0;
         while (!b[0] || !b[1] || !b[2] || !b[3]) {
             int temp = random.nextInt(4);
-            switch (temp) {
-                case 0:
-                    if (!b[0]) {
-                        colors[i] = Car.Color.RED;
-                        i++;
-                        b[0] = true;
-                    }
-                    break;
-                case 1:
-                    if (!b[1]) {
-                        colors[i] = Car.Color.GREEN;
-                        i++;
-                        b[1] = true;
-                    }
-                    break;
-                case 2:
-                    if (!b[2]) {
-                        colors[i] = Car.Color.YELLOW;
-                        i++;
-                        b[2] = true;
-                    }
-                    break;
-                case 3:
-                default:
-                    if (!b[3]) {
-                        colors[i] = Car.Color.BLUE;
-                        i++;
-                        b[3] = true;
-                    }
+            if (!b[temp]) {
+                colors[i] = Car.Color.fromInt(temp);
+                i++;
+                b[temp] = true;
             }
         }
         chunks[0][0] = new Base(0, chunks[0][0].getY(), 0, this, colors[0]);
@@ -306,14 +272,14 @@ class Field {
     }
 
     private void generateLifts(final int i, final int j, final int length, final int width) {
-        Direction direction;
+        com.programmers.enums.Direction direction;
         int temp = 0;
-        do direction = Direction.getRandom();
+        do direction = com.programmers.enums.Direction.getRandom();
         while (liftNotGenerated(i, j, length, width, direction) && (temp++ < 10));
     }
 
     private boolean liftNotGenerated(final int i, final int j, final int length, final int width,
-                                     final Direction direction) {
+                                     final com.programmers.enums.Direction direction) {
         int temp = 0;
         switch (direction) {
             case Forward:
@@ -413,43 +379,75 @@ class Field {
     }
 
     private void generateLives() {
-        int end;
-        switch (ProgrammersGame.difficulty) {
+        GridPoint2[] gridPoint2;
+        int[] typeCount;
+        switch (programmersGame.getDifficulty()) {
             case Easy:
-                end = 3;
+                typeCount = new int[]{ 3, 3, 3, 3 };
+                gridPoint2 = new GridPoint2[] {
+                        new GridPoint2(0, 1),
+                        new GridPoint2(0, 3),
+                        new GridPoint2(1, 2),
+                        new GridPoint2(1, 4),
+                        new GridPoint2(2, 0),
+                        new GridPoint2(2, 3),
+                        new GridPoint2(3, 2),
+                        new GridPoint2(3, 5),
+                        new GridPoint2(4, 1),
+                        new GridPoint2(4, 3),
+                        new GridPoint2(4, 4),
+                        new GridPoint2(5, 2)
+                };
                 break;
             case Hard:
             default:
-                end = 5;
+                typeCount = new int[]{ 5, 5, 5, 5 };
+                gridPoint2 = new GridPoint2[] {
+                        new GridPoint2(0, 2),
+                        new GridPoint2(1, 3),
+                        new GridPoint2(1, 6),
+                        new GridPoint2(2, 1),
+                        new GridPoint2(2, 4),
+                        new GridPoint2(2, 7),
+                        new GridPoint2(3, 0),
+                        new GridPoint2(3, 2),
+                        new GridPoint2(3, 5),
+                        new GridPoint2(3, 7),
+                        new GridPoint2(4, 4),
+                        new GridPoint2(5, 1),
+                        new GridPoint2(5, 3),
+                        new GridPoint2(5, 8),
+                        new GridPoint2(6, 6),
+                        new GridPoint2(6, 8),
+                        new GridPoint2(7, 3),
+                        new GridPoint2(7, 6),
+                        new GridPoint2(8, 2),
+                        new GridPoint2(8, 4)
+                };
+                break;
         }
-        int x, z;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < end; j++) {
-                do {
-                    x = random.nextInt(size);
-                    z = random.nextInt(size);
-                } while ((x < 2 && (z < 2 || z > 6)) || (x > 6 && (z < 2 || z > 6))
-                        || !chunks[x][z].getLives().isEmpty()
-                        || chunks[x][z].getLift() != null
-                        || chunks[x][z] instanceof Base
-                        || chunks[x][z].getLivesCount() > 1);
-                new Life(chunks[x][z], Life.Type.fromInt(i));
-            }
+        int k;
+        for (GridPoint2 point : gridPoint2) {
+            do {
+                k = random.nextInt(4);
+            } while (typeCount[k] == 0);
+            typeCount[k]--;
+            new Life(chunks[point.x][point.y], Life.Type.fromInt(k));
         }
     }
 
     private void generateWalls() {
         int count;
-        switch (ProgrammersGame.difficulty) {
+        switch (programmersGame.getDifficulty()) {
             case Easy:
-                count = random.nextInt(5) + 10;
+                count = random.nextInt(3) + 12;
                 break;
             case Hard:
             default:
-                count = random.nextInt(11) + 20;
+                count = random.nextInt(8) + 23;
         }
         int x, z;
-        Direction direction;
+        com.programmers.enums.Direction direction;
         Wall wall;
         while (count-- > 0) {
             do {
@@ -479,29 +477,19 @@ class Field {
         }
     }
 
-    void loading() {
+    public void loading() {
         for (Chunk[] chunks : chunks) {
             for (Chunk chunk : chunks) {
                 chunk.loading();
             }
         }
-        /*
-        for (FieldBox fieldBox : fieldBoxes) {
-            fieldBox.loading();
-        }
-        */
     }
 
-    void doneLoading() {
+    public void doneLoading() {
         for (Chunk[] chunks : chunks) {
             for (Chunk chunk : chunks) {
                 chunk.doneLoading();
             }
         }
-        /*
-        for (FieldBox fieldBox : fieldBoxes) {
-            fieldBox.doneLoading();
-        }
-        */
     }
 }

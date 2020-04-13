@@ -1,27 +1,31 @@
-package com.mygdx.game;
+package com.programmers.game_objects;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Vector3;
 
-class Lift extends Chunk {
+public final class Lift extends Chunk {
 
-    Lift(Chunk from, Chunk lift) {
+    public Lift(Chunk from, Chunk lift) {
         super(from.getX(), from.getY(), from.getZ(), from.getColor(), from.getField());
         this.setLift(lift);
         lift.setLift(this);
+        getLives().addAll(from.getLives());
     }
 
     @Override
-    void loading() {
+    public void loading() {
         setModelFileName("Models/Terrain/Lift/Lift.obj");
-        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
+        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
+        for (Life life : getLives()) {
+            life.loading();
+        }
     }
 
     @Override
-    void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
+    public void doneLoading() {
+        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
@@ -36,6 +40,9 @@ class Lift extends Chunk {
         } else if (getLift().getZ() < getZ()) {
             getModelInstance().transform.rotate(Vector3.Y, 180f);
         }
-        ProgrammersGame.instances.add(getModelInstance());
+        getProgrammersGame().getInstances().add(getModelInstance());
+        for (Life life : getLives()) {
+            life.doneLoading();
+        }
     }
 }

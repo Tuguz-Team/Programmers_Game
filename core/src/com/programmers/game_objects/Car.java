@@ -1,16 +1,19 @@
-package com.mygdx.game;
+package com.programmers.game_objects;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
-
+import com.programmers.enums.Direction;
+import com.programmers.interfaces.ICard;
+import com.programmers.game.Player;
+import com.programmers.interfaces.Procedure;
 import static com.badlogic.gdx.math.MathUtils.random;
 
-class Car extends GameObject implements ICard {
+public final class Car extends GameObject implements ICard {
 
-    private static final int size = ProgrammersGame.getSize();
+    private final int size;
 
     private final Player player;
     private final Array<Life> lives = new Array<>(3);
@@ -19,20 +22,34 @@ class Car extends GameObject implements ICard {
     private Direction direction;
     private boolean compensated;
 
-    enum Color {
+    public enum Color {
         RED,
         GREEN,
         YELLOW,
-        BLUE
+        BLUE;
+
+        public static Color fromInt(int i) {
+            switch (i % 4) {
+                case 0:
+                    return RED;
+                case 1:
+                    return GREEN;
+                case 2:
+                    return YELLOW;
+                default:
+                    return BLUE;
+            }
+        }
     }
 
-    Car(final Base base, final Player player) {
-        super(base.getX(), base.getY() + 1, base.getZ());
+    public Car(final Base base, final Player player) {
+        super(base.getX(), base.getY() + 1, base.getZ(), base.getProgrammersGame());
         this.base = base;
         this.player = player;
+        this.size = getProgrammersGame().getSize();
         base.setCar(this);
         StringBuilder stringBuilder = new StringBuilder("Models/");
-        switch (ProgrammersGame.difficulty) {
+        switch (getProgrammersGame().getDifficulty()) {
             case Hard:
                 stringBuilder.append("Hard");
                 break;
@@ -56,16 +73,16 @@ class Car extends GameObject implements ICard {
         setModelFileName(stringBuilder.toString());
     }
 
-    Player getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
-    Array<Life> getLives() {
+    public Array<Life> getLives() {
         return lives;
     }
 
     @Override
-    void setX(final int x) {
+    public void setX(final int x) {
         super.setX(x);
         if (getModelInstance() != null) {
             getModelInstance().transform.setTranslation(new Vector3(x * Chunk.width,
@@ -74,7 +91,7 @@ class Car extends GameObject implements ICard {
     }
 
     @Override
-    void setY(final int y) {
+    public void setY(final int y) {
         super.setY(y);
         if (getModelInstance() != null) {
             getModelInstance().transform.setTranslation(new Vector3(getX() * Chunk.width,
@@ -83,7 +100,7 @@ class Car extends GameObject implements ICard {
     }
 
     @Override
-    void setZ(final int z) {
+    public void setZ(final int z) {
         super.setZ(z);
         if (getModelInstance() != null) {
             getModelInstance().transform.setTranslation(new Vector3(getX() * Chunk.width,
@@ -92,7 +109,7 @@ class Car extends GameObject implements ICard {
     }
 
     @Override
-    void setPosition(final int x, final int y, final int z) {
+    public void setPosition(final int x, final int y, final int z) {
         super.setPosition(x, y, z);
         if (getModelInstance() != null) {
             getModelInstance().transform.setTranslation(new Vector3(
@@ -104,7 +121,7 @@ class Car extends GameObject implements ICard {
     }
 
     @Override
-    void setPosition(GameObject other) {
+    public void setPosition(GameObject other) {
         super.setPosition(other);
         setY(getY() + 1);
         if (getModelInstance() != null) {
@@ -117,13 +134,13 @@ class Car extends GameObject implements ICard {
     }
 
     @Override
-    void loading() {
-        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
+    public void loading() {
+        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
     }
 
     @Override
-    void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
+    public void doneLoading() {
+        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.001f,
@@ -177,7 +194,7 @@ class Car extends GameObject implements ICard {
             case Right:
                 getModelInstance().transform.rotate(Vector3.Y, -90f);
         }
-        ProgrammersGame.instances.add(getModelInstance());
+        getProgrammersGame().getInstances().add(getModelInstance());
     }
 
     @Override
@@ -434,7 +451,7 @@ class Car extends GameObject implements ICard {
                         Chunk base = car.base;
                         for (Life life : car.lives) {
                             life.setPosition(nextChunk);
-                            ProgrammersGame.instances.add(life.getModelInstance());
+                            getProgrammersGame().getInstances().add(life.getModelInstance());
                         }
                         nextChunk.getLives().addAll(car.lives);
                         car.lives.clear();
@@ -496,7 +513,7 @@ class Car extends GameObject implements ICard {
         for (int i = lives.size; i < 3 && !chunk.getLives().isEmpty(); i++) {
             lives.add(chunk.getLives().get(chunk.getLives().size - 1));
             chunk.getLives().removeIndex(chunk.getLives().size - 1);
-            ProgrammersGame.instances.removeValue(lives.get(lives.size - 1).getModelInstance(), false);
+            getProgrammersGame().getInstances().removeValue(lives.get(lives.size - 1).getModelInstance(), false);
         }
         // if [chunk] is base:
         if (chunk instanceof Base

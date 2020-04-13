@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.programmers.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -7,12 +7,14 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import com.programmers.game_objects.Chunk;
+
 class MyGestureDetector implements GestureDetector.GestureListener {
 
-    private final static int size = ProgrammersGame.getSize();
+    private final int size;
 
-    private final static float MIN_ZOOM = size * Chunk.width;
-    private final static float MAX_ZOOM = (size + 2) * Chunk.width;
+    private final float MIN_ZOOM;
+    private final float MAX_ZOOM;
 
     private final static float MIN_ANGLE = 30f;
     private final static float MAX_ANGLE = 60f;
@@ -23,8 +25,11 @@ class MyGestureDetector implements GestureDetector.GestureListener {
     private final PerspectiveCamera camera;
     private boolean locked;
 
-    MyGestureDetector(final PerspectiveCamera camera) {
+    public MyGestureDetector(final PerspectiveCamera camera, final ProgrammersGame programmersGame) {
         this.camera = camera;
+        size = programmersGame.getSize();
+        MIN_ZOOM = size * Chunk.width;
+        MAX_ZOOM = (size + 2) * Chunk.width;
         lockCamera();
     }
 

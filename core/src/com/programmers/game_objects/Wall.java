@@ -1,10 +1,11 @@
-package com.mygdx.game;
+package com.programmers.game_objects;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
+import com.programmers.enums.Direction;
 
-class Wall extends GameObject {
+public final class Wall extends GameObject {
 
     private final static int[] chances = {};
     private final static float width = 0.4f;
@@ -13,8 +14,8 @@ class Wall extends GameObject {
     private final Chunk chunk;
     private final Direction direction;
 
-    Wall(final Chunk chunk, final Direction direction) {
-        super(chunk.getX(), chunk.getY() + 1, chunk.getZ());
+    public Wall(final Chunk chunk, final Direction direction) {
+        super(chunk.getX(), chunk.getY() + 1, chunk.getZ(), chunk.getProgrammersGame());
         this.chunk = chunk;
         this.direction = direction;
         switch (direction) {
@@ -33,19 +34,19 @@ class Wall extends GameObject {
         }
     }
 
-    Direction getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
     @Override
-    void loading() {
+    public void loading() {
         setModelFileName("Models/Terrain/Walls/Wall1/Wall1.obj");
-        ProgrammersGame.assetManager.load(getModelFileName(), Model.class);
+        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
     }
 
     @Override
-    void doneLoading() {
-        setModel(ProgrammersGame.assetManager.get(getModelFileName(), Model.class));
+    public void doneLoading() {
+        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width,
@@ -65,6 +66,6 @@ class Wall extends GameObject {
             default:
                 getModelInstance().transform.rotate(Vector3.Y, -90f);
         }
-        ProgrammersGame.instances.add(getModelInstance());
+        getProgrammersGame().getInstances().add(getModelInstance());
     }
 }

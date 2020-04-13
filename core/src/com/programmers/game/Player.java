@@ -1,26 +1,27 @@
-package com.mygdx.game;
+package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
+import com.programmers.game_objects.Car;
+import com.programmers.game_objects.Life;
 
-class Player {
+public final class Player {
 
     private int score;
-
     private final Car car;
     private final Array<Life> lives;
     private final Array<Card> cards;
 
-    Player(final Car car) {
+    public Player(final Car car) {
         this.car = car;
         lives = new Array<>(10);
         cards = new Array<>(5);
     }
 
-    int getScore() {
+    public int getScore() {
         return score;
     }
 
-    void addScore(final Life.Type type) {
+    public void addScore(final Life.Type type) {
         for (Life life : lives) {
             if (life.getType() == type) {
                 score++;
@@ -30,15 +31,15 @@ class Player {
         score += 2;
     }
 
-    Car getCar() {
+    public Car getCar() {
         return car;
     }
 
-    Array<Life> getLives() {
+    public Array<Life> getLives() {
         return lives;
     }
 
-    Array<Card> getCards() {
+    public Array<Card> getCards() {
         return cards;
     }
 }
