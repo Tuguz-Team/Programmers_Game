@@ -3,7 +3,6 @@ package com.programmers.game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Direction;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
@@ -425,6 +424,23 @@ public final class Field {
                         new GridPoint2(8, 4)
                 };
                 break;
+        }
+        if (random.nextBoolean()) {
+            // Transpose the matrix
+            for (GridPoint2 point : gridPoint2) {
+                int temp = point.x;
+                point.x = point.y;
+                point.y = temp;
+            }
+        }
+        // Mirror the matrix
+        boolean swapX = random.nextBoolean(),
+                swapY = random.nextBoolean();
+        for (GridPoint2 point : gridPoint2) {
+            if (swapX)
+                point.x = size - 1 - point.x;
+            if (swapY)
+                point.y = size - 1 - point.y;
         }
         int k;
         for (GridPoint2 point : gridPoint2) {

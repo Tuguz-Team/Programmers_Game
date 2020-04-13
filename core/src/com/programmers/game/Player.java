@@ -3,8 +3,10 @@ package com.programmers.game;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game_objects.Car;
 import com.programmers.game_objects.Life;
+import com.programmers.interfaces.ICard;
+import com.programmers.interfaces.Procedure;
 
-public final class Player {
+public final class Player implements ICard {
 
     private int score;
     private final Car car;
@@ -41,5 +43,50 @@ public final class Player {
 
     public Array<Card> getCards() {
         return cards;
+    }
+
+    @Override
+    public boolean stepForward() {
+        return car.stepForward();
+    }
+
+    @Override
+    public void stepForwardToFloor() {
+        car.stepForwardToFloor();
+    }
+
+    @Override
+    public void jump() {
+        car.jump();
+    }
+
+    @Override
+    public void turn90Left() {
+        car.turn90Left();
+    }
+
+    @Override
+    public void turn90Right() {
+        car.turn90Right();
+    }
+
+    @Override
+    public void turn180() {
+        car.turn180();
+    }
+
+    @Override
+    public void cycle2(Procedure[] procedures) {
+        car.cycle2(procedures);
+    }
+
+    @Override
+    public void cycle3(Procedure[] procedures) {
+        car.cycle3(procedures);
+    }
+
+    @Override
+    public void teleport() {
+        car.teleport();
     }
 }

@@ -498,7 +498,7 @@ public final class Car extends GameObject implements ICard {
         }
     }
 
-    void compensation(final Car other) {
+    public void compensation(final Car other) {
         if (!compensated) {
             if (lives.size < 3 && !other.lives.isEmpty()) {
                 lives.add(other.lives.get(other.lives.size - 1));
