@@ -113,40 +113,28 @@ public final class Field {
                     if (length1 > width1) {
                         i2 = random.nextInt(size - length2 + 1);
                         if (j1 < 3) {
-                            j2 = (i1 == 0 || i1 == 3)
-                                    ? j1 + width1
-                                    : 3;
+                            j2 = (i1 == 0 || i1 == 3) ? j1 + width1 : 3;
                         } else if (j1 == 3) {
                             j2 = random.nextBoolean() ? 0 : 6;
                         } else {
-                            j2 = (i1 == 0 || i1 == 3)
-                                    ? j1 - width1
-                                    : 3;
+                            j2 = (i1 == 0 || i1 == 3) ? j1 - width1 : 3;
                         }
                     } else {
                         if (i1 == 0) {
                             j2 = random.nextInt(size - width2 + 1);
                             if (j1 == 0) {
-                                i2 = (j2 == 6)
-                                        ? random.nextInt(size - length2)
-                                        : 3;
+                                i2 = (j2 == 6) ? random.nextInt(size - length2) : 3;
                             } else if (j1 == 3) {
-                                i2 = (j2 == 0)
-                                        ? random.nextInt(size - length2)
-                                        : 3;
+                                i2 = (j2 == 0) ? random.nextInt(size - length2) : 3;
                             } else {
                                 i2 = 3;
                             }
                         } else if (i1 == 6) {
                             j2 = random.nextInt(size - width2 + 1);
                             if (j1 == 0) {
-                                i2 = (j2 == 6)
-                                        ? random.nextInt(size - length2)
-                                        : 0;
+                                i2 = (j2 == 6) ? random.nextInt(size - length2) : 0;
                             } else if (j1 == 3) {
-                                i2 = (j2 == 0)
-                                        ? random.nextInt(size - length2)
-                                        : 0;
+                                i2 = (j2 == 0) ? random.nextInt(size - length2) : 0;
                             } else {
                                 i2 = 0;
                             }
@@ -160,26 +148,18 @@ public final class Field {
                         if (j1 == 0) {
                             i2 = random.nextInt(size - length2 + 1);
                             if (i1 == 0) {
-                                j2 = (i2 == 6)
-                                        ? random.nextInt(size - width2)
-                                        : 3;
+                                j2 = (i2 == 6) ? random.nextInt(size - width2) : 3;
                             } else if (i1 == 3) {
-                                j2 = (i2 == 0)
-                                        ? random.nextInt(size - width2)
-                                        : 3;
+                                j2 = (i2 == 0) ? random.nextInt(size - width2) : 3;
                             } else {
                                 j2 = 3;
                             }
                         } else if (j1 == 6) {
                             i2 = random.nextInt(size - length2 + 1);
                             if (i1 == 0) {
-                                j2 = (i2 == 6)
-                                        ? random.nextInt(size - width2)
-                                        : 0;
+                                j2 = (i2 == 6) ? random.nextInt(size - width2) : 0;
                             } else if (i1 == 3) {
-                                j2 = (i2 == 0)
-                                        ? random.nextInt(size - width2)
-                                        : 0;
+                                j2 = (i2 == 0) ? random.nextInt(size - width2) : 0;
                             } else {
                                 j2 = 0;
                             }
@@ -190,15 +170,11 @@ public final class Field {
                     } else {
                         j2 = random.nextInt(size - width2 + 1);
                         if (i1 < 3) {
-                            i2 = (j1 == 0 || j1 == 3)
-                                    ? i1 + length1
-                                    : 3;
+                            i2 = (j1 == 0 || j1 == 3) ? i1 + length1 : 3;
                         } else if (i1 == 3) {
                             i2 = random.nextBoolean() ? 0 : 6;
                         } else {
-                            i2 = (j1 == 0 || j1 == 3)
-                                    ? i1 - length1
-                                    : 3;
+                            i2 = (j1 == 0 || j1 == 3) ? i1 - length1 : 3;
                         }
                     }
                 }
@@ -283,16 +259,15 @@ public final class Field {
         switch (direction) {
             case Forward:
                 if (j + width < size) {
+                    for (int k = i; k < i + length; k++) {
+                        if (chunks[k][j + width - 1] instanceof Lift)
+                            return true;
+                    }
                     int iTemp;
                     do {
                         if (++temp > 10)
                             return true;
                         iTemp = random.nextInt(length) + i;
-                        for (int k = i; k < i + length; k++) {
-                            if (chunks[k][j + width - 1] instanceof Lift) {
-                                return true;
-                            }
-                        }
                     }
                     while (chunks[iTemp][j + width - 1].getY() <= chunks[iTemp][j + width].getY()
                             || chunks[iTemp][j + width].getLift() != null
@@ -306,16 +281,15 @@ public final class Field {
                 return true;
             case Back:
                 if (j > 0) {
+                    for (int k = i; k < i + length; k++) {
+                        if (chunks[k][j] instanceof Lift)
+                            return true;
+                    }
                     int iTemp;
                     do {
                         if (++temp > 10)
                             return true;
                         iTemp = random.nextInt(length) + i;
-                        for (int k = i; k < i + length; k++) {
-                            if (chunks[k][j] instanceof Lift) {
-                                return true;
-                            }
-                        }
                     }
                     while (chunks[iTemp][j].getY() <= chunks[iTemp][j - 1].getY()
                             || chunks[iTemp][j - 1].getLift() != null
@@ -329,16 +303,15 @@ public final class Field {
                 return true;
             case Left:
                 if (i + length < size) {
+                    for (int k = j; k < j + width; k++) {
+                        if (chunks[i + length - 1][k] instanceof Lift)
+                            return true;
+                    }
                     int jTemp;
                     do {
                         if (++temp > 10)
                             return true;
                         jTemp = random.nextInt(width) + j;
-                        for (int k = j; k < j + width; k++) {
-                            if (chunks[i + length - 1][k] instanceof Lift) {
-                                return true;
-                            }
-                        }
                     }
                     while (chunks[i + length - 1][jTemp].getY() <= chunks[i + length][jTemp].getY()
                             || chunks[i + length][jTemp].getLift() != null
@@ -353,16 +326,15 @@ public final class Field {
             case Right:
             default:
                 if (i > 0) {
+                    for (int k = j; k < j + width; k++) {
+                        if (chunks[i][k] instanceof Lift)
+                            return true;
+                    }
                     int jTemp;
                     do {
                         if (++temp > 10)
                             return true;
                         jTemp = random.nextInt(width) + j;
-                        for (int k = j; k < j + width; k++) {
-                            if (chunks[i][k] instanceof Lift) {
-                                return true;
-                            }
-                        }
                     }
                     while (chunks[i][jTemp].getY() <= chunks[i - 1][jTemp].getY()
                             || chunks[i - 1][jTemp].getLift() != null
