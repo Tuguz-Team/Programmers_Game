@@ -14,7 +14,7 @@ public final class Wall extends GameObject {
     private final Direction direction;
 
     public Wall(final Chunk chunk, final Direction direction) {
-        super(chunk.getX(), chunk.getY() + 1, chunk.getZ(), chunk.getProgrammersGame());
+        super(chunk.getX(), chunk.getY() + 1, chunk.getZ(), chunk.getGameScreen());
         this.chunk = chunk;
         this.direction = direction;
         switch (direction) {
@@ -40,12 +40,12 @@ public final class Wall extends GameObject {
     @Override
     public void loading() {
         setModelFileName("Models/Terrain/Walls/Wall1/Wall1.obj");
-        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
+        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
     }
 
     @Override
     public void doneLoading() {
-        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
+        setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width,
@@ -65,6 +65,6 @@ public final class Wall extends GameObject {
             default:
                 getModelInstance().transform.rotate(Vector3.Y, -90f);
         }
-        getProgrammersGame().getInstances().add(getModelInstance());
+        getGameScreen().getInstances().add(getModelInstance());
     }
 }

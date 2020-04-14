@@ -5,15 +5,14 @@ import android.view.View;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.programmers.enums.Difficulty;
-import com.programmers.game.ProgrammersGame;
+import com.programmers.screens.ScreenLoader;
 
 public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new ProgrammersGame(Difficulty.Hard, 4), config);
+		initialize(new ScreenLoader(), config);
 
 		setImmersiveSticky();
 		getWindow().getDecorView().setOnSystemUiVisibilityChangeListener

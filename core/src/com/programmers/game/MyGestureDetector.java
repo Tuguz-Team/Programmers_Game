@@ -8,8 +8,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import com.programmers.game_objects.Chunk;
+import com.programmers.screens.GameScreen;
 
-class MyGestureDetector implements GestureDetector.GestureListener {
+public class MyGestureDetector implements GestureDetector.GestureListener {
 
     private final int size;
 
@@ -25,19 +26,19 @@ class MyGestureDetector implements GestureDetector.GestureListener {
     private final PerspectiveCamera camera;
     private boolean locked;
 
-    public MyGestureDetector(final PerspectiveCamera camera, final ProgrammersGame programmersGame) {
+    public MyGestureDetector(final PerspectiveCamera camera, final GameScreen gameScreen) {
         this.camera = camera;
-        size = programmersGame.getSize();
+        size = gameScreen.getSize();
         MIN_ZOOM = size * Chunk.width;
         MAX_ZOOM = (size + 2) * Chunk.width;
         lockCamera();
     }
 
-    void lockCamera() {
+    public void lockCamera() {
         locked = true;
     }
 
-    void unlockCamera() {
+    public void unlockCamera() {
         locked = false;
     }
 
@@ -101,7 +102,7 @@ class MyGestureDetector implements GestureDetector.GestureListener {
         return true;
     }
 
-    void cameraPosChange() {
+    public void cameraPosChange() {
         if (!locked) {
             if ((isVelXPositive && velocityX > 0) || (!isVelXPositive && velocityX < 0)) {
                 camera.rotateAround(new Vector3(),

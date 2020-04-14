@@ -10,20 +10,20 @@ import com.programmers.game_objects.Chunk;
 import com.programmers.game_objects.Life;
 import com.programmers.game_objects.Lift;
 import com.programmers.game_objects.Wall;
+import com.programmers.screens.GameScreen;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
 public final class Field {
 
     private final int size;
-
-    private ProgrammersGame programmersGame;
+    private GameScreen gameScreen;
     private final Chunk[][] chunks;
     private final Vector3 offset;
 
-    Field(final ProgrammersGame programmersGame) {
-        this.programmersGame = programmersGame;
-        size = programmersGame.getSize();
+    public Field(final GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
+        size = gameScreen.getSize();
         offset = new Vector3(
                 (1 - size) * Chunk.width / 2f,
                 0f,
@@ -40,8 +40,8 @@ public final class Field {
         return chunks;
     }
 
-    public ProgrammersGame getProgrammersGame() {
-        return programmersGame;
+    public GameScreen getGameScreen() {
+        return gameScreen;
     }
 
     public int getSize() {
@@ -49,7 +49,7 @@ public final class Field {
     }
 
     private void generateField() {
-        switch (programmersGame.getDifficulty()) {
+        switch (gameScreen.getDifficulty()) {
             case Easy: {
                 initializing(253 / 255f, 208 / 255f, 2 / 255f);
                 // Set position of square 2x2
@@ -353,7 +353,7 @@ public final class Field {
     private void generateLives() {
         GridPoint2[] gridPoint2;
         int[] typeCount;
-        switch (programmersGame.getDifficulty()) {
+        switch (gameScreen.getDifficulty()) {
             case Easy:
                 typeCount = new int[]{ 3, 3, 3, 3 };
                 gridPoint2 = new GridPoint2[] {
@@ -427,7 +427,7 @@ public final class Field {
 
     private void generateWalls() {
         int count;
-        switch (programmersGame.getDifficulty()) {
+        switch (gameScreen.getDifficulty()) {
             case Easy:
                 count = random.nextInt(3) + 12;
                 break;

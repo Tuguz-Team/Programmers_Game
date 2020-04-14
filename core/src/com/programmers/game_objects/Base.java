@@ -16,7 +16,7 @@ public final class Base extends Chunk {
         super(x, y, z, null, field);
         this.baseColor = baseColor;
         StringBuilder stringBuilder = new StringBuilder("Models/");
-        switch (getProgrammersGame().getDifficulty()) {
+        switch (getGameScreen().getDifficulty()) {
             case Easy:
                 labColors = new Array<>(4);
                 labColors.addAll(Car.Color.Red, Car.Color.Green, Car.Color.Yellow, Car.Color.Blue);
@@ -45,19 +45,19 @@ public final class Base extends Chunk {
 
     @Override
     public void loading() {
-        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
+        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
     }
 
     @Override
     public void doneLoading() {
-        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
+        setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
                 getY() * height,
                 getZ() * width
         ).add(getField().getOffset()));
-        getProgrammersGame().getInstances().add(getModelInstance());
+        getGameScreen().getInstances().add(getModelInstance());
     }
 
     public Car.Color getBaseColor() {

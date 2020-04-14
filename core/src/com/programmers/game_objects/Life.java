@@ -14,7 +14,7 @@ public final class Life extends GameObject {
     private String typeModelFileName;
 
     public Life(final Chunk chunk, final Type type) {
-        super(chunk.getX(), chunk.getY() + 1, chunk.getZ(), chunk.getProgrammersGame());
+        super(chunk.getX(), chunk.getY() + 1, chunk.getZ(), chunk.getGameScreen());
         this.type = type;
         this.field = chunk.getField();
         chunk.getLives().add(this);
@@ -24,21 +24,21 @@ public final class Life extends GameObject {
 
     @Override
     public void loading() {
-        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
-        getProgrammersGame().getAssetManager().load(typeModelFileName, Model.class);
+        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
+        getGameScreen().getAssetManager().load(typeModelFileName, Model.class);
     }
 
     @Override
     public void doneLoading() {
-        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
-        typeModel = getProgrammersGame().getAssetManager().get(typeModelFileName, Model.class);
+        setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
+        typeModel = getGameScreen().getAssetManager().get(typeModelFileName, Model.class);
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.002f,
                 getY() * Chunk.height + 0.002f,
                 getZ() * Chunk.width + 0.002f
         ).add(field.getOffset()));
-        getProgrammersGame().getInstances().add(getModelInstance());
+        getGameScreen().getInstances().add(getModelInstance());
     }
 
     @Override

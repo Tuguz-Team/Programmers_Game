@@ -4,25 +4,25 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-class UIController {
+public final class UIController {
 
     private Stage stage;
     private Skin skin;
     private SpriteBatch spriteBatch;
 
-    UIController(Skin skin) {
+    public UIController(Skin skin) {
         this.skin = skin;
         stage = new Stage();
         spriteBatch = new SpriteBatch();
     }
 
-    void draw() {
+    public void draw() {
         spriteBatch.begin();
         // draw something
         spriteBatch.end();
     }
 
-    void dispose() {
+    public void dispose() {
         stage.dispose();
         skin.dispose();
         spriteBatch.dispose();

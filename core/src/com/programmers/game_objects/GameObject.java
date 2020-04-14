@@ -3,29 +3,29 @@ package com.programmers.game_objects;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
-import com.programmers.game.ProgrammersGame;
+import com.programmers.screens.GameScreen;
 
 public abstract class GameObject {
 
-    private ProgrammersGame programmersGame;
+    private GameScreen gameScreen;
     private Model model;
     private ModelInstance modelInstance;
     private int x, y, z;
     private String modelFileName;
 
-    protected GameObject(final int x, final int y, final int z, final ProgrammersGame programmersGame) {
+    protected GameObject(final int x, final int y, final int z, final GameScreen gameScreen) {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.programmersGame = programmersGame;
+        this.gameScreen = gameScreen;
     }
 
     abstract protected void loading();
 
     abstract protected void doneLoading();
 
-    protected ProgrammersGame getProgrammersGame() {
-        return programmersGame;
+    protected GameScreen getGameScreen() {
+        return gameScreen;
     }
 
     protected void setPosition(final int x, final int y, final int z) {

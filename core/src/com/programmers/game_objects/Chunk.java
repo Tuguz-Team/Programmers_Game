@@ -25,7 +25,7 @@ public class Chunk extends GameObject {
     private final Field field;
 
     public Chunk(final int x, final int y, final int z, final Color color, final Field field) {
-        super(x, y, z, field.getProgrammersGame());
+        super(x, y, z, field.getGameScreen());
         this.color = color;
         this.field = field;
     }
@@ -171,7 +171,7 @@ public class Chunk extends GameObject {
             stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
         }
         setModelFileName(stringBuilder.toString());
-        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
+        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
         for (Life life : lives) {
             life.loading();
         }
@@ -183,7 +183,7 @@ public class Chunk extends GameObject {
 
     @Override
     public void doneLoading() {
-        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
+        setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * width,
@@ -192,7 +192,7 @@ public class Chunk extends GameObject {
         ).add(field.getOffset()));
         getModelInstance().materials.get(0).set(ColorAttribute.createDiffuse(color));
         getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
-        getProgrammersGame().getInstances().add(getModelInstance());
+        getGameScreen().getInstances().add(getModelInstance());
         for (Life life : lives) {
             life.doneLoading();
         }

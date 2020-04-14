@@ -1,7 +1,7 @@
-package com.programmers.game;
+package com.programmers.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,20 +16,26 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
-
 import com.programmers.enums.Difficulty;
+import com.programmers.game.Field;
+import com.programmers.game.GameController;
+import com.programmers.game.MyGestureDetector;
+import com.programmers.game.Player;
+import com.programmers.game.UIController;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public class ProgrammersGame extends Game {
+public class GameScreen implements Screen {
 
 	private int size;
 	private int playersCount;
 
+	ScreenLoader screenLoader;
 	private Field field;
 	private GameController gameController;
 	private com.programmers.enums.Difficulty difficulty;
@@ -44,33 +50,11 @@ public class ProgrammersGame extends Game {
 	private UIController uiController;
 	private MyGestureDetector myGestureDetector;
 
-	public ProgrammersGame(final com.programmers.enums.Difficulty difficulty, final int players) {
+	public GameScreen(ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
+		this.screenLoader = screenLoader;
 		this.difficulty = difficulty;
-		playersCount = players;
-	}
+		this.playersCount = playersCount;
 
-	public int getSize() {
-		return size;
-	}
-
-	public Array<ModelInstance> getInstances() {
-		return instances;
-	}
-
-	public int getPlayersCount() {
-		return playersCount;
-	}
-
-	public Difficulty getDifficulty() {
-		return difficulty;
-	}
-
-	public AssetManager getAssetManager() {
-		return assetManager;
-	}
-
-	@Override
-	public void create() {
 		switch (difficulty) {
 			case Hard:
 				size = 9;
@@ -86,7 +70,9 @@ public class ProgrammersGame extends Game {
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+
 		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 1f, 0.8f, 0.2f));
 
 		camera = new PerspectiveCamera(67f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.position.set(-size, size, -size);
@@ -143,6 +129,26 @@ public class ProgrammersGame extends Game {
 		}
 	}
 
+	public int getSize() {
+		return size;
+	}
+
+	public Array<ModelInstance> getInstances() {
+		return instances;
+	}
+
+	public int getPlayersCount() {
+		return playersCount;
+	}
+
+	public Difficulty getDifficulty() {
+		return difficulty;
+	}
+
+	public AssetManager getAssetManager() {
+		return assetManager;
+	}
+
 	private void loading() {
 		field.loading();
         for (Player player : gameController.getPlayers()) {
@@ -160,7 +166,12 @@ public class ProgrammersGame extends Game {
 	}
 
 	@Override
-	public void render() {
+	public void show() {
+
+	}
+
+	@Override
+	public void render(float delta) {
 		if (loading && assetManager.update()) {
 			doneLoading();
 			myGestureDetector.unlockCamera();
@@ -178,6 +189,26 @@ public class ProgrammersGame extends Game {
 		modelBatch.end();
 
 		uiController.draw();
+	}
+
+	@Override
+	public void resize(int width, int height) {
+
+	}
+
+	@Override
+	public void pause() {
+
+	}
+
+	@Override
+	public void resume() {
+
+	}
+
+	@Override
+	public void hide() {
+
 	}
 
 	@Override
