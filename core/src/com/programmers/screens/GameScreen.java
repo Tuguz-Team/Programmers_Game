@@ -16,12 +16,11 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameController;
-import com.programmers.game.MyGestureDetector;
+import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
@@ -45,8 +44,7 @@ public class GameScreen implements Screen {
 	private PerspectiveCamera camera;
 	private Environment environment;
 	private ModelBatch modelBatch;
-	private UIController uiController;
-	private MyGestureDetector myGestureDetector;
+	private GameInputProcessor gameInputProcessor;
 
 	public GameScreen(ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
 		this.screenLoader = screenLoader;
@@ -63,7 +61,6 @@ public class GameScreen implements Screen {
 
 		instances = new Array<>();
 		assetManager = new AssetManager();
-		uiController = new UIController(new Skin());
 		modelBatch = new ModelBatch();
 
 		environment = new Environment();
@@ -79,8 +76,8 @@ public class GameScreen implements Screen {
 		camera.far = 100f;
 		camera.update();
 
-		myGestureDetector = new MyGestureDetector(camera, this);
-		Gdx.input.setInputProcessor(new GestureDetector(myGestureDetector));
+		gameInputProcessor = new GameInputProcessor(camera, this);
+		Gdx.input.setInputProcessor(new GestureDetector(gameInputProcessor));
 
 		field = new Field(this);
 		Player[] players = new Player[playersCount];
@@ -172,21 +169,19 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
 		if (loading && assetManager.update()) {
 			doneLoading();
-			myGestureDetector.unlockCamera();
+			gameInputProcessor.unlockCamera();
 		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		myGestureDetector.cameraPosChange();
+		gameInputProcessor.cameraPosChange();
 		camera.update();
 
 		modelBatch.begin(camera);
 		modelBatch.render(instances, environment);
 		modelBatch.end();
-
-		uiController.draw();
 	}
 
 	@Override
@@ -214,6 +209,5 @@ public class GameScreen implements Screen {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();
-		uiController.dispose();
 	}
 }

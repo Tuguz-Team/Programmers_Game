@@ -28,7 +28,6 @@ public class MainMenuScreen extends Stage implements Screen {
     Skin buttonSkin;
     BitmapFont font;
 
-    private SpriteBatch batch; // объект для отрисовки спрайтов нашей игры
     private OrthographicCamera camera; // область просмотра нашей игры
 
     public MainMenuScreen(final ScreenLoader screenLoader) {
@@ -36,7 +35,6 @@ public class MainMenuScreen extends Stage implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
-        batch = new SpriteBatch();
 
         buttonSkin = new Skin();
         buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
@@ -124,10 +122,8 @@ public class MainMenuScreen extends Stage implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         act(Gdx.graphics.getDeltaTime());
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
+        getBatch().setProjectionMatrix(camera.combined);
         draw();
-        batch.end();
     }
 
     @Override
@@ -152,7 +148,6 @@ public class MainMenuScreen extends Stage implements Screen {
 
     @Override
     public void dispose() {
-        batch.dispose();
         buttonSkin.dispose();
         font.dispose();
     }

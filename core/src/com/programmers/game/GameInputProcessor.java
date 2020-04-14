@@ -10,9 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.programmers.game_objects.Chunk;
 import com.programmers.screens.GameScreen;
 
-public class MyGestureDetector implements GestureDetector.GestureListener {
-
-    private final int size;
+public class GameInputProcessor implements GestureDetector.GestureListener {
 
     private final float MIN_ZOOM;
     private final float MAX_ZOOM;
@@ -24,13 +22,16 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
     private final static float MIN_VELOCITY = -MAX_VELOCITY;
 
     private final PerspectiveCamera camera;
-    private boolean locked;
 
-    public MyGestureDetector(final PerspectiveCamera camera, final GameScreen gameScreen) {
+    private boolean locked, isVelXPositive, isVelYPositive, panStop;
+    private float distanceOld;
+    private final Vector2 velocity = new Vector2();
+
+    public GameInputProcessor(final PerspectiveCamera camera, final GameScreen gameScreen) {
         this.camera = camera;
-        size = gameScreen.getSize();
+        int size = gameScreen.getSize();
         MIN_ZOOM = size * Chunk.width;
-        MAX_ZOOM = (size + 2) * Chunk.width;
+        MAX_ZOOM = (size + 3) * Chunk.width;
         lockCamera();
     }
 
@@ -50,8 +51,7 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
     @Override
     public boolean tap(float x, float y, int count, int button) {
         if (!locked) {
-            velocityX = 0;
-            velocityY = 0;
+            velocity.setZero();
         }
         return true;
     }
@@ -66,77 +66,94 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
         if (!locked) {
             velocityX *= Gdx.graphics.getDeltaTime();
             velocityX = MathUtils.clamp(velocityX, MIN_VELOCITY, MAX_VELOCITY);
-            this.velocityX = velocityX;
 
             velocityY *= Gdx.graphics.getDeltaTime();
             velocityY = MathUtils.clamp(velocityY, MIN_VELOCITY, MAX_VELOCITY);
-            this.velocityY = velocityY;
+
+            velocity.set(velocityX, velocityY);
         }
-        return (velocityX != 0) && (velocityY != 0);
+        return velocity.isZero();
     }
 
-    private float velocityX, velocityY;
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
         if (!locked) {
-            velocityX = MathUtils.clamp(deltaX, MIN_VELOCITY, MAX_VELOCITY);
-            camera.rotateAround(new Vector3(),
-                    new Vector3(0f, 1f, 0f),
-                    Gdx.graphics.getDeltaTime() * -velocityX * 2f);
+            panStop = false;
+            velocity.set(
+                    MathUtils.clamp(deltaX, MIN_VELOCITY, MAX_VELOCITY),
+                    MathUtils.clamp(deltaY, MIN_VELOCITY, MAX_VELOCITY)
+            );
 
-            velocityY = MathUtils.clamp(deltaY, MIN_VELOCITY, MAX_VELOCITY);
-            camera.rotateAround(new Vector3(),
+            camera.rotateAround(
+                    new Vector3(),
+                    new Vector3(0f, 1f, 0f),
+                    Gdx.graphics.getDeltaTime() * -velocity.x * 2f
+            );
+            camera.rotateAround(
+                    new Vector3(),
                     new Vector3(0f, 1f, 0f).crs(camera.direction),
-                    Gdx.graphics.getDeltaTime() * velocityY * 2f);
+                    Gdx.graphics.getDeltaTime() * velocity.y * 2f
+            );
         }
-        return (deltaX != 0) && (deltaY != 0);
+        return (deltaX != 0) || (deltaY != 0);
     }
 
-    private boolean isVelXPositive, isVelYPositive;
     @Override
     public boolean panStop(float x, float y, int pointer, int button) {
         if (!locked) {
-            isVelXPositive = velocityX > 0;
-            isVelYPositive = velocityY > 0;
+            isVelXPositive = velocity.x > 0;
+            isVelYPositive = velocity.y > 0;
         }
-        return true;
+        return panStop = true;
     }
 
     public void cameraPosChange() {
         if (!locked) {
-            if ((isVelXPositive && velocityX > 0) || (!isVelXPositive && velocityX < 0)) {
-                camera.rotateAround(new Vector3(),
-                        new Vector3(0f, 1f, 0f),
-                        Gdx.graphics.getDeltaTime() * -velocityX * 2f);
-                velocityX += isVelXPositive
-                        ? -Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2
-                        : Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2;
-            }
+            if (panStop) {
+                if ((isVelXPositive && velocity.x > 0) || (!isVelXPositive && velocity.x < 0)) {
+                    camera.rotateAround(
+                            new Vector3(),
+                            new Vector3(0f, 1f, 0f),
+                            Gdx.graphics.getDeltaTime() * -velocity.x * 2f
+                    );
+                    velocity.x += isVelXPositive
+                            ? -Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2
+                            : Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2;
+                }
 
-            if ((isVelYPositive && velocityY > 0) || (!isVelYPositive && velocityY < 0)) {
-                camera.rotateAround(new Vector3(),
-                        new Vector3(0f, 1f, 0f).crs(camera.direction),
-                        Gdx.graphics.getDeltaTime() * velocityY * 2f);
-                velocityY += isVelYPositive
-                        ? -Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2
-                        : Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2;
+                if ((isVelYPositive && velocity.y > 0) || (!isVelYPositive && velocity.y < 0)) {
+                    camera.rotateAround(
+                            new Vector3(),
+                            new Vector3(0f, 1f, 0f).crs(camera.direction),
+                            Gdx.graphics.getDeltaTime() * velocity.y * 2f
+                    );
+                    velocity.y += isVelYPositive
+                            ? -Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2
+                            : Gdx.graphics.getDeltaTime() * MAX_VELOCITY / 2;
+                }
             }
 
             float vectorAngle = VectorAngle(new Vector3(0, 1, 0), camera.position);
             if (vectorAngle < MIN_ANGLE) {
-                camera.rotateAround(new Vector3(),
+                camera.rotateAround(
+                        new Vector3(),
                         new Vector3(0f, 1f, 0f).crs(camera.direction),
-                        vectorAngle - MIN_ANGLE);
+                        vectorAngle - MIN_ANGLE
+                );
             } else if (vectorAngle > MAX_ANGLE) {
-                camera.rotateAround(new Vector3(),
+                camera.rotateAround(
+                        new Vector3(),
                         new Vector3(0f, 1f, 0f).crs(camera.direction),
-                        vectorAngle - MAX_ANGLE);
+                        vectorAngle - MAX_ANGLE
+                );
             }
 
             if (camera.up.y < 0) {
-                camera.rotateAround(new Vector3(),
+                camera.rotateAround(
+                        new Vector3(),
                         new Vector3(0f, 1f, 0f).crs(camera.direction),
-                        VectorAngle(new Vector3(0, 1, 0), camera.position) * 2);
+                        VectorAngle(new Vector3(0, 1, 0), camera.position) * 2
+                );
             }
 
             camera.lookAt(0f, 0f, 0f);
@@ -147,7 +164,6 @@ public class MyGestureDetector implements GestureDetector.GestureListener {
         return (float)(Math.acos(first.dot(second) / first.len() / second.len()) * 180f / Math.PI);
     }
 
-    private float distanceOld;
     @Override
     public boolean zoom(float initialDistance, float distance) {
         if (!locked) {
