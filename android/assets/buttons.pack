@@ -1,0 +1,19 @@
+
+buttons.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+start_button
+  rotate: false
+  xy: 1, 1
+  size: 150, 145
+  orig: 150, 145
+  offset: 0, 0
+  index: -1
+exit_button
+  rotate: false
+  xy: 153, 18
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
