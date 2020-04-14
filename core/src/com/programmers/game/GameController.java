@@ -20,26 +20,26 @@ final class GameController {
         thisPlayer = players[0];
         cards = new Array<>(36);
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.StepForward));
+            cards.add(new Card(Card.Type.StepForward, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.StepForwardToFloor));
+            cards.add(new Card(Card.Type.StepForwardToFloor, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Jump));
+            cards.add(new Card(Card.Type.Jump, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Turn90Left));
+            cards.add(new Card(Card.Type.Turn90Left, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Turn90Right));
+            cards.add(new Card(Card.Type.Turn90Right, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Turn180));
+            cards.add(new Card(Card.Type.Turn180, null));
         // Add Cycles and Teleports
-        if (field.getProgrammersGame().getDifficulty() == com.programmers.enums.Difficulty.Hard) {
+        if (field.getProgrammersGame().getDifficulty() == Difficulty.Hard) {
             cards.ensureCapacity(16);
             for (int i = 0; i < 5; i++)
-                cards.add(new Card(Card.Type.Cycle2));
+                cards.add(new Card(Card.Type.Cycle2, null));
             for (int i = 0; i < 5; i++)
-                cards.add(new Card(Card.Type.Cycle3));
+                cards.add(new Card(Card.Type.Cycle3, null));
             for (int i = 0; i < 6; i++)
-                cards.add(new Card(Card.Type.Teleport));
+                cards.add(new Card(Card.Type.Teleport, null));
         }
         // Add 5 cards to each Player
         for (Player player : players) {
@@ -66,7 +66,7 @@ final class GameController {
 
     Player getWinner() {
         for (Player player : players) {
-            if ((field.getProgrammersGame().getDifficulty() == com.programmers.enums.Difficulty.Easy && player.getScore() >= 7)
+            if ((field.getProgrammersGame().getDifficulty() == Difficulty.Easy && player.getScore() >= 7)
                     || (field.getProgrammersGame().getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {
                 return player;
             }
