@@ -8,7 +8,6 @@ import com.programmers.enums.Direction;
 public final class Wall extends GameObject {
 
     private final static int[] chances = {};
-    private final static float width = 0.4f;
 
     private final Vector3 offset;
     private final Chunk chunk;

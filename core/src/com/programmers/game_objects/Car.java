@@ -23,21 +23,21 @@ public final class Car extends GameObject implements ICard {
     private boolean compensated;
 
     public enum Color {
-        RED,
-        GREEN,
-        YELLOW,
-        BLUE;
+        Red,
+        Green,
+        Yellow,
+        Blue;
 
         public static Color fromInt(int i) {
             switch (i % 4) {
                 case 0:
-                    return RED;
+                    return Red;
                 case 1:
-                    return GREEN;
+                    return Green;
                 case 2:
-                    return YELLOW;
+                    return Yellow;
                 default:
-                    return BLUE;
+                    return Blue;
             }
         }
     }
@@ -49,27 +49,9 @@ public final class Car extends GameObject implements ICard {
         this.size = getProgrammersGame().getSize();
         base.setCar(this);
         StringBuilder stringBuilder = new StringBuilder("Models/");
-        switch (getProgrammersGame().getDifficulty()) {
-            case Hard:
-                stringBuilder.append("Hard");
-                break;
-            case Easy:
-                stringBuilder.append("Easy");
-        }
-        stringBuilder.append("Mode/Cars/");
-        switch (base.getBaseColor()) {
-            case RED:
-                stringBuilder.append("RedCar/RedCar.obj");
-                break;
-            case GREEN:
-                stringBuilder.append("GreenCar/GreenCar.obj");
-                break;
-            case YELLOW:
-                stringBuilder.append("YellowCar/YellowCar.obj");
-                break;
-            case BLUE:
-                stringBuilder.append("BlueCar/BlueCar.obj");
-        }
+        stringBuilder.append(getProgrammersGame().getDifficulty()).append("Mode/Cars/");
+        final Color color = base.getBaseColor();
+        stringBuilder.append(color).append("Car/").append(color).append("Car.obj");
         setModelFileName(stringBuilder.toString());
     }
 

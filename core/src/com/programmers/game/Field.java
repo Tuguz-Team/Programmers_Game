@@ -16,6 +16,7 @@ import static com.badlogic.gdx.math.MathUtils.random;
 public final class Field {
 
     private final int size;
+
     private ProgrammersGame programmersGame;
     private final Chunk[][] chunks;
     private final Vector3 offset;

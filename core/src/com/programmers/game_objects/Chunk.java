@@ -14,7 +14,7 @@ import static com.badlogic.gdx.math.MathUtils.random;
 
 public class Chunk extends GameObject {
 
-    private final static int[] fieldChances = { 100, 2, 100, 2, 100, 2, 100, 2, 100, 2 };
+    private final static int[] chances = { 100, 2, 100, 2, 100, 2, 100, 2, 100, 2 };
     public final static float width = 1.5f, height = 0.6f;
 
     private Wall wallForward, wallBack, wallLeft, wallRight;
@@ -121,34 +121,30 @@ public class Chunk extends GameObject {
         Chunk other;
         switch (direction) {
             case Forward:
-                if (hasWall(Direction.Back)) {
+                if (hasWall(Direction.Back))
                     return false;
-                }
                 if (getZ() < field.getSize() - 1) {
                     other = field.getChunks()[getX()][getZ() + 1];
                     break;
                 } else return false;
             case Back:
-                if (hasWall(Direction.Forward)) {
+                if (hasWall(Direction.Forward))
                     return false;
-                }
                 if (getZ() > 0) {
                     other = field.getChunks()[getX()][getZ() - 1];
                     break;
                 } else return false;
             case Left:
-                if (hasWall(Direction.Right)) {
+                if (hasWall(Direction.Right))
                     return false;
-                }
                 if (getX() < field.getSize() - 1) {
                     other = field.getChunks()[getX() + 1][getZ()];
                     break;
                 } else return false;
             case Right:
             default:
-                if (hasWall(Direction.Left)) {
+                if (hasWall(Direction.Left))
                     return false;
-                }
                 if (getX() > 0) {
                     other = field.getChunks()[getX() - 1][getZ()];
                 } else return false;
@@ -209,14 +205,14 @@ public class Chunk extends GameObject {
     private int getRandomChunkIndex() {
         Array<Integer> integers = new Array<>();
         int sum = 0;
-        for (int i = 0; i < fieldChances.length; i++) {
-            integers.add(fieldChances[i]);
+        for (int i = 0; i < chances.length; i++) {
+            integers.add(chances[i]);
             sum += integers.get(i);
         }
         int value = random.nextInt(sum + 1);
         sum = 0;
-        for (int i = 0; i < fieldChances.length; i++) {
-            sum += fieldChances[i];
+        for (int i = 0; i < chances.length; i++) {
+            sum += chances[i];
             if (value <= sum) {
                 return i;
             }

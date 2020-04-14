@@ -18,25 +18,8 @@ public final class Life extends GameObject {
         this.type = type;
         this.field = chunk.getField();
         chunk.getLives().add(this);
-        StringBuilder stringBuilder = new StringBuilder("Models/LifeObjects/LifeObject");
-        int number;
-        switch (type) {
-            case Yellow:
-                number = 1;
-                break;
-            case Purple:
-                number = 3;
-                break;
-            case Green:
-                number = 2;
-                break;
-            case Blue:
-            default:
-                number = 4;
-        }
-        stringBuilder.append(number).append("/LifeObject").append(number).append(".obj");
-        typeModelFileName = stringBuilder.toString();
-        setModelFileName("Models/LifeObjects/LifeObject0/LifeObject0.obj");
+        typeModelFileName = "Models/LifeObjects/LifeObject" + type + "/LifeObject" + type + ".obj";
+        setModelFileName("Models/LifeObjects/LifeObjectUnknown/LifeObjectUnknown.obj");
     }
 
     @Override

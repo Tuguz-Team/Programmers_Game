@@ -18,32 +18,27 @@ public final class Base extends Chunk {
         StringBuilder stringBuilder = new StringBuilder("Models/");
         switch (getProgrammersGame().getDifficulty()) {
             case Easy:
-                stringBuilder.append("Easy");
                 labColors = new Array<>(4);
-                labColors.addAll(Car.Color.RED, Car.Color.GREEN, Car.Color.YELLOW, Car.Color.BLUE);
+                labColors.addAll(Car.Color.Red, Car.Color.Green, Car.Color.Yellow, Car.Color.Blue);
                 break;
             case Hard:
             default:
-                stringBuilder.append("Hard");
                 labColors = new Array<>(2);
         }
-        stringBuilder.append("Mode/Bases/");
+        stringBuilder.append(getProgrammersGame().getDifficulty()).append("Mode/Bases/");
+        stringBuilder.append(baseColor).append("Base/").append(baseColor).append("Base.obj");
         switch (baseColor) {
-            case RED:
-                stringBuilder.append("RedBase/RedBase.obj");
-                labColors.addAll(Car.Color.BLUE, Car.Color.YELLOW);
+            case Red:
+                labColors.addAll(Car.Color.Blue, Car.Color.Yellow);
                 break;
-            case GREEN:
-                stringBuilder.append("GreenBase/GreenBase.obj");
-                labColors.addAll(Car.Color.RED, Car.Color.YELLOW);
+            case Green:
+                labColors.addAll(Car.Color.Red, Car.Color.Yellow);
                 break;
-            case YELLOW:
-                stringBuilder.append("YellowBase/YellowBase.obj");
-                labColors.addAll(Car.Color.BLUE, Car.Color.GREEN);
+            case Yellow:
+                labColors.addAll(Car.Color.Blue, Car.Color.Green);
                 break;
-            case BLUE:
-                stringBuilder.append("BlueBase/BlueBase.obj");
-                labColors.addAll(Car.Color.RED, Car.Color.GREEN);
+            case Blue:
+                labColors.addAll(Car.Color.Red, Car.Color.Green);
         }
         setModelFileName(stringBuilder.toString());
     }
