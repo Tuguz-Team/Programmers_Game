@@ -25,7 +25,7 @@ public final class Base extends Chunk {
             default:
                 labColors = new Array<>(2);
         }
-        stringBuilder.append(getProgrammersGame().getDifficulty()).append("Mode/Bases/");
+        stringBuilder.append(getGameScreen().getDifficulty()).append("Mode/Bases/");
         stringBuilder.append(baseColor).append("Base/").append(baseColor).append("Base.obj");
         switch (baseColor) {
             case Red:

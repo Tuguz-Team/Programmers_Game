@@ -43,13 +43,13 @@ public final class Car extends GameObject implements ICard {
     }
 
     public Car(final Base base, final Player player) {
-        super(base.getX(), base.getY() + 1, base.getZ(), base.getProgrammersGame());
+        super(base.getX(), base.getY() + 1, base.getZ(), base.getGameScreen());
         this.base = base;
         this.player = player;
-        this.size = getProgrammersGame().getSize();
+        this.size = getGameScreen().getSize();
         base.setCar(this);
         StringBuilder stringBuilder = new StringBuilder("Models/");
-        stringBuilder.append(getProgrammersGame().getDifficulty()).append("Mode/Cars/");
+        stringBuilder.append(getGameScreen().getDifficulty()).append("Mode/Cars/");
         final Color color = base.getBaseColor();
         stringBuilder.append(color).append("Car/").append(color).append("Car.obj");
         setModelFileName(stringBuilder.toString());
@@ -117,12 +117,12 @@ public final class Car extends GameObject implements ICard {
 
     @Override
     public void loading() {
-        getProgrammersGame().getAssetManager().load(getModelFileName(), Model.class);
+        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
     }
 
     @Override
     public void doneLoading() {
-        setModel(getProgrammersGame().getAssetManager().get(getModelFileName(), Model.class));
+        setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.001f,
@@ -176,7 +176,7 @@ public final class Car extends GameObject implements ICard {
             case Right:
                 getModelInstance().transform.rotate(Vector3.Y, -90f);
         }
-        getProgrammersGame().getInstances().add(getModelInstance());
+        getGameScreen().getInstances().add(getModelInstance());
     }
 
     @Override
@@ -433,7 +433,7 @@ public final class Car extends GameObject implements ICard {
                         Chunk base = car.base;
                         for (Life life : car.lives) {
                             life.setPosition(nextChunk);
-                            getProgrammersGame().getInstances().add(life.getModelInstance());
+                            getGameScreen().getInstances().add(life.getModelInstance());
                         }
                         nextChunk.getLives().addAll(car.lives);
                         car.lives.clear();
@@ -495,7 +495,7 @@ public final class Car extends GameObject implements ICard {
         for (int i = lives.size; i < 3 && !chunk.getLives().isEmpty(); i++) {
             lives.add(chunk.getLives().get(chunk.getLives().size - 1));
             chunk.getLives().removeIndex(chunk.getLives().size - 1);
-            getProgrammersGame().getInstances().removeValue(lives.get(lives.size - 1).getModelInstance(), false);
+            getGameScreen().getInstances().removeValue(lives.get(lives.size - 1).getModelInstance(), false);
         }
         // if [chunk] is base:
         if (chunk instanceof Base
