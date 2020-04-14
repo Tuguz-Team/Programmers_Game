@@ -31,6 +31,11 @@ public final class Player {
         score += 2;
     }
 
+    public void addCard(Card card) {
+        card.setPlayer(this);
+        cards.add(card);
+    }
+
     public Car getCar() {
         return car;
     }
