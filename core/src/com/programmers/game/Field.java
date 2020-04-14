@@ -272,6 +272,7 @@ public final class Field {
                     }
                     while (chunks[iTemp][j + width - 1].getY() <= chunks[iTemp][j + width].getY()
                             || chunks[iTemp][j + width].getLift() != null
+                            || chunks[iTemp][j + width - 1].getLift() != null
                             || (j + width == 8 && (iTemp == 8 || iTemp == 0)));
                     chunks[iTemp][j + width - 1] = new Lift(
                             chunks[iTemp][j + width - 1],
@@ -294,6 +295,7 @@ public final class Field {
                     }
                     while (chunks[iTemp][j].getY() <= chunks[iTemp][j - 1].getY()
                             || chunks[iTemp][j - 1].getLift() != null
+                            || chunks[iTemp][j].getLift() != null
                             || (j == 1 && (iTemp == 8 || iTemp == 0)));
                     chunks[iTemp][j] = new Lift(
                             chunks[iTemp][j],
@@ -316,6 +318,7 @@ public final class Field {
                     }
                     while (chunks[i + length - 1][jTemp].getY() <= chunks[i + length][jTemp].getY()
                             || chunks[i + length][jTemp].getLift() != null
+                            || chunks[i + length - 1][jTemp].getLift() != null
                             || (i + length == 8 && (jTemp == 8 || jTemp == 0)));
                     chunks[i + length - 1][jTemp] = new Lift(
                             chunks[i + length - 1][jTemp],
@@ -339,6 +342,7 @@ public final class Field {
                     }
                     while (chunks[i][jTemp].getY() <= chunks[i - 1][jTemp].getY()
                             || chunks[i - 1][jTemp].getLift() != null
+                            || chunks[i][jTemp].getLift() != null
                             || (i == 1 && (jTemp == 8 || jTemp == 0)));
                     chunks[i][jTemp] = new Lift(
                             chunks[i][jTemp],

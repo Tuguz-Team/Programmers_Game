@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
@@ -24,7 +23,6 @@ import com.programmers.game.Field;
 import com.programmers.game.GameController;
 import com.programmers.game.MyGestureDetector;
 import com.programmers.game.Player;
-import com.programmers.game.UIController;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 
@@ -178,7 +176,7 @@ public class GameScreen implements Screen {
 		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		//Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
+		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		myGestureDetector.cameraPosChange();

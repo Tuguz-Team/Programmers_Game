@@ -155,6 +155,7 @@ public class Chunk extends GameObject {
                 && getWallCount() < 2
                 && !other.hasWall(direction)
                 && !(other instanceof Base)
+                && other.getLift() == null
                 && (other.getY() == getY())
                 && other.getWallCount() < 2;
     }
