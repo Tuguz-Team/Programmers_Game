@@ -5,6 +5,8 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game_objects.Chunk;
 
+import java.util.Stack;
+
 import static com.badlogic.gdx.math.MathUtils.random;
 
 public final class GameController {
@@ -12,43 +14,63 @@ public final class GameController {
     private Player thisPlayer;
     private final Player[] players;
     private final Field field;
-    private final Array<Card> cards;
+
+    private final int cardsCount;
+    private final Array<Card> discardPile;
+    private final Stack<Card> talon = new Stack<>();
 
     public GameController(final Player[] players, final Field field) {
         this.players = players;
         this.field = field;
         thisPlayer = players[0];
-        cards = new Array<>(36);
+        // Use discardPile as place where cards are initializing
+        cardsCount = field.getGameScreen().getDifficulty() == Difficulty.Easy ? 36 : 52;
+        discardPile = new Array<>(cardsCount);
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.StepForward, null));
+            discardPile.add(new Card(Card.Type.StepForward, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.StepForwardToFloor, null));
+            discardPile.add(new Card(Card.Type.StepForwardToFloor, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Jump, null));
+            discardPile.add(new Card(Card.Type.Jump, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Turn90Left, null));
+            discardPile.add(new Card(Card.Type.Turn90Left, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Turn90Right, null));
+            discardPile.add(new Card(Card.Type.Turn90Right, null));
         for (int i = 0; i < 6; i++)
-            cards.add(new Card(Card.Type.Turn180, null));
+            discardPile.add(new Card(Card.Type.Turn180, null));
         // Add Cycles and Teleports
         if (field.getGameScreen().getDifficulty() == Difficulty.Hard) {
-            cards.ensureCapacity(16);
             for (int i = 0; i < 5; i++)
-                cards.add(new Card(Card.Type.Cycle2, null));
+                discardPile.add(new Card(Card.Type.Cycle2, null));
             for (int i = 0; i < 5; i++)
-                cards.add(new Card(Card.Type.Cycle3, null));
+                discardPile.add(new Card(Card.Type.Cycle3, null));
             for (int i = 0; i < 6; i++)
-                cards.add(new Card(Card.Type.Teleport, null));
+                discardPile.add(new Card(Card.Type.Teleport, null));
         }
-        // Add 5 cards to each Player
+        // Make a talon of cards
+        makeTalon();
+        // Add 5 cards from talon to each player
         for (Player player : players) {
             for (int i = 0; i < 5; i++) {
-                int index = random.nextInt(players.length);
-                player.getCards().add(cards.get(index));
-                cards.removeIndex(index);
+                player.addCard(talon.pop());
             }
         }
+    }
+
+    private void makeTalon() {
+        while (!discardPile.isEmpty()) {
+            final int i = random.nextInt(discardPile.size);
+            talon.push(discardPile.get(i));
+            discardPile.removeIndex(i);
+        }
+    }
+
+    private void discardThisPlayerCards() {
+        for (Card card : thisPlayer.getCards()) {
+            card.setPlayer(null);
+            discardPile.add(card);
+        }
+        thisPlayer.getCards().clear();
     }
 
     public Player nextPlayer() {
