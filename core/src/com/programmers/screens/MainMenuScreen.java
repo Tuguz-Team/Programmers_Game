@@ -40,7 +40,6 @@ public class MainMenuScreen extends Stage implements Screen {
         fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
         font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
 
-        Gdx.input.setInputProcessor(this);
         mainButtons = new VerticalGroup();
         mainButtons.setFillParent(true);
         addActor(mainButtons);
@@ -53,7 +52,7 @@ public class MainMenuScreen extends Stage implements Screen {
         startButton = new TextButton("START", style);
         exitButton = new TextButton("END", style);
         mainButtons.addActor(startButton);
-        mainButtons.space(0.1f * Gdx.graphics.getWidth());
+        mainButtons.space(0.2f * Gdx.graphics.getHeight());
         mainButtons.addActor(exitButton);
         mainButtons.center();
 
@@ -111,7 +110,7 @@ public class MainMenuScreen extends Stage implements Screen {
 
     @Override
     public void show() {
-
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
@@ -148,5 +147,6 @@ public class MainMenuScreen extends Stage implements Screen {
     public void dispose() {
         buttonSkin.dispose();
         font.dispose();
+        super.dispose();
     }
 }

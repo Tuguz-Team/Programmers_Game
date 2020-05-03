@@ -25,14 +25,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameController;
@@ -127,9 +124,29 @@ public class GameScreen extends Stage implements Screen {
 
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				if (wasPressed)
-					screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
+				if (wasPressed) {
+					//screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
+					gameInputProcessor.lockCamera();
+					final Dialog dialog = new Dialog("",
+							new Skin(Gdx.files.internal("uiskin.json"))) {
+						@Override
+						protected void result(Object object) {
+							if (object.equals(1)) {
+								//
+							} else if (object.equals(2)) {
+								screenLoader.setScreen(screenLoader.getMainMenu());
+							}
+							gameInputProcessor.unlockCamera();
+						}
+					};
+					dialog.button("Return to game", 0);
+					dialog.button("Settings", 1);
+					dialog.button("Main menu", 2);
+					dialog.setMovable(false);
+					addActor(dialog);
+					dialog.show(GameScreen.this);
 					// Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
+				}
 				wasPressed = false;
 			}
 
@@ -164,37 +181,9 @@ public class GameScreen extends Stage implements Screen {
 			bases.removeIndex(index);
 		}
 		gameController = new GameController(players, field);
+		addAxises();
 
 		loading();
-
-		// X axis (red) is i, Y axis (green) is height, Z axis (blue) is j
-		{
-			Vector3 start = new Vector3(0f, 5f, 0f), end = new Vector3();
-
-			ModelBuilder modelBuilder1 = new ModelBuilder();
-			modelBuilder1.begin();
-			MeshPartBuilder builder1 = modelBuilder1.part("Y", 1, 3, new Material());
-			builder1.setColor(Color.GREEN);
-			end.set(start).add(new Vector3(Vector3.Y).scl(3));
-			builder1.line(start.x, start.y, start.z, end.x, end.y, end.z);
-			instances.add(new ModelInstance(modelBuilder1.end()));
-
-			ModelBuilder modelBuilder2 = new ModelBuilder();
-			modelBuilder2.begin();
-			MeshPartBuilder builder2 = modelBuilder2.part("X", 1, 3, new Material());
-			builder2.setColor(Color.RED);
-			end.set(start).add(new Vector3(Vector3.X).scl(3));
-			builder2.line(start.x, start.y, start.z, end.x, end.y, end.z);
-			instances.add(new ModelInstance(modelBuilder2.end()));
-
-			ModelBuilder modelBuilder3 = new ModelBuilder();
-			modelBuilder3.begin();
-			MeshPartBuilder builder3 = modelBuilder3.part("Z", 1, 3, new Material());
-			builder3.setColor(Color.BLUE);
-			end.set(start).add(new Vector3(Vector3.Z).scl(3));
-			builder3.line(start.x, start.y, start.z, end.x, end.y, end.z);
-			instances.add(new ModelInstance(modelBuilder3.end()));
-		}
 	}
 
 	public int getSize() {
@@ -287,5 +276,34 @@ public class GameScreen extends Stage implements Screen {
 
 		buttonSkin.dispose();
 		font.dispose();
+		super.dispose();
+	}
+
+	private void addAxises() {
+		Vector3 start = new Vector3(0f, 5f, 0f), end = new Vector3();
+
+		ModelBuilder modelBuilder1 = new ModelBuilder();
+		modelBuilder1.begin();
+		MeshPartBuilder builder1 = modelBuilder1.part("Y", 1, 3, new Material());
+		builder1.setColor(Color.GREEN);
+		end.set(start).add(new Vector3(Vector3.Y).scl(3));
+		builder1.line(start.x, start.y, start.z, end.x, end.y, end.z);
+		instances.add(new ModelInstance(modelBuilder1.end()));
+
+		ModelBuilder modelBuilder2 = new ModelBuilder();
+		modelBuilder2.begin();
+		MeshPartBuilder builder2 = modelBuilder2.part("X", 1, 3, new Material());
+		builder2.setColor(Color.RED);
+		end.set(start).add(new Vector3(Vector3.X).scl(3));
+		builder2.line(start.x, start.y, start.z, end.x, end.y, end.z);
+		instances.add(new ModelInstance(modelBuilder2.end()));
+
+		ModelBuilder modelBuilder3 = new ModelBuilder();
+		modelBuilder3.begin();
+		MeshPartBuilder builder3 = modelBuilder3.part("Z", 1, 3, new Material());
+		builder3.setColor(Color.BLUE);
+		end.set(start).add(new Vector3(Vector3.Z).scl(3));
+		builder3.line(start.x, start.y, start.z, end.x, end.y, end.z);
+		instances.add(new ModelInstance(modelBuilder3.end()));
 	}
 }
