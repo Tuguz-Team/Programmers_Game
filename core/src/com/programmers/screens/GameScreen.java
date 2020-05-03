@@ -1,11 +1,16 @@
 package com.programmers.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -16,7 +21,18 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameController;
@@ -27,12 +43,18 @@ import com.programmers.game_objects.Car;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public class GameScreen implements Screen {
+public class GameScreen extends Stage implements Screen {
 
 	private int size;
 	private int playersCount;
 
-	ScreenLoader screenLoader;
+	private ScreenLoader screenLoader;
+	private VerticalGroup mainButtons;
+	private Texture fontTexture;
+	private TextButton startButton;
+	private Skin buttonSkin;
+	private BitmapFont font;
+
 	private Field field;
 	private GameController gameController;
 	private com.programmers.enums.Difficulty difficulty;
@@ -46,7 +68,7 @@ public class GameScreen implements Screen {
 	private ModelBatch modelBatch;
 	private GameInputProcessor gameInputProcessor;
 
-	public GameScreen(ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
+	public GameScreen(final ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
 		this.screenLoader = screenLoader;
 		this.difficulty = difficulty;
 		this.playersCount = playersCount;
@@ -76,8 +98,59 @@ public class GameScreen implements Screen {
 		camera.far = 100f;
 		camera.update();
 
+		/////
+		buttonSkin = new Skin();
+		buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
+		fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
+		font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
+
+		TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+		style.up = buttonSkin.getDrawable("start_button");
+		style.down = buttonSkin.getDrawable("exit_button");
+		style.font = font;
+
+		mainButtons = new VerticalGroup();
+		mainButtons.setFillParent(true);
+		addActor(mainButtons);
+
+		startButton = new TextButton("START", style);
+		mainButtons.addActor(startButton);
+		mainButtons.space(0.2f * Gdx.graphics.getWidth());
+		mainButtons.left().top();
+
+		startButton.addListener(new InputListener() {
+			boolean wasPressed;
+
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				return wasPressed = true;
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				if (wasPressed)
+					screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
+					// Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
+				wasPressed = false;
+			}
+
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				wasPressed = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				wasPressed = false;
+			}
+		});
+		/////
+
 		gameInputProcessor = new GameInputProcessor(camera, this);
-		Gdx.input.setInputProcessor(new GestureDetector(gameInputProcessor));
+
+		InputMultiplexer multiplexer = new InputMultiplexer();
+		multiplexer.addProcessor(this);
+		multiplexer.addProcessor(new GestureDetector(gameInputProcessor));
+		Gdx.input.setInputProcessor(multiplexer);
 
 		field = new Field(this);
 		Player[] players = new Player[playersCount];
@@ -146,17 +219,15 @@ public class GameScreen implements Screen {
 
 	private void loading() {
 		field.loading();
-        for (Player player : gameController.getPlayers()) {
+        for (Player player : gameController.getPlayers())
             player.getCar().loading();
-        }
 		loading = true;
 	}
 
 	private void doneLoading() {
 		field.doneLoading();
-		for (Player player : gameController.getPlayers()) {
+		for (Player player : gameController.getPlayers())
 			player.getCar().doneLoading();
-		}
 		loading = false;
 	}
 
@@ -182,11 +253,15 @@ public class GameScreen implements Screen {
 		modelBatch.begin(camera);
 		modelBatch.render(instances, environment);
 		modelBatch.end();
+
+		act(Gdx.graphics.getDeltaTime());
+		getBatch().setProjectionMatrix(camera.combined);
+		draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-
+		getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 	}
 
 	@Override
@@ -209,5 +284,8 @@ public class GameScreen implements Screen {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();
+
+		buttonSkin.dispose();
+		font.dispose();
 	}
 }

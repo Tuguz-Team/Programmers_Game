@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -22,11 +21,11 @@ public class MainMenuScreen extends Stage implements Screen {
 
     private ScreenLoader screenLoader;
     private VerticalGroup mainButtons;
-    Texture fontTexture;
 
-    TextButton startButton, exitButton;
-    Skin buttonSkin;
-    BitmapFont font;
+    private Texture fontTexture;
+    private TextButton startButton, exitButton;
+    private Skin buttonSkin;
+    private BitmapFont font;
 
     private OrthographicCamera camera; // область просмотра нашей игры
 
@@ -45,7 +44,6 @@ public class MainMenuScreen extends Stage implements Screen {
         mainButtons = new VerticalGroup();
         mainButtons.setFillParent(true);
         addActor(mainButtons);
-        mainButtons.setDebug(true);
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
         style.up = buttonSkin.getDrawable("start_button");
@@ -55,7 +53,7 @@ public class MainMenuScreen extends Stage implements Screen {
         startButton = new TextButton("START", style);
         exitButton = new TextButton("END", style);
         mainButtons.addActor(startButton);
-        mainButtons.space(400f);
+        mainButtons.space(0.1f * Gdx.graphics.getWidth());
         mainButtons.addActor(exitButton);
         mainButtons.center();
 
@@ -118,7 +116,7 @@ public class MainMenuScreen extends Stage implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         act(Gdx.graphics.getDeltaTime());
@@ -128,7 +126,7 @@ public class MainMenuScreen extends Stage implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        getViewport().update(width, height, true);
+        getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
     }
 
     @Override
