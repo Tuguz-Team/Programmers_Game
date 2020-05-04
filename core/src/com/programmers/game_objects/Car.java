@@ -15,7 +15,7 @@ public final class Car extends GameObject implements ICard {
 
     private final int size;
 
-    private final Player player;
+    private Player player;
     private final Array<Life> lives = new Array<>(3);
     private final Base base;
 
@@ -42,10 +42,9 @@ public final class Car extends GameObject implements ICard {
         }
     }
 
-    public Car(final Base base, final Player player) {
+    public Car(final Base base) {
         super(base.getX(), base.getY() + 1, base.getZ(), base.getGameScreen());
         this.base = base;
-        this.player = player;
         this.size = getGameScreen().getSize();
         base.setCar(this);
         StringBuilder stringBuilder = new StringBuilder("Models/");
@@ -57,6 +56,10 @@ public final class Car extends GameObject implements ICard {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Array<Life> getLives() {

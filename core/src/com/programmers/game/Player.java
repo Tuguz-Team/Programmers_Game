@@ -13,6 +13,7 @@ public final class Player {
 
     public Player(final Car car) {
         this.car = car;
+        car.setPlayer(this);
         lives = new Array<>(10);
         cards = new Array<>(5);
     }

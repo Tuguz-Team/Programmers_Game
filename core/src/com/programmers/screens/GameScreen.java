@@ -69,6 +69,8 @@ public class GameScreen extends Stage implements Screen {
 	private Environment environment;
 	private ModelBatch modelBatch;
 	private GameInputProcessor gameInputProcessor;
+	private InputMultiplexer multiplexer;
+	private final Dialog dialog;
 
 	public GameScreen(final ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
 		this.screenLoader = screenLoader;
@@ -115,53 +117,40 @@ public class GameScreen extends Stage implements Screen {
 		mainButtons.setFillParent(true);
 		addActor(mainButtons);
 
+		dialog = new Dialog("PAUSE MENU",
+				new Skin(Gdx.files.internal("uiskin.json")));
+		dialog.setVisible(false);
+		dialogButtons = new VerticalGroup();
+		dialogButtons.setFillParent(true);
+		ImageTextButton _startButton = new MyButton("MAIN MENU", style) {
+			@Override
+			public void call() {
+				dispose();
+				screenLoader.setScreen(screenLoader.getMainMenu());
+			}
+		};
+		ImageTextButton _startButton_ = new MyButton("RETURN", style) {
+			@Override
+			public void call() {
+				dialog.hide();
+				gameInputProcessor.unlockCamera();
+			}
+		};
+		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		dialogButtons.addActor(_startButton);
+		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		dialogButtons.addActor(_startButton_);
+		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		dialog.getContentTable().add(dialogButtons);
+		dialog.setMovable(false);
+		addActor(dialog);
+
 		startButton = new MyButton("PAUSE MENU", style) {
 			@Override
 			public void call() {
 				//screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
 				gameInputProcessor.lockCamera();
-				final Dialog dialog = new Dialog("PAUSE MENU",
-						new Skin(Gdx.files.internal("uiskin.json"))) {
-					@Override
-					protected void result(Object object) {
-						if (object.equals(1)) {
-							//
-						} else if (object.equals(2)) {
-							screenLoader.setScreen(screenLoader.getMainMenu());
-						}
-						gameInputProcessor.unlockCamera();
-					}
-				};
-
-				dialogButtons = new VerticalGroup();
-				dialogButtons.setFillParent(true);
-				ImageTextButton _startButton = new MyButton("MAIN MENU", style) {
-					@Override
-					public void call() {
-						screenLoader.setScreen(screenLoader.getMainMenu());
-					}
-				};
-				ImageTextButton _startButton_ = new MyButton("RETURN", style) {
-					@Override
-					public void call() {
-						dialog.hide();
-						gameInputProcessor.unlockCamera();
-					}
-				};
-
-				dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-				dialogButtons.addActor(_startButton);
-				dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-				dialogButtons.addActor(_startButton_);
-				dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-
-				dialog.getContentTable().add(dialogButtons);
-
-				//dialog.button("Return to game", 0);
-				//dialog.button("Settings", 1);
-				//dialog.button("Main menu", 2);
-				dialog.setMovable(false);
-				addActor(dialog);
+				dialog.setVisible(true);
 				dialog.show(GameScreen.this);
 				// Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
 			}
@@ -179,7 +168,7 @@ public class GameScreen extends Stage implements Screen {
 
 		gameInputProcessor = new GameInputProcessor(camera, this);
 
-		InputMultiplexer multiplexer = new InputMultiplexer();
+		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(this);
 		multiplexer.addProcessor(new GestureDetector(gameInputProcessor));
 		Gdx.input.setInputProcessor(multiplexer);
@@ -192,12 +181,12 @@ public class GameScreen extends Stage implements Screen {
 		});
 		for (int i = 0; i < players.length; i++) {
 			int index = random.nextInt(bases.size);
-			players[i] = new Player(new Car(bases.get(index), players[i]));
+			players[i] = new Player(new Car(bases.get(index)));
 			bases.removeIndex(index);
 		}
 		gameController = new GameController(players, field);
-		addAxises();
 
+		addAxises();
 		loading();
 	}
 
@@ -237,7 +226,7 @@ public class GameScreen extends Stage implements Screen {
 
 	@Override
 	public void show() {
-
+		Gdx.input.setInputProcessor(multiplexer);
 	}
 
 	@Override
