@@ -12,10 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.programmers.enums.Difficulty;
+import com.programmers.ui_elements.MyButton;
 
 public class MainMenuScreen extends Stage implements Screen {
 
@@ -23,7 +25,7 @@ public class MainMenuScreen extends Stage implements Screen {
     private VerticalGroup mainButtons;
 
     private Texture fontTexture;
-    private TextButton startButton, exitButton;
+    private ImageTextButton startButton, exitButton;
     private Skin buttonSkin;
     private BitmapFont font;
 
@@ -44,68 +46,28 @@ public class MainMenuScreen extends Stage implements Screen {
         mainButtons.setFillParent(true);
         addActor(mainButtons);
 
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
         style.up = buttonSkin.getDrawable("start_button");
         style.down = buttonSkin.getDrawable("exit_button");
         style.font = font;
 
-        startButton = new TextButton("START", style);
-        exitButton = new TextButton("END", style);
+        startButton = new MyButton("START", style) {
+            @Override
+            public void call() {
+                screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
+            }
+        };
+        exitButton = new MyButton("END", style) {
+            @Override
+            public void call() {
+                Gdx.app.exit();
+            }
+        };
+
         mainButtons.addActor(startButton);
         mainButtons.space(0.2f * Gdx.graphics.getHeight());
         mainButtons.addActor(exitButton);
         mainButtons.center();
-
-        startButton.addListener(new InputListener() {
-            boolean wasPressed;
-
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                return wasPressed = true;
-            }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (wasPressed)
-                    screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
-                //Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
-                wasPressed = false;
-            }
-
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                wasPressed = true;
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                wasPressed = false;
-            }
-        });
-
-        exitButton.addListener(new InputListener() {
-            boolean wasPressed;
-
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                return wasPressed = true;
-            }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (wasPressed)
-                    Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
-                wasPressed = false;
-            }
-
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                wasPressed = true;
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                wasPressed = false;
-            }
-        });
     }
 
     @Override

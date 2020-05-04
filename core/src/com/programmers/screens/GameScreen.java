@@ -26,6 +26,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
@@ -37,6 +40,8 @@ import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
+import com.programmers.interfaces.Procedure;
+import com.programmers.ui_elements.MyButton;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
@@ -46,9 +51,9 @@ public class GameScreen extends Stage implements Screen {
 	private int playersCount;
 
 	private ScreenLoader screenLoader;
-	private VerticalGroup mainButtons;
+	private VerticalGroup mainButtons, dialogButtons;
 	private Texture fontTexture;
-	private TextButton startButton;
+	private ImageTextButton startButton;
 	private Skin buttonSkin;
 	private BitmapFont font;
 
@@ -101,7 +106,7 @@ public class GameScreen extends Stage implements Screen {
 		fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
 		font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
 
-		TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+		final ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
 		style.up = buttonSkin.getDrawable("start_button");
 		style.down = buttonSkin.getDrawable("exit_button");
 		style.font = font;
@@ -110,57 +115,67 @@ public class GameScreen extends Stage implements Screen {
 		mainButtons.setFillParent(true);
 		addActor(mainButtons);
 
-		startButton = new TextButton("START", style);
+		startButton = new MyButton("PAUSE MENU", style) {
+			@Override
+			public void call() {
+				//screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
+				gameInputProcessor.lockCamera();
+				final Dialog dialog = new Dialog("PAUSE MENU",
+						new Skin(Gdx.files.internal("uiskin.json"))) {
+					@Override
+					protected void result(Object object) {
+						if (object.equals(1)) {
+							//
+						} else if (object.equals(2)) {
+							screenLoader.setScreen(screenLoader.getMainMenu());
+						}
+						gameInputProcessor.unlockCamera();
+					}
+				};
+
+				dialogButtons = new VerticalGroup();
+				dialogButtons.setFillParent(true);
+				ImageTextButton _startButton = new MyButton("MAIN MENU", style) {
+					@Override
+					public void call() {
+						screenLoader.setScreen(screenLoader.getMainMenu());
+					}
+				};
+				ImageTextButton _startButton_ = new MyButton("RETURN", style) {
+					@Override
+					public void call() {
+						dialog.hide();
+						gameInputProcessor.unlockCamera();
+					}
+				};
+
+				dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+				dialogButtons.addActor(_startButton);
+				dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+				dialogButtons.addActor(_startButton_);
+				dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+
+				dialog.getContentTable().add(dialogButtons);
+
+				//dialog.button("Return to game", 0);
+				//dialog.button("Settings", 1);
+				//dialog.button("Main menu", 2);
+				dialog.setMovable(false);
+				addActor(dialog);
+				dialog.show(GameScreen.this);
+				// Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
+			}
+		};
+
 		mainButtons.addActor(startButton);
 		mainButtons.space(0.2f * Gdx.graphics.getWidth());
 		mainButtons.left().top();
-
-		startButton.addListener(new InputListener() {
-			boolean wasPressed;
-
-			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-				return wasPressed = true;
-			}
-
-			@Override
-			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-				if (wasPressed) {
-					//screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
-					gameInputProcessor.lockCamera();
-					final Dialog dialog = new Dialog("",
-							new Skin(Gdx.files.internal("uiskin.json"))) {
-						@Override
-						protected void result(Object object) {
-							if (object.equals(1)) {
-								//
-							} else if (object.equals(2)) {
-								screenLoader.setScreen(screenLoader.getMainMenu());
-							}
-							gameInputProcessor.unlockCamera();
-						}
-					};
-					dialog.button("Return to game", 0);
-					dialog.button("Settings", 1);
-					dialog.button("Main menu", 2);
-					dialog.setMovable(false);
-					addActor(dialog);
-					dialog.show(GameScreen.this);
-					// Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
-				}
-				wasPressed = false;
-			}
-
-			@Override
-			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-				wasPressed = true;
-			}
-
-			@Override
-			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-				wasPressed = false;
-			}
-		});
 		/////
+
+		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+		final SelectBox<String> selectBox = new SelectBox<>(skin);
+		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
+		mainButtons.addActor(selectBox);
 
 		gameInputProcessor = new GameInputProcessor(camera, this);
 
