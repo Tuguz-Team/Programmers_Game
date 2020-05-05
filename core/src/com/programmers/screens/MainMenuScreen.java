@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
@@ -31,7 +32,6 @@ public final class MainMenuScreen extends Stage implements Screen {
         exitDialog.button("YES", true);
         exitDialog.button("NO", false);
         exitDialog.setMovable(false);
-        exitDialog.setRound(true);
 
         VerticalGroup mainButtons = new VerticalGroup();
         mainButtons.setFillParent(true);

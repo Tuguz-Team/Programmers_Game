@@ -208,7 +208,6 @@ public final class GameScreen extends Stage implements Screen {
 		final Dialog pauseMenu = new Dialog("PAUSE MENU", skin);
 		pauseMenu.getContentTable().setFillParent(true);
 		pauseMenu.setMovable(false);
-		pauseMenu.setRound(true);
 
 		ImageTextButton mainMenuButton =
 				new MyButton("MAIN MENU", screenLoader.getButtonStyle()) {
