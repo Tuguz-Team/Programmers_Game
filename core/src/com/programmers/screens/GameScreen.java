@@ -21,16 +21,11 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
@@ -40,37 +35,33 @@ import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
-import com.programmers.interfaces.Procedure;
 import com.programmers.ui_elements.MyButton;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
 public class GameScreen extends Stage implements Screen {
 
-	private int size;
-	private int playersCount;
+	private final int size;
+	private final int playersCount;
 
-	private ScreenLoader screenLoader;
-	private VerticalGroup mainButtons, dialogButtons;
-	private Texture fontTexture;
-	private ImageTextButton startButton;
+	private final ScreenLoader screenLoader;
 	private Skin buttonSkin;
 	private BitmapFont font;
 
-	private Field field;
-	private GameController gameController;
-	private com.programmers.enums.Difficulty difficulty;
+	private final Field field;
+	private final GameController gameController;
+	private final com.programmers.enums.Difficulty difficulty;
 
-	private Array<ModelInstance> instances;
-	private AssetManager assetManager;
+	private final Array<ModelInstance> instances;
+	private final AssetManager assetManager;
 	private boolean loading;
 
-	private PerspectiveCamera camera;
-	private Environment environment;
-	private ModelBatch modelBatch;
-	private GameInputProcessor gameInputProcessor;
-	private InputMultiplexer multiplexer;
-	private final Dialog dialog;
+	private final PerspectiveCamera camera;
+	private final Environment environment;
+	private final ModelBatch modelBatch;
+	private final GameInputProcessor gameInputProcessor;
+	private final InputMultiplexer multiplexer;
+	private Dialog dialog;
 
 	public GameScreen(final ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
 		this.screenLoader = screenLoader;
@@ -82,6 +73,7 @@ public class GameScreen extends Stage implements Screen {
 				size = 9;
 				break;
 			case Easy:
+			default:
 				size = 6;
 		}
 
@@ -101,70 +93,6 @@ public class GameScreen extends Stage implements Screen {
 		camera.near = 0.1f;
 		camera.far = 100f;
 		camera.update();
-
-		/////
-		buttonSkin = new Skin();
-		buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
-		fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
-		font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
-
-		final ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
-		style.up = buttonSkin.getDrawable("start_button");
-		style.down = buttonSkin.getDrawable("exit_button");
-		style.font = font;
-
-		mainButtons = new VerticalGroup();
-		mainButtons.setFillParent(true);
-		addActor(mainButtons);
-
-		dialog = new Dialog("PAUSE MENU",
-				new Skin(Gdx.files.internal("uiskin.json")));
-		dialog.setVisible(false);
-		dialogButtons = new VerticalGroup();
-		dialogButtons.setFillParent(true);
-		ImageTextButton _startButton = new MyButton("MAIN MENU", style) {
-			@Override
-			public void call() {
-				dispose();
-				screenLoader.setScreen(screenLoader.getMainMenu());
-			}
-		};
-		ImageTextButton _startButton_ = new MyButton("RETURN", style) {
-			@Override
-			public void call() {
-				dialog.hide();
-				gameInputProcessor.unlockCamera();
-			}
-		};
-		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialogButtons.addActor(_startButton);
-		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialogButtons.addActor(_startButton_);
-		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialog.getContentTable().add(dialogButtons);
-		dialog.setMovable(false);
-		addActor(dialog);
-
-		startButton = new MyButton("PAUSE MENU", style) {
-			@Override
-			public void call() {
-				//screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
-				gameInputProcessor.lockCamera();
-				dialog.setVisible(true);
-				dialog.show(GameScreen.this);
-				// Gdx.app.exit();//Gdx.app.log("my app", "Pressed");
-			}
-		};
-
-		mainButtons.addActor(startButton);
-		mainButtons.space(0.2f * Gdx.graphics.getWidth());
-		mainButtons.left().top();
-		/////
-
-		Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-		final SelectBox<String> selectBox = new SelectBox<>(skin);
-		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
-		mainButtons.addActor(selectBox);
 
 		gameInputProcessor = new GameInputProcessor(camera, this);
 
@@ -186,7 +114,6 @@ public class GameScreen extends Stage implements Screen {
 		}
 		gameController = new GameController(players, field);
 
-		addAxises();
 		loading();
 	}
 
@@ -234,6 +161,8 @@ public class GameScreen extends Stage implements Screen {
 		if (loading && assetManager.update()) {
 			doneLoading();
 			gameInputProcessor.unlockCamera();
+			addAxises();
+			addUI();
 		}
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -281,6 +210,67 @@ public class GameScreen extends Stage implements Screen {
 		buttonSkin.dispose();
 		font.dispose();
 		super.dispose();
+	}
+
+	private void addUI() {
+        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        buttonSkin = new Skin();
+		buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
+		Texture fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
+		font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
+
+		final ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
+		style.up = buttonSkin.getDrawable("start_button");
+		style.down = buttonSkin.getDrawable("exit_button");
+		style.font = font;
+
+		VerticalGroup mainButtons = new VerticalGroup();
+		mainButtons.setFillParent(true);
+		addActor(mainButtons);
+
+		dialog = new Dialog("PAUSE MENU", skin);
+		dialog.setVisible(false);
+		VerticalGroup dialogButtons = new VerticalGroup();
+		dialogButtons.setFillParent(true);
+		ImageTextButton _startButton = new MyButton("MAIN MENU", style) {
+			@Override
+			public void call() {
+				dispose();
+				screenLoader.setScreen(screenLoader.getMainMenu());
+			}
+		};
+		ImageTextButton _startButton_ = new MyButton("RETURN", style) {
+			@Override
+			public void call() {
+				dialog.hide();
+				gameInputProcessor.unlockCamera();
+			}
+		};
+		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		dialogButtons.addActor(_startButton);
+		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		dialogButtons.addActor(_startButton_);
+		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		dialog.getContentTable().add(dialogButtons);
+		dialog.setMovable(false);
+		addActor(dialog);
+
+		ImageTextButton startButton = new MyButton("PAUSE MENU", style) {
+			@Override
+			public void call() {
+				gameInputProcessor.lockCamera();
+				dialog.setVisible(true);
+				dialog.show(GameScreen.this);
+			}
+		};
+
+		mainButtons.addActor(startButton);
+		mainButtons.space(0.2f * Gdx.graphics.getWidth());
+		mainButtons.left().top();
+
+		final SelectBox<String> selectBox = new SelectBox<>(skin);
+		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
+		mainButtons.addActor(selectBox);
 	}
 
 	private void addAxises() {
