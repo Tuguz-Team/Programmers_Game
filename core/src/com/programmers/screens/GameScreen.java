@@ -230,32 +230,43 @@ public class GameScreen extends Stage implements Screen {
 
 		dialog = new Dialog("PAUSE MENU", skin);
 		dialog.setVisible(false);
+		dialog.hide();
 		VerticalGroup dialogButtons = new VerticalGroup();
 		dialogButtons.setFillParent(true);
-		ImageTextButton _startButton = new MyButton("MAIN MENU", style) {
+		ImageTextButton mainMenuButton = new MyButton("MAIN MENU", style) {
 			@Override
 			public void call() {
 				dispose();
 				screenLoader.setScreen(screenLoader.getMainMenu());
 			}
 		};
-		ImageTextButton _startButton_ = new MyButton("RETURN", style) {
+		ImageTextButton returnButton = new MyButton("RETURN", style) {
 			@Override
 			public void call() {
 				dialog.hide();
 				gameInputProcessor.unlockCamera();
 			}
 		};
+		ImageTextButton settingsButton = new MyButton("SETTINGS", style) {
+			@Override
+			public void call() {
+				screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
+			}
+		};
+
 		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialogButtons.addActor(_startButton);
+		dialogButtons.addActor(mainMenuButton);
 		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialogButtons.addActor(_startButton_);
+		dialogButtons.addActor(returnButton);
 		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		dialogButtons.addActor(settingsButton);
+		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+
 		dialog.getContentTable().add(dialogButtons);
 		dialog.setMovable(false);
 		addActor(dialog);
 
-		ImageTextButton startButton = new MyButton("PAUSE MENU", style) {
+		ImageTextButton toDialogButton = new MyButton("PAUSE MENU", style) {
 			@Override
 			public void call() {
 				gameInputProcessor.lockCamera();
@@ -264,7 +275,7 @@ public class GameScreen extends Stage implements Screen {
 			}
 		};
 
-		mainButtons.addActor(startButton);
+		mainButtons.addActor(toDialogButton);
 		mainButtons.space(0.2f * Gdx.graphics.getWidth());
 		mainButtons.left().top();
 
