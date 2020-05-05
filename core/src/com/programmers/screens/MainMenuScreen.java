@@ -7,10 +7,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
 import com.programmers.ui_elements.MyButton;
 
@@ -42,7 +40,9 @@ public final class MainMenuScreen extends Stage implements Screen {
         ImageTextButton startButton = new MyButton("START", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
+                screenLoader.setScreen(new PreGameScreen(screenLoader, MainMenuScreen.this)
+                        //GameScreen(screenLoader, Difficulty.Hard, 4)
+                );
             }
         };
         ImageTextButton exitButton = new MyButton("END", screenLoader.getButtonStyle()) {

@@ -17,20 +17,20 @@ public abstract class ReturnableScreen extends Stage implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        ImageTextButton returnButton = new MyButton("RETURN", screenLoader.getButtonStyle()) {
+        ImageTextButton returnButton =
+                new MyButton("RETURN", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 dispose();
                 screenLoader.setScreen(previousScreen);
             }
         };
+
         addActor(returnButton);
         returnButton.setPosition(
                 Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.01f),
                 Gdx.graphics.getHeight() * 0.99f,
-                Align.topRight
-        );
-        Gdx.input.setInputProcessor(this);
+                Align.topRight);
     }
 
     @Override
