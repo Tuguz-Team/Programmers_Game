@@ -4,13 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.programmers.enums.Difficulty;
+import com.programmers.ui_elements.ExitDialog;
 import com.programmers.ui_elements.MyButton;
 
 public final class MainMenuScreen extends Stage implements Screen {
@@ -22,30 +20,29 @@ public final class MainMenuScreen extends Stage implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-        final Dialog exitDialog = new Dialog("Are you sure you want to exit the game?", skin) {
+        final ExitDialog exitDialog =
+                new ExitDialog("Are you sure you want to exit the game?", skin) {
             @Override
-            protected void result(Object object) {
-                if (object.equals(true))
-                    Gdx.app.exit();
+            public void call() {
+                Gdx.app.exit();
             }
         };
-        exitDialog.button("YES", true);
-        exitDialog.button("NO", false);
-        exitDialog.setMovable(false);
 
         VerticalGroup mainButtons = new VerticalGroup();
         mainButtons.setFillParent(true);
         addActor(mainButtons);
 
-        ImageTextButton startButton = new MyButton("START", screenLoader.getButtonStyle()) {
+        ImageTextButton startButton =
+                new MyButton("START", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                screenLoader.setScreen(new PreGameScreen(screenLoader, MainMenuScreen.this)
-                        //GameScreen(screenLoader, Difficulty.Hard, 4)
+                screenLoader.setScreen(new PreGameScreen
+                        (screenLoader, MainMenuScreen.this)
                 );
             }
         };
-        ImageTextButton exitButton = new MyButton("END", screenLoader.getButtonStyle()) {
+        ImageTextButton exitButton =
+                new MyButton("END", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 exitDialog.show(MainMenuScreen.this);

@@ -31,6 +31,7 @@ import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
+import com.programmers.ui_elements.ExitDialog;
 import com.programmers.ui_elements.MyButton;
 
 import static com.badlogic.gdx.math.MathUtils.random;
@@ -205,6 +206,15 @@ public final class GameScreen extends Stage implements Screen {
 	private void addUI() {
         final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+		final ExitDialog exitDialog = new ExitDialog
+				("Are you sure you want to quit the room and return to main menu?", skin) {
+			@Override
+			public void call() {
+				dispose();
+				screenLoader.setScreen(screenLoader.getMainMenu());
+			}
+		};
+
 		final Dialog pauseMenu = new Dialog("PAUSE MENU", skin);
 		pauseMenu.getContentTable().setFillParent(true);
 		pauseMenu.setMovable(false);
@@ -213,8 +223,7 @@ public final class GameScreen extends Stage implements Screen {
 				new MyButton("MAIN MENU", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
-				dispose();
-				screenLoader.setScreen(screenLoader.getMainMenu());
+				exitDialog.show(GameScreen.this);
 			}
 		};
 		ImageTextButton returnButton =
