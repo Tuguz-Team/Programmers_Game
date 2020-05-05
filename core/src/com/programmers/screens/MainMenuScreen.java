@@ -21,43 +21,23 @@ import com.programmers.ui_elements.MyButton;
 
 public class MainMenuScreen extends Stage implements Screen {
 
-    private ScreenLoader screenLoader;
-    private VerticalGroup mainButtons;
-
-    private Texture fontTexture;
-    private ImageTextButton startButton, exitButton;
-    private Skin buttonSkin;
-    private BitmapFont font;
-
-    private OrthographicCamera camera; // область просмотра нашей игры
+    private OrthographicCamera camera;
 
     public MainMenuScreen(final ScreenLoader screenLoader) {
-        this.screenLoader = screenLoader;
-
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        buttonSkin = new Skin();
-        buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
-        fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
-        font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
-
-        mainButtons = new VerticalGroup();
+        VerticalGroup mainButtons = new VerticalGroup();
         mainButtons.setFillParent(true);
         addActor(mainButtons);
 
-        ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
-        style.up = buttonSkin.getDrawable("start_button");
-        style.down = buttonSkin.getDrawable("exit_button");
-        style.font = font;
-
-        startButton = new MyButton("START", style) {
+        ImageTextButton startButton = new MyButton("START", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new GameScreen(screenLoader, Difficulty.Hard, 4));
             }
         };
-        exitButton = new MyButton("END", style) {
+        ImageTextButton exitButton = new MyButton("END", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 Gdx.app.exit();
@@ -103,12 +83,5 @@ public class MainMenuScreen extends Stage implements Screen {
     @Override
     public void hide() {
 
-    }
-
-    @Override
-    public void dispose() {
-        buttonSkin.dispose();
-        font.dispose();
-        super.dispose();
     }
 }

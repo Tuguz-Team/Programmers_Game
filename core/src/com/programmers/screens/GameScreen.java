@@ -7,10 +7,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -45,8 +41,6 @@ public class GameScreen extends Stage implements Screen {
 	private final int playersCount;
 
 	private final ScreenLoader screenLoader;
-	private Skin buttonSkin;
-	private BitmapFont font;
 
 	private final Field field;
 	private final GameController gameController;
@@ -206,23 +200,11 @@ public class GameScreen extends Stage implements Screen {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();
-
-		buttonSkin.dispose();
-		font.dispose();
 		super.dispose();
 	}
 
 	private void addUI() {
         final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-        buttonSkin = new Skin();
-		buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
-		Texture fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
-		font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
-
-		final ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
-		style.up = buttonSkin.getDrawable("start_button");
-		style.down = buttonSkin.getDrawable("exit_button");
-		style.font = font;
 
 		VerticalGroup mainButtons = new VerticalGroup();
 		mainButtons.setFillParent(true);
@@ -233,21 +215,21 @@ public class GameScreen extends Stage implements Screen {
 		dialog.hide();
 		VerticalGroup dialogButtons = new VerticalGroup();
 		dialogButtons.setFillParent(true);
-		ImageTextButton mainMenuButton = new MyButton("MAIN MENU", style) {
+		ImageTextButton mainMenuButton = new MyButton("MAIN MENU", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				dispose();
 				screenLoader.setScreen(screenLoader.getMainMenu());
 			}
 		};
-		ImageTextButton returnButton = new MyButton("RETURN", style) {
+		ImageTextButton returnButton = new MyButton("RETURN", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				dialog.hide();
 				gameInputProcessor.unlockCamera();
 			}
 		};
-		ImageTextButton settingsButton = new MyButton("SETTINGS", style) {
+		ImageTextButton settingsButton = new MyButton("SETTINGS", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
@@ -266,7 +248,7 @@ public class GameScreen extends Stage implements Screen {
 		dialog.setMovable(false);
 		addActor(dialog);
 
-		ImageTextButton toDialogButton = new MyButton("PAUSE MENU", style) {
+		ImageTextButton toDialogButton = new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				gameInputProcessor.lockCamera();

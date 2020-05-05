@@ -3,38 +3,21 @@ package com.programmers.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.ui_elements.MyButton;
 
 public class SettingsScreen extends Stage implements Screen {
 
-    private Skin buttonSkin;
-    private BitmapFont font;
-
     private final OrthographicCamera camera;
 
     SettingsScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        buttonSkin = new Skin();
-        buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
-        Texture fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
-        font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"), new TextureRegion(fontTexture), false);
-
-        final ImageTextButton.ImageTextButtonStyle style = new ImageTextButton.ImageTextButtonStyle();
-        style.up = buttonSkin.getDrawable("start_button");
-        style.down = buttonSkin.getDrawable("exit_button");
-        style.font = font;
-        ImageTextButton returnButton = new MyButton("RETURN", style) {
+        ImageTextButton returnButton = new MyButton("RETURN", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 dispose();
@@ -81,12 +64,5 @@ public class SettingsScreen extends Stage implements Screen {
     @Override
     public void hide() {
 
-    }
-
-    @Override
-    public void dispose() {
-        buttonSkin.dispose();
-        font.dispose();
-        super.dispose();
     }
 }
