@@ -55,7 +55,7 @@ public class GameScreen extends Stage implements Screen {
 	private final ModelBatch modelBatch;
 	private final GameInputProcessor gameInputProcessor;
 	private final InputMultiplexer multiplexer;
-	private Dialog dialog;
+	private Dialog pauseMenu;
 
 	public GameScreen(final ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
 		this.screenLoader = screenLoader;
@@ -210,56 +210,62 @@ public class GameScreen extends Stage implements Screen {
 		mainButtons.setFillParent(true);
 		addActor(mainButtons);
 
-		dialog = new Dialog("PAUSE MENU", skin);
-		dialog.setVisible(false);
-		dialog.hide();
-		VerticalGroup dialogButtons = new VerticalGroup();
-		dialogButtons.setFillParent(true);
-		ImageTextButton mainMenuButton = new MyButton("MAIN MENU", screenLoader.getButtonStyle()) {
+		pauseMenu = new Dialog("PAUSE MENU", skin);
+		pauseMenu.setVisible(false);
+		pauseMenu.hide();
+		pauseMenu.getContentTable().setFillParent(true);
+
+		ImageTextButton mainMenuButton =
+				new MyButton("MAIN MENU", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				dispose();
 				screenLoader.setScreen(screenLoader.getMainMenu());
 			}
 		};
-		ImageTextButton returnButton = new MyButton("RETURN", screenLoader.getButtonStyle()) {
+		ImageTextButton returnButton =
+				new MyButton("RETURN", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
-				dialog.hide();
+				pauseMenu.hide();
 				gameInputProcessor.unlockCamera();
 			}
 		};
-		ImageTextButton settingsButton = new MyButton("SETTINGS", screenLoader.getButtonStyle()) {
+		ImageTextButton settingsButton =
+				new MyButton("SETTINGS", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
 			}
 		};
 
-		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialogButtons.addActor(mainMenuButton);
-		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialogButtons.addActor(returnButton);
-		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
-		dialogButtons.addActor(settingsButton);
-		dialogButtons.space(0.05f * Gdx.graphics.getWidth());
+		pauseMenu.getContentTable().pad(
+		        0.05f * Gdx.graphics.getHeight(),
+                0.05f * Gdx.graphics.getHeight(),
+                0.025f * Gdx.graphics.getHeight(),
+                0.05f * Gdx.graphics.getHeight());
 
-		dialog.getContentTable().add(dialogButtons);
-		dialog.setMovable(false);
-		addActor(dialog);
+		pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
+		pauseMenu.getContentTable().row();
+		pauseMenu.getContentTable().add(returnButton).space(0.05f * Gdx.graphics.getHeight());
+		pauseMenu.getContentTable().row();
+		pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight());
 
-		ImageTextButton toDialogButton = new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
+		pauseMenu.setMovable(false);
+		addActor(pauseMenu);
+
+		ImageTextButton toDialogButton =
+				new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				gameInputProcessor.lockCamera();
-				dialog.setVisible(true);
-				dialog.show(GameScreen.this);
+				pauseMenu.setVisible(true);
+				pauseMenu.show(GameScreen.this);
 			}
 		};
-
 		mainButtons.addActor(toDialogButton);
 		mainButtons.space(0.2f * Gdx.graphics.getWidth());
-		mainButtons.left().top();
+		mainButtons.right().top();
 
 		final SelectBox<String> selectBox = new SelectBox<>(skin);
 		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
