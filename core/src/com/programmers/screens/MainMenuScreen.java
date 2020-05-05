@@ -5,18 +5,35 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
 import com.programmers.ui_elements.MyButton;
 
-public class MainMenuScreen extends Stage implements Screen {
+public final class MainMenuScreen extends Stage implements Screen {
 
     private OrthographicCamera camera;
 
     public MainMenuScreen(final ScreenLoader screenLoader) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        final Dialog exitDialog = new Dialog("Are you sure you want to exit the game?", skin) {
+            @Override
+            protected void result(Object object) {
+                if (object.equals(true))
+                    Gdx.app.exit();
+            }
+        };
+        exitDialog.button("YES", true);
+        exitDialog.button("NO", false);
+        exitDialog.setMovable(false);
+        exitDialog.setRound(true);
 
         VerticalGroup mainButtons = new VerticalGroup();
         mainButtons.setFillParent(true);
@@ -31,7 +48,7 @@ public class MainMenuScreen extends Stage implements Screen {
         ImageTextButton exitButton = new MyButton("END", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                Gdx.app.exit();
+                exitDialog.show(MainMenuScreen.this);
             }
         };
 

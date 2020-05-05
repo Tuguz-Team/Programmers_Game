@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class ScreenLoader extends Game {
+public final class ScreenLoader extends Game {
 
     private MainMenuScreen mainMenu;
 

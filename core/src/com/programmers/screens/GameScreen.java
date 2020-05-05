@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
@@ -35,7 +36,7 @@ import com.programmers.ui_elements.MyButton;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public class GameScreen extends Stage implements Screen {
+public final class GameScreen extends Stage implements Screen {
 
 	private final int size;
 	private final int playersCount;
@@ -55,7 +56,6 @@ public class GameScreen extends Stage implements Screen {
 	private final ModelBatch modelBatch;
 	private final GameInputProcessor gameInputProcessor;
 	private final InputMultiplexer multiplexer;
-	private Dialog pauseMenu;
 
 	public GameScreen(final ScreenLoader screenLoader, final com.programmers.enums.Difficulty difficulty, final int playersCount) {
 		this.screenLoader = screenLoader;
@@ -206,14 +206,10 @@ public class GameScreen extends Stage implements Screen {
 	private void addUI() {
         final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-		VerticalGroup mainButtons = new VerticalGroup();
-		mainButtons.setFillParent(true);
-		addActor(mainButtons);
-
-		pauseMenu = new Dialog("PAUSE MENU", skin);
-		pauseMenu.setVisible(false);
-		pauseMenu.hide();
+		final Dialog pauseMenu = new Dialog("PAUSE MENU", skin);
 		pauseMenu.getContentTable().setFillParent(true);
+		pauseMenu.setMovable(false);
+		pauseMenu.setRound(true);
 
 		ImageTextButton mainMenuButton =
 				new MyButton("MAIN MENU", screenLoader.getButtonStyle()) {
@@ -251,25 +247,24 @@ public class GameScreen extends Stage implements Screen {
 		pauseMenu.getContentTable().row();
 		pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight());
 
-		pauseMenu.setMovable(false);
-		addActor(pauseMenu);
-
 		ImageTextButton toDialogButton =
 				new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
 			@Override
 			public void call() {
 				gameInputProcessor.lockCamera();
-				pauseMenu.setVisible(true);
 				pauseMenu.show(GameScreen.this);
 			}
 		};
-		mainButtons.addActor(toDialogButton);
-		mainButtons.space(0.2f * Gdx.graphics.getWidth());
-		mainButtons.right().top();
+		addActor(toDialogButton);
+		toDialogButton.setPosition(
+				Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.01f),
+				Gdx.graphics.getHeight() * 0.99f,
+				Align.topRight
+		);
 
 		final SelectBox<String> selectBox = new SelectBox<>(skin);
 		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
-		mainButtons.addActor(selectBox);
+		addActor(selectBox);
 	}
 
 	private void addAxises() {
