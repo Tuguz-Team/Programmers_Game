@@ -31,6 +31,7 @@ import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
+import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.ExitDialog;
 import com.programmers.ui_elements.MyButton;
 
@@ -272,6 +273,12 @@ public final class GameScreen extends Stage implements Screen {
 		final SelectBox<String> selectBox = new SelectBox<>(skin);
 		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
 		addActor(selectBox);
+
+		///
+		CardContainer cardContainer = new CardContainer(gameController.getThisPlayer().getCards());
+		addActor(cardContainer);
+		cardContainer.setPosition(Gdx.graphics.getWidth() / 2f,
+				Gdx.graphics.getHeight() / 2f, Align.center);
 	}
 
 	private void addAxises() {

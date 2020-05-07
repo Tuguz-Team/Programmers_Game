@@ -1,22 +1,23 @@
 package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
+import com.programmers.enums.CardType;
 import com.programmers.interfaces.ICard;
 import com.programmers.interfaces.Procedure;
 
 public final class Card implements ICard {
 
-    private final Type type;
+    private final CardType type;
     private final Array<Card> cards;
     private Player player;
 
-    public Card(final Type type, final Player player) {
+    public Card(final CardType type, final Player player) {
         this.type = type;
         this.player = player;
         cards = new Array<>(2);
     }
 
-    public Type getType() {
+    public CardType getType() {
         return type;
     }
 
@@ -128,17 +129,5 @@ public final class Card implements ICard {
     @Override
     public void teleport() {
         player.getCar().teleport();
-    }
-
-    enum Type {
-        StepForward,
-        StepForwardToFloor,
-        Jump,
-        Turn90Left,
-        Turn90Right,
-        Turn180,
-        Cycle2,
-        Cycle3,
-        Teleport
     }
 }

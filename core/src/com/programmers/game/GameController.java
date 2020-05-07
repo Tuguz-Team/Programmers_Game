@@ -2,6 +2,7 @@ package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
 
+import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.game_objects.Chunk;
 
@@ -27,25 +28,25 @@ public final class GameController {
         cardsCount = field.getGameScreen().getDifficulty() == Difficulty.Easy ? 36 : 52;
         discardPile = new Array<>(cardsCount);
         for (int i = 0; i < 6; i++)
-            discardPile.add(new Card(Card.Type.StepForward, null));
+            discardPile.add(new Card(CardType.StepForward, null));
         for (int i = 0; i < 6; i++)
-            discardPile.add(new Card(Card.Type.StepForwardToFloor, null));
+            discardPile.add(new Card(CardType.StepForwardToFloor, null));
         for (int i = 0; i < 6; i++)
-            discardPile.add(new Card(Card.Type.Jump, null));
+            discardPile.add(new Card(CardType.Jump, null));
         for (int i = 0; i < 6; i++)
-            discardPile.add(new Card(Card.Type.Turn90Left, null));
+            discardPile.add(new Card(CardType.Turn90Left, null));
         for (int i = 0; i < 6; i++)
-            discardPile.add(new Card(Card.Type.Turn90Right, null));
+            discardPile.add(new Card(CardType.Turn90Right, null));
         for (int i = 0; i < 6; i++)
-            discardPile.add(new Card(Card.Type.Turn180, null));
+            discardPile.add(new Card(CardType.Turn180, null));
         // Add Cycles and Teleports
         if (field.getGameScreen().getDifficulty() == Difficulty.Hard) {
             for (int i = 0; i < 5; i++)
-                discardPile.add(new Card(Card.Type.Cycle2, null));
+                discardPile.add(new Card(CardType.Cycle2, null));
             for (int i = 0; i < 5; i++)
-                discardPile.add(new Card(Card.Type.Cycle3, null));
+                discardPile.add(new Card(CardType.Cycle3, null));
             for (int i = 0; i < 6; i++)
-                discardPile.add(new Card(Card.Type.Teleport, null));
+                discardPile.add(new Card(CardType.Teleport, null));
         }
         // Make a talon of cards
         makeTalon();
@@ -71,6 +72,10 @@ public final class GameController {
             discardPile.add(card);
         }
         thisPlayer.getCards().clear();
+    }
+
+    public Player getThisPlayer() {
+        return thisPlayer;
     }
 
     public Player nextPlayer() {
