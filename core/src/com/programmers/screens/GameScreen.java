@@ -274,11 +274,9 @@ public final class GameScreen extends Stage implements Screen {
 		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
 		addActor(selectBox);
 
-		///
 		CardContainer cardContainer = new CardContainer(gameController.getThisPlayer().getCards());
 		addActor(cardContainer);
-		cardContainer.setPosition(Gdx.graphics.getWidth() / 2f,
-				Gdx.graphics.getHeight() / 2f, Align.center);
+		cardContainer.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
 	}
 
 	private void addAxises() {
