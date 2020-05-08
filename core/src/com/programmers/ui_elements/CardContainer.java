@@ -21,6 +21,7 @@ public class CardContainer extends VerticalGroup {
                          final Content content, final boolean sorting) {
         this.sorting = sorting;
         this.content = content;
+        addActor(new Card());
         setSize(100, 100);
         setPosition(0, 0, Align.bottomLeft);
         if (cards != null)
@@ -49,12 +50,16 @@ public class CardContainer extends VerticalGroup {
                 if (card.getCard().getType() == CardType.Cycle2
                         || card.getCard().getType() == CardType.Cycle3) {
                     addActor(card);
+                } else {
+                    card.getPrevParent().addActor(card);
                 }
                 break;
             case Actions:
                 if (card.getCard().getType() != CardType.Cycle2
                         && card.getCard().getType() != CardType.Cycle3) {
                     addActor(card);
+                } else {
+                    card.getPrevParent().addActor(card);
                 }
                 break;
             case All:

@@ -12,13 +12,18 @@ import com.badlogic.gdx.utils.Align;
 public class Card extends Image implements Comparable<Card> {
 
     private final com.programmers.game.Card card;
+    private CardContainer prevParent;
+
+    public Card() {
+        super(new Texture("Sprites/Cards/empty.png"));
+        this.card = null;
+    }
 
     public Card(final com.programmers.game.Card card) {
         super(new Texture("Sprites/Cards/".concat(card.getType().toString()).concat(".png")));
         this.card = card;
         setDebug(true);
         addListener(new InputListener() {
-            CardContainer prevParent;
             final Vector2 prevPosition = new Vector2();
             final Card thisCard = Card.this;
 
@@ -33,22 +38,26 @@ public class Card extends Image implements Comparable<Card> {
                 }
                 thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
                 touchDragged(event, x, y, pointer);
+                Gdx.app.log("Card", event.getStageX() + " " + event.getStageY());
                 return true;
             }
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 thisCard.setPosition(event.getStageX(), event.getStageY(), Align.center);
+                Gdx.app.log("Card", event.getStageX() + " " + event.getStageY());
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.log("Card", event.getStageX() + " " + event.getStageY());
                 x = event.getStageX();
                 y = event.getStageY();
                 CardContainer cardContainer = null;
                 for (CardContainer container : CardContainer.cardContainers) {
-                    if (x >= container.getX() && x < container.getRight()
-                            && y >= container.getY() && y < container.getTop()) {
+                    Vector2 tmp = container.localToStageCoordinates(new Vector2());
+                    if (x >= tmp.x && x < tmp.x + container.getWidth()
+                            && y >= tmp.y && y < tmp.y + container.getHeight()) {
                         cardContainer = container;
                         break;
                     }
@@ -58,18 +67,25 @@ public class Card extends Image implements Comparable<Card> {
                 }
                 cardContainer.addCard(thisCard);
                 thisCard.setPosition(prevPosition.x, prevPosition.y);
-                Gdx.app.log("Card", thisCard.getParent().toString()
-                        + " " + thisCard.getParent().hashCode());
             }
         });
     }
 
     @Override
     public int compareTo(Card other) {
+        if (getCard() == null) {
+            return -1;
+        } else if (other.getCard() == null) {
+            return 1;
+        }
         return getCard().getType().compareTo(other.getCard().getType());
     }
 
     public com.programmers.game.Card getCard() {
         return card;
+    }
+
+    public CardContainer getPrevParent() {
+        return prevParent;
     }
 }

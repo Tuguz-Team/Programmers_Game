@@ -31,8 +31,9 @@ import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
+import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.CardContainer;
-import com.programmers.ui_elements.CardWindow;
+import com.programmers.ui_elements.PlayerCardWindow;
 import com.programmers.ui_elements.ExitDialog;
 import com.programmers.ui_elements.MyButton;
 
@@ -275,17 +276,12 @@ public final class GameScreen extends Stage implements Screen {
 				gameController.getThisPlayer().getCards(),
 				CardContainer.Content.All, true
 		);
-		CardWindow playerCardWindow = new CardWindow("Player cards", playerCardContainer);
+		PlayerCardWindow playerCardWindow = new PlayerCardWindow("Player cards", playerCardContainer);
 		addActor(playerCardWindow);
-		playerCardWindow.top().left();
 
-		CardContainer algorithmCardContainer = new CardContainer(
-				gameController.getAlgorithm(),
-				CardContainer.Content.All, true
-		);
-		CardWindow algorithmCardWindow = new CardWindow("Algorithm", algorithmCardContainer);
+		AlgorithmCardWindow algorithmCardWindow
+                = new AlgorithmCardWindow("Algorithm", gameController.getAlgorithm());
 		addActor(algorithmCardWindow);
-		algorithmCardWindow.right();
 	}
 
 	private void addAxises() {
