@@ -18,7 +18,7 @@ public class CardContainer extends VerticalGroup {
     private final Content content;
 
     public CardContainer(final Array<com.programmers.game.Card> cards,
-                         final Content content, boolean sorting) {
+                         final Content content, final boolean sorting) {
         this.sorting = sorting;
         this.content = content;
         setSize(100, 100);

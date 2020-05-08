@@ -16,7 +16,7 @@ public final class GameController {
     private final Player[] players;
     private final Field field;
 
-    private final int cardsCount;
+    private final Array<Card> algorithm;
     private final Array<Card> discardPile;
     private final Stack<Card> talon = new Stack<>();
 
@@ -24,27 +24,24 @@ public final class GameController {
         this.players = players;
         this.field = field;
         thisPlayer = players[0];
+        algorithm = new Array<>();
         // Use discardPile as place where cards are initializing
-        cardsCount = field.getGameScreen().getDifficulty() == Difficulty.Easy ? 36 : 52;
+        int cardsCount = field.getGameScreen().getDifficulty() == Difficulty.Easy ? 36 : 52;
         discardPile = new Array<>(cardsCount);
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++) {
             discardPile.add(new Card(CardType.StepForward, null));
-        for (int i = 0; i < 6; i++)
             discardPile.add(new Card(CardType.StepForwardToFloor, null));
-        for (int i = 0; i < 6; i++)
             discardPile.add(new Card(CardType.Jump, null));
-        for (int i = 0; i < 6; i++)
             discardPile.add(new Card(CardType.Turn90Left, null));
-        for (int i = 0; i < 6; i++)
             discardPile.add(new Card(CardType.Turn90Right, null));
-        for (int i = 0; i < 6; i++)
             discardPile.add(new Card(CardType.Turn180, null));
+        }
         // Add Cycles and Teleports
         if (field.getGameScreen().getDifficulty() == Difficulty.Hard) {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 5; i++) {
                 discardPile.add(new Card(CardType.Cycle2, null));
-            for (int i = 0; i < 5; i++)
                 discardPile.add(new Card(CardType.Cycle3, null));
+            }
             for (int i = 0; i < 6; i++)
                 discardPile.add(new Card(CardType.Teleport, null));
         }
@@ -72,6 +69,10 @@ public final class GameController {
             discardPile.add(card);
         }
         thisPlayer.getCards().clear();
+    }
+
+    public Array<Card> getAlgorithm() {
+        return algorithm;
     }
 
     public Player getThisPlayer() {

@@ -32,6 +32,7 @@ import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 import com.programmers.ui_elements.CardContainer;
+import com.programmers.ui_elements.CardWindow;
 import com.programmers.ui_elements.ExitDialog;
 import com.programmers.ui_elements.MyButton;
 
@@ -201,6 +202,7 @@ public final class GameScreen extends Stage implements Screen {
 		modelBatch.dispose();
 		instances.clear();
 		assetManager.dispose();
+		CardContainer.cardContainers.clear();
 		super.dispose();
 	}
 
@@ -269,14 +271,21 @@ public final class GameScreen extends Stage implements Screen {
 		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
 		addActor(selectBox);
 
-		CardContainer cardContainer = new CardContainer(
+		CardContainer playerCardContainer = new CardContainer(
 				gameController.getThisPlayer().getCards(),
-				CardContainer.Content.All,false);
-		addActor(cardContainer);
+				CardContainer.Content.All, true
+		);
+		CardWindow playerCardWindow = new CardWindow("Player cards", playerCardContainer);
+		addActor(playerCardWindow);
+		playerCardWindow.top().left();
 
-		CardContainer cardContainer1 = new CardContainer(null,
-				CardContainer.Content.All,false);
-		addActor(cardContainer1);
+		CardContainer algorithmCardContainer = new CardContainer(
+				gameController.getAlgorithm(),
+				CardContainer.Content.All, true
+		);
+		CardWindow algorithmCardWindow = new CardWindow("Algorithm", algorithmCardContainer);
+		addActor(algorithmCardWindow);
+		algorithmCardWindow.right();
 	}
 
 	private void addAxises() {

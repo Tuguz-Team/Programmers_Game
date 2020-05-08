@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -15,6 +16,7 @@ public class Card extends Image implements Comparable<Card> {
     public Card(final com.programmers.game.Card card) {
         super(new Texture("Sprites/Cards/".concat(card.getType().toString()).concat(".png")));
         this.card = card;
+        setDebug(true);
         addListener(new InputListener() {
             CardContainer prevParent;
             final Vector2 prevPosition = new Vector2();
@@ -51,16 +53,15 @@ public class Card extends Image implements Comparable<Card> {
                         break;
                     }
                 }
-                if (cardContainer == null) cardContainer = prevParent;
+                if (cardContainer == null) {
+                    cardContainer = prevParent;
+                }
                 cardContainer.addCard(thisCard);
                 thisCard.setPosition(prevPosition.x, prevPosition.y);
+                Gdx.app.log("Card", thisCard.getParent().toString()
+                        + " " + thisCard.getParent().hashCode());
             }
         });
-    }
-
-    @Override
-    public void setParent(Group parent) {
-        super.setParent(parent);
     }
 
     @Override
