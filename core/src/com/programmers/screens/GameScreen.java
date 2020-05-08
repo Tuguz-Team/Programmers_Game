@@ -20,8 +20,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
@@ -244,10 +244,8 @@ public final class GameScreen extends Stage implements Screen {
 		};
 
 		pauseMenu.getContentTable().pad(
-		        0.05f * Gdx.graphics.getHeight(),
-                0.05f * Gdx.graphics.getHeight(),
-                0.025f * Gdx.graphics.getHeight(),
-                0.05f * Gdx.graphics.getHeight());
+				0.05f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight(),
+                0.025f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight());
 
 		pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
 		pauseMenu.getContentTable().row();
@@ -266,22 +264,23 @@ public final class GameScreen extends Stage implements Screen {
 		addActor(toDialogButton);
 		toDialogButton.setPosition(
 				Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.01f),
-				Gdx.graphics.getHeight() * 0.99f,
-				Align.topRight
-		);
+				Gdx.graphics.getHeight() * 0.99f, Align.topRight);
 
-		final SelectBox<String> selectBox = new SelectBox<>(skin);
-		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
-		addActor(selectBox);
+		//final SelectBox<String> selectBox = new SelectBox<>(skin);
+		//selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
+		//addActor(selectBox);
 
-		CardContainer cardContainer = new CardContainer(
-				gameController.getThisPlayer().getCards(),
-				CardContainer.Content.All
-		);
-		addActor(cardContainer);
+		CardContainer playerCards = new CardContainer(gameController.getThisPlayer().getCards());
 
-		CardContainer cardContainer1 = new CardContainer(null, CardContainer.Content.All);
-		addActor(cardContainer1);
+		final Window window = new Window("Your cards", skin);
+		window.setMovable(false);
+		window.getTitleLabel().setAlignment(Align.center);
+		window.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
+		window.setSize(1.5f * playerCards.getWidth(),
+				playerCards.getHeight() + 2 * window.getTitleLabel().getHeight());
+
+		addActor(window);
+		window.add(playerCards);
 	}
 
 	private void addAxises() {
