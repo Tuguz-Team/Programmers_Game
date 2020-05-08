@@ -3,11 +3,11 @@ package com.programmers.enums;
 public enum CardType {
     Cycle2,
     Cycle3,
+    Teleport,
+    Jump,
     StepForward,
     StepForwardToFloor,
-    Jump,
     Turn90Left,
     Turn90Right,
-    Turn180,
-    Teleport
+    Turn180
 }

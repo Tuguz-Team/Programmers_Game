@@ -20,8 +20,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
@@ -134,8 +134,8 @@ public final class GameScreen extends Stage implements Screen {
 
 	private void loading() {
 		field.loading();
-        for (Player player : gameController.getPlayers())
-            player.getCar().loading();
+		for (Player player : gameController.getPlayers())
+			player.getCar().loading();
 		loading = true;
 	}
 
@@ -205,10 +205,10 @@ public final class GameScreen extends Stage implements Screen {
 	}
 
 	private void addUI() {
-        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+		final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
 		final ExitDialog exitDialog = new ExitDialog
-				("Are you sure you want to quit the room and return to main menu?", skin) {
+				("Are you sure you want to return to main menu?", skin) {
 			@Override
 			public void call() {
 				dispose();
@@ -220,84 +220,63 @@ public final class GameScreen extends Stage implements Screen {
 		pauseMenu.getContentTable().setFillParent(true);
 		pauseMenu.setMovable(false);
 
-		ImageTextButton mainMenuButton =
-				new MyButton("MAIN MENU", screenLoader.getButtonStyle()) {
-			@Override
-			public void call() {
-				exitDialog.show(GameScreen.this);
-			}
-		};
 		ImageTextButton returnButton =
-				new MyButton("RETURN", screenLoader.getButtonStyle()) {
-			@Override
-			public void call() {
-				pauseMenu.hide();
-				gameInputProcessor.unlockCamera();
-			}
-		};
+				new MyButton("CONTINUE", screenLoader.getButtonStyle()) {
+					@Override
+					public void call() {
+						pauseMenu.hide();
+						gameInputProcessor.unlockCamera();
+					}
+				};
 		ImageTextButton settingsButton =
 				new MyButton("SETTINGS", screenLoader.getButtonStyle()) {
-			@Override
-			public void call() {
-				screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
-			}
-		};
+					@Override
+					public void call() {
+						screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
+					}
+				};
+		ImageTextButton mainMenuButton =
+				new MyButton("QUIT ROOM", screenLoader.getButtonStyle()) {
+					@Override
+					public void call() {
+						exitDialog.show(GameScreen.this);
+					}
+				};
 
 		pauseMenu.getContentTable().pad(
 				0.05f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight(),
-                0.025f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight());
+				0.025f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight());
 
+		pauseMenu.getContentTable().add(returnButton).space(0.05f * Gdx.graphics.getHeight()).row();
+		pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight()).row();
 		pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
-		pauseMenu.getContentTable().row();
-		pauseMenu.getContentTable().add(returnButton).space(0.05f * Gdx.graphics.getHeight());
-		pauseMenu.getContentTable().row();
-		pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight());
 
 		ImageTextButton toDialogButton =
 				new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
-			@Override
-			public void call() {
-				gameInputProcessor.lockCamera();
-				pauseMenu.show(GameScreen.this);
-			}
-		};
+					@Override
+					public void call() {
+						gameInputProcessor.lockCamera();
+						pauseMenu.show(GameScreen.this);
+					}
+				};
 		addActor(toDialogButton);
 		toDialogButton.setPosition(
-				Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.01f),
-				Gdx.graphics.getHeight() * 0.99f, Align.topRight);
+				Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.02f),
+				Gdx.graphics.getHeight() * 0.98f,
+				Align.topRight);
 
-		//final SelectBox<String> selectBox = new SelectBox<>(skin);
-		//selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
-		//addActor(selectBox);
+		final SelectBox<String> selectBox = new SelectBox<>(skin);
+		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
+		addActor(selectBox);
 
-		CardContainer playerCardsContainer = new CardContainer(
+		CardContainer cardContainer = new CardContainer(
 				gameController.getThisPlayer().getCards(),
-				CardContainer.Content.All);
+				CardContainer.Content.All,false);
+		addActor(cardContainer);
 
-		final Window playerCards = new Window("Your cards", skin);
-		playerCards.setMovable(false);
-		playerCards.getTitleLabel().setAlignment(Align.center);
-		playerCards.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
-		playerCards.setSize(1.5f * playerCardsContainer.getWidth(),
-				playerCardsContainer.getHeight() + 2 * playerCards.getTitleLabel().getHeight());
-
-		addActor(playerCards);
-		playerCards.add(playerCardsContainer);
-
-		CardContainer gameCardsContainer = new CardContainer(
-				null,
-				CardContainer.Content.All);
-		//addActor(gameCardsContainer);
-
-		final Window gameCards = new Window("Game cards", skin);
-		gameCards.setMovable(false);
-		gameCards.getTitleLabel().setAlignment(Align.center);
-		gameCards.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Align.topLeft);
-		gameCards.setSize(1.5f * gameCardsContainer.getWidth(),
-				gameCardsContainer.getHeight() + 2 * gameCards.getTitleLabel().getHeight());
-
-		addActor(gameCards);
-		gameCards.addActor(gameCardsContainer);
+		CardContainer cardContainer1 = new CardContainer(null,
+				CardContainer.Content.All,false);
+		addActor(cardContainer1);
 	}
 
 	private void addAxises() {

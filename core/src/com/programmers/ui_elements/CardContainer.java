@@ -14,18 +14,17 @@ public class CardContainer extends VerticalGroup {
 
     public static final Array<CardContainer> cardContainers = new Array<>(3);
     private static final Sort sort = new Sort();
-
+    private final boolean sorting;
     private final Content content;
 
-    public CardContainer(final Array<com.programmers.game.Card> cards, final Content content) {
+    public CardContainer(final Array<com.programmers.game.Card> cards,
+                         final Content content, boolean sorting) {
+        this.sorting = sorting;
         this.content = content;
         setSize(100, 100);
-        //setPosition(0, 0, Align.bottomLeft);
-        if (cards != null) {
-            for (com.programmers.game.Card card : cards) {
-                addCard(new Card(card));
-            }
-        }
+        setPosition(0, 0, Align.bottomLeft);
+        if (cards != null)
+            for (com.programmers.game.Card card : cards) addCard(new Card(card));
         cardContainers.add(this);
         setDebug(true);
     }
@@ -35,12 +34,13 @@ public class CardContainer extends VerticalGroup {
         super.childrenChanged();
         setSize(getPrefWidth(), getPrefHeight());
         setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
-        sort.sort(getChildren(), new Comparator<Actor>() {
-            @Override
-            public int compare(Actor lhs, Actor rhs) {
-                return ((Card) lhs).compareTo((Card) rhs);
-            }
-        });
+        if (sorting)
+            sort.sort(getChildren(), new Comparator<Actor>() {
+                @Override
+                public int compare(Actor lhs, Actor rhs) {
+                    return ((Card) lhs).compareTo((Card) rhs);
+                }
+            });
     }
 
     public void addCard(final Card card) {
