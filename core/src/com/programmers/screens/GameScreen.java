@@ -276,7 +276,6 @@ public final class GameScreen extends Stage implements Screen {
 
 		CardContainer cardContainer = new CardContainer(gameController.getThisPlayer().getCards());
 		addActor(cardContainer);
-		cardContainer.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
 	}
 
 	private void addAxises() {

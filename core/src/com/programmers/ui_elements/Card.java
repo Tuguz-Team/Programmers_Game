@@ -8,12 +8,16 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 
-public class Card extends Image {
+public class Card extends Image implements Comparable<Card> {
+
+    private final com.programmers.game.Card card;
 
     public Card(final com.programmers.game.Card card) {
         super(new Texture("Sprites/Cards/".concat(card.getType().toString()).concat(".png")));
+        this.card = card;
         addListener(new InputListener() {
             Group prevParent;
             final Vector2 prevPosition = new Vector2();
@@ -26,22 +30,22 @@ public class Card extends Image {
                 prevPosition.set(thisCard.getX(), thisCard.getY());
                 Group group = prevParent.getParent();
                 while (group != null) {
-                    thisCard.setParent(group);
+                    group.addActor(thisCard);
                     group = group.getParent();
                 }
+                touchDragged(event, x, y, pointer);
                 return true;
             }
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                thisCard.setPosition(event.getStageX() - prevParent.getX(),
-                        event.getStageY() - prevParent.getY(), Align.center);
+                thisCard.setPosition(event.getStageX(), event.getStageY(), Align.center);
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (thisCard.getParent().getParent() == null) {
-                    thisCard.setParent(prevParent);
+                    prevParent.addActor(thisCard);
                     thisCard.setPosition(prevPosition.x, prevPosition.y);
                 }
             }
@@ -65,5 +69,14 @@ public class Card extends Image {
     @Override
     public void setParent(Group parent) {
         super.setParent(parent);
+    }
+
+    @Override
+    public int compareTo(Card other) {
+        return getCard().getType().compareTo(other.getCard().getType());
+    }
+
+    public com.programmers.game.Card getCard() {
+        return card;
     }
 }
