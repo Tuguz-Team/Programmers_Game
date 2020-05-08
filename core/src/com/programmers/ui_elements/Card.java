@@ -16,20 +16,20 @@ public class Card extends Image implements Comparable<Card> {
         super(new Texture("Sprites/Cards/".concat(card.getType().toString()).concat(".png")));
         this.card = card;
         addListener(new InputListener() {
-            Group prevParent;
+            CardContainer prevParent;
             final Vector2 prevPosition = new Vector2();
             final Card thisCard = Card.this;
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
-                prevParent = thisCard.getParent();
+                prevParent = (CardContainer) thisCard.getParent();
                 prevPosition.set(thisCard.getX(), thisCard.getY());
                 Group group = prevParent.getParent();
                 while (group != null) {
                     group.addActor(thisCard);
                     group = group.getParent();
                 }
+                thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
                 touchDragged(event, x, y, pointer);
                 return true;
             }
@@ -41,22 +41,20 @@ public class Card extends Image implements Comparable<Card> {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (thisCard.getParent().getParent() == null) {
-                    prevParent.addActor(thisCard);
-                    thisCard.setPosition(prevPosition.x, prevPosition.y);
-                }
-            }
-
-            /* НЕ РАБОТАЕТ!
-            private Actor getByPosition(final Actor rootActor, final float x, final float y) {
-                if (rootActor instanceof Group)
-                    for (Actor actor : ((Group)rootActor).getChildren()) {
-                        Actor temp = getByPosition(actor, x, y);
-                        if (temp != null && temp != thisCard) return temp;
+                x = event.getStageX();
+                y = event.getStageY();
+                CardContainer cardContainer = null;
+                for (CardContainer container : CardContainer.cardContainers) {
+                    if (x >= container.getX() && x < container.getRight()
+                            && y >= container.getY() && y < container.getTop()) {
+                        cardContainer = container;
+                        break;
                     }
-                return rootActor.hit(x, y, true);
+                }
+                if (cardContainer == null) cardContainer = prevParent;
+                cardContainer.addCard(thisCard);
+                thisCard.setPosition(prevPosition.x, prevPosition.y);
             }
-            */
         });
     }
 

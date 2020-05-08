@@ -20,7 +20,7 @@ public class CardContainer extends VerticalGroup {
     public CardContainer(final Array<com.programmers.game.Card> cards, final Content content) {
         this.content = content;
         setSize(100, 100);
-        setPosition(0, 0, Align.bottomLeft);
+        //setPosition(0, 0, Align.bottomLeft);
         if (cards != null) {
             for (com.programmers.game.Card card : cards) {
                 addCard(new Card(card));

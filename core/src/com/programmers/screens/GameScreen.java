@@ -270,17 +270,34 @@ public final class GameScreen extends Stage implements Screen {
 		//selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
 		//addActor(selectBox);
 
-		CardContainer playerCards = new CardContainer(gameController.getThisPlayer().getCards());
+		CardContainer playerCardsContainer = new CardContainer(
+				gameController.getThisPlayer().getCards(),
+				CardContainer.Content.All);
 
-		final Window window = new Window("Your cards", skin);
-		window.setMovable(false);
-		window.getTitleLabel().setAlignment(Align.center);
-		window.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
-		window.setSize(1.5f * playerCards.getWidth(),
-				playerCards.getHeight() + 2 * window.getTitleLabel().getHeight());
+		final Window playerCards = new Window("Your cards", skin);
+		playerCards.setMovable(false);
+		playerCards.getTitleLabel().setAlignment(Align.center);
+		playerCards.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
+		playerCards.setSize(1.5f * playerCardsContainer.getWidth(),
+				playerCardsContainer.getHeight() + 2 * playerCards.getTitleLabel().getHeight());
 
-		addActor(window);
-		window.add(playerCards);
+		addActor(playerCards);
+		playerCards.add(playerCardsContainer);
+
+		CardContainer gameCardsContainer = new CardContainer(
+				null,
+				CardContainer.Content.All);
+		//addActor(gameCardsContainer);
+
+		final Window gameCards = new Window("Game cards", skin);
+		gameCards.setMovable(false);
+		gameCards.getTitleLabel().setAlignment(Align.center);
+		gameCards.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), Align.topLeft);
+		gameCards.setSize(1.5f * gameCardsContainer.getWidth(),
+				gameCardsContainer.getHeight() + 2 * gameCards.getTitleLabel().getHeight());
+
+		addActor(gameCards);
+		gameCards.addActor(gameCardsContainer);
 	}
 
 	private void addAxises() {
