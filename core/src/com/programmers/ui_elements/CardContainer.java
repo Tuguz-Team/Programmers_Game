@@ -21,6 +21,8 @@ public class CardContainer extends VerticalGroup {
 
     private int prevChildrenCount;
 
+    public boolean discardMode = false;
+
     public CardContainer(final Array<GameCard> cards,
                          final Content content, final boolean sorting) {
         this.sorting = sorting;
@@ -46,31 +48,25 @@ public class CardContainer extends VerticalGroup {
             addActor(emptyCard);
         }
         setSize(getPrefWidth(), getPrefHeight());
-        // if we add some stuff, but don't remove
-        if (prevChildrenCount < getChildren().size) {
-            if (sorting) {
-                sort.sort(getChildren(), new Comparator<Actor>() {
-                    @Override
-                    public int compare(Actor lhs, Actor rhs) {
-                        return ((Card) lhs).compareTo((Card) rhs);
-                    }
-                });
-            } else {
-                // move added item to the top
-                for (int i = prevChildrenCount; i > 0; i--) {
-                    getChildren().swap(i, i - 1);
+        if (prevChildrenCount < getChildren().size && sorting) {
+            sort.sort(getChildren(), new Comparator<Actor>() {
+                @Override
+                public int compare(Actor lhs, Actor rhs) {
+                    return ((Card) lhs).compareTo((Card) rhs);
                 }
-            }
+            });
         }
         prevChildrenCount = getChildren().size;
         setTouchable();
     }
 
     protected void setTouchable() {
-        if (getChildren().size < 3)
-            setTouchable(Touchable.disabled);
-        else
-            setTouchable(Touchable.enabled);
+        if (!discardMode) {
+            if (getChildren().size < 3)
+                setTouchable(Touchable.disabled);
+            else
+                setTouchable(Touchable.enabled);
+        }
     }
 
     public void addEmpty() {
