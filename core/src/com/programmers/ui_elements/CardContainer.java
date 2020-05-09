@@ -20,19 +20,22 @@ public class CardContainer extends VerticalGroup {
     private final Card emptyCard;
 
     private int prevChildrenCount;
+    private Array<GameCard> gameCards;
 
     public boolean discardMode = false;
 
-    public CardContainer(final Array<GameCard> cards,
+    public CardContainer(final Array<GameCard> gameCards,
                          final Content content, final boolean sorting) {
+        this.gameCards = gameCards;
         this.sorting = sorting;
         this.content = content;
         emptyCard = new Card();
         addActor(emptyCard);
         setSize(100, 100);
         setPosition(0, 0, Align.bottomLeft);
-        if (cards != null) {
-            for (GameCard gameCard : cards) addCard(new Card(gameCard));
+        if (gameCards != null) {
+            for (GameCard gameCard : gameCards)
+                addCard(new Card(gameCard));
         }
         prevChildrenCount = getChildren().size;
         cardContainers.add(this);
@@ -73,6 +76,14 @@ public class CardContainer extends VerticalGroup {
         addActor(emptyCard);
     }
 
+    public Array<GameCard> getGameCards() {
+        return gameCards;
+    }
+
+    public void setGameCards(Array<GameCard> gameCards) {
+        this.gameCards = gameCards;
+    }
+
     public void addCard(final Card card) {
         switch (content) {
             case Cycles:
@@ -94,6 +105,12 @@ public class CardContainer extends VerticalGroup {
             case All:
                 addActor(card);
         }
+    }
+
+    @Override
+    public void clearChildren() {
+        super.clearChildren();
+        addEmpty();
     }
 
     public enum Content {

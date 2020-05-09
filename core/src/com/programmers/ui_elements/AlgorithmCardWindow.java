@@ -3,6 +3,7 @@ package com.programmers.ui_elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -15,15 +16,20 @@ import com.programmers.game.GameController;
 
 import java.util.Iterator;
 
-public class AlgorithmCardWindow extends Table {
+public final class AlgorithmCardWindow extends Table {
+
+    private final GameController gameController;
+
+    private final Button button;
+    private CardContainer actionsCardContainer;
+    private CardContainer cyclesCardContainer;
 
     public AlgorithmCardWindow(final String name, final GameController gameController) {
+        this.gameController = gameController;
         setFillParent(true);
         setDebug(true);
-        final CardContainer actionsCardContainer;
-        final CardContainer cyclesCardContainer;
         final Table table = new Table();
-        final Button button = new Button(
+        button = new Button(
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOn.png")),
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
         );
@@ -32,17 +38,17 @@ public class AlgorithmCardWindow extends Table {
         add(table);
         if (gameController.getDifficulty() == Difficulty.Hard) {
             cyclesCardContainer = new CardContainer(
-                    gameController.getAlgorithm(),
+                    gameController.getAlgorithmCards(),
                     CardContainer.Content.Cycles,
                     false
             );
             table.add(cyclesCardContainer).spaceRight(10).bottom();
             actionsCardContainer = new CardContainer(
-                    gameController.getAlgorithm(),
+                    gameController.getAlgorithmCards(),
                     CardContainer.Content.Actions, false);
         } else {
             actionsCardContainer = new CardContainer(
-                    gameController.getAlgorithm(),
+                    gameController.getAlgorithmCards(),
                     CardContainer.Content.Actions, false) {
                 @Override
                 protected void setTouchable() { }
@@ -68,7 +74,32 @@ public class AlgorithmCardWindow extends Table {
                     }
                     actionsCardContainer.addEmpty();
                 }
+                gameController.toNextPlayer();
             }
         });
+    }
+
+    public void enable() {
+        button.setTouchable(Touchable.enabled);
+        actionsCardContainer.setTouchable(Touchable.enabled);
+        CardContainer.cardContainers.add(actionsCardContainer);
+        if (gameController.getDifficulty() == Difficulty.Hard) {
+            cyclesCardContainer.setTouchable(Touchable.enabled);
+            CardContainer.cardContainers.add(cyclesCardContainer);
+        }
+    }
+
+    public void disable() {
+        button.setTouchable(Touchable.disabled);
+        actionsCardContainer.setTouchable(Touchable.disabled);
+        CardContainer.cardContainers.removeValue(actionsCardContainer, false);
+        if (gameController.getDifficulty() == Difficulty.Hard) {
+            cyclesCardContainer.setTouchable(Touchable.disabled);
+            CardContainer.cardContainers.removeValue(cyclesCardContainer, false);
+        }
+    }
+
+    public Button getButton() {
+        return button;
     }
 }

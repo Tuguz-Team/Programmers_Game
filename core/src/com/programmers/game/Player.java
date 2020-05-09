@@ -45,7 +45,7 @@ public final class Player {
         return lives;
     }
 
-    public Array<GameCard> getCards() {
+    public Array<GameCard> getGameCards() {
         return cards;
     }
 }

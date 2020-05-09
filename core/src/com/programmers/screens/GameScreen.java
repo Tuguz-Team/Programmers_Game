@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -31,9 +30,7 @@ import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
-import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.CardContainer;
-import com.programmers.ui_elements.PlayerCardWindow;
 import com.programmers.ui_elements.ExitDialog;
 import com.programmers.ui_elements.MyButton;
 
@@ -267,19 +264,8 @@ public final class GameScreen extends Stage implements Screen {
                 Gdx.graphics.getHeight() * 0.98f,
                 Align.topRight);
 
-        CardContainer playerCardContainer = new CardContainer(
-                gameController.getThisPlayer().getCards(),
-                CardContainer.Content.All, true
-        );
-        PlayerCardWindow playerCardWindow = new PlayerCardWindow(
-                "Player cards",
-                playerCardContainer,
-                gameController
-        );
-        addActor(playerCardWindow);
-
-        AlgorithmCardWindow algorithmCardWindow = new AlgorithmCardWindow("Algorithm", gameController);
-        addActor(algorithmCardWindow);
+        addActor(gameController.getPlayerCardWindow());
+        addActor(gameController.getAlgorithmCardWindow());
     }
 
     private void addAxises() {

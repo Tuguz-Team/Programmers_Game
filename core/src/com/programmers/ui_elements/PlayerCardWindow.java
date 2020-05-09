@@ -11,12 +11,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
 
-public class PlayerCardWindow extends Table {
+public final class PlayerCardWindow extends Table {
+
+    private boolean discarding = false;
+    private CardContainer cardContainer;
 
     public PlayerCardWindow(final String name, final CardContainer cardContainer,
                             final GameController gameController) {
         setFillParent(true);
         setDebug(true);
+        this.cardContainer = cardContainer;
         final Table tableTemp = new Table();
         final Table table = new Table();
         final Button button = new Button(
@@ -46,23 +50,29 @@ public class PlayerCardWindow extends Table {
         table.add(button).left();
         table.add(discardContainer).left().row();
         button.addListener(new MyButton.Listener() {
-            boolean canAdd = false;
             @Override
             public void call() {
-                canAdd = !canAdd;
-                discardContainer.setVisible(canAdd);
-                if (!canAdd) {
-                    cardContainer.discardMode = false;
-                    CardContainer.cardContainers.removeValue(discardContainer, false);
-                } else {
+                discarding = !discarding;
+                discardContainer.setVisible(discarding);
+                if (discarding) {
+                    gameController.getAlgorithmCardWindow().disable();
                     cardContainer.setTouchable(Touchable.enabled);
                     cardContainer.discardMode = true;
                     CardContainer.cardContainers.add(discardContainer);
+                } else {
+                    gameController.getAlgorithmCardWindow().enable();
+                    cardContainer.discardMode = false;
+                    CardContainer.cardContainers.removeValue(discardContainer, false);
+                    gameController.toNextPlayer();
                 }
                 cardContainer.setTouchable();
             }
         });
         table.add(new Label(name, new Skin(Gdx.files.internal("uiskin.json")))).bottom();
         left().bottom();
+    }
+
+    public CardContainer getCardContainer() {
+        return cardContainer;
     }
 }

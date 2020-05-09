@@ -1,10 +1,15 @@
 package com.programmers.game;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.game_objects.Chunk;
+import com.programmers.ui_elements.AlgorithmCardWindow;
+import com.programmers.ui_elements.Card;
+import com.programmers.ui_elements.CardContainer;
+import com.programmers.ui_elements.PlayerCardWindow;
 
 import java.util.Stack;
 
@@ -17,7 +22,10 @@ public final class GameController {
     private final Field field;
     private final Difficulty difficulty;
 
-    private final Array<GameCard> algorithm;
+    private final PlayerCardWindow playerCardWindow;
+    private final AlgorithmCardWindow algorithmCardWindow;
+
+    private final Array<GameCard> algorithmCards;
     private final Array<GameCard> discardPile;
     private final Stack<GameCard> talon = new Stack<>();
 
@@ -25,7 +33,7 @@ public final class GameController {
         this.players = players;
         this.field = field;
         thisPlayer = players[0];
-        algorithm = new Array<>();
+        algorithmCards = new Array<>();
         // Use discardPile as place where cards are initializing
         difficulty = field.getGameScreen().getDifficulty();
         int cardsCount = difficulty == Difficulty.Easy ? 36 : 52;
@@ -55,6 +63,15 @@ public final class GameController {
                 player.addCard(talon.pop());
             }
         }
+        //
+        CardContainer playerCardContainer = new CardContainer(
+                thisPlayer.getGameCards(),
+                CardContainer.Content.All, true
+        );
+        playerCardWindow = new PlayerCardWindow(
+                "Player cards", playerCardContainer, this
+        );
+        algorithmCardWindow = new AlgorithmCardWindow("Algorithm", this);
     }
 
     public void makeTalon() {
@@ -69,8 +86,8 @@ public final class GameController {
         return discardPile;
     }
 
-    public Array<GameCard> getAlgorithm() {
-        return algorithm;
+    public Array<GameCard> getAlgorithmCards() {
+        return algorithmCards;
     }
 
     public Stack<GameCard> getTalon() {
@@ -85,13 +102,27 @@ public final class GameController {
         return difficulty;
     }
 
-    public Player nextPlayer() {
+    public void toNextPlayer() {
+        Array<GameCard> gameCards = thisPlayer.getGameCards();
+        gameCards.clear();
+        for (Actor actor : playerCardWindow.getCardContainer().getChildren()) {
+            gameCards.add(((Card) actor).getGameCard());
+        }
+        while (gameCards.size < 5) {
+            gameCards.add(talon.pop());
+        }
+        playerCardWindow.getCardContainer().clearChildren();
+        //
         int i;
         for (i = 0; i < players.length; i++) {
             if (thisPlayer.equals(players[i]))
                 break;
         }
-        return players[(i + 1) % players.length];
+        thisPlayer = players[(i + 1) % players.length];
+        //
+        for (GameCard gameCard : thisPlayer.getGameCards()) {
+            playerCardWindow.getCardContainer().addCard(new Card(gameCard));
+        }
     }
 
     public Player[] getPlayers() {
@@ -124,5 +155,13 @@ public final class GameController {
             }
         }
         return winner;
+    }
+
+    public PlayerCardWindow getPlayerCardWindow() {
+        return playerCardWindow;
+    }
+
+    public AlgorithmCardWindow getAlgorithmCardWindow() {
+        return algorithmCardWindow;
     }
 }
