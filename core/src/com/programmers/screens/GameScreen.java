@@ -271,6 +271,7 @@ public final class GameScreen extends Stage implements Screen {
 		final SelectBox<String> selectBox = new SelectBox<>(skin);
 		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
 		addActor(selectBox);
+		selectBox.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
 
 		CardContainer playerCardContainer = new CardContainer(
 				gameController.getThisPlayer().getCards(),
@@ -280,7 +281,7 @@ public final class GameScreen extends Stage implements Screen {
 		addActor(playerCardWindow);
 
 		AlgorithmCardWindow algorithmCardWindow
-                = new AlgorithmCardWindow("Algorithm", gameController.getAlgorithm());
+                = new AlgorithmCardWindow("Algorithm", gameController.getAlgorithm(), difficulty);
 		addActor(algorithmCardWindow);
 	}
 

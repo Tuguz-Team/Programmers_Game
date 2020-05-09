@@ -1,6 +1,5 @@
 package com.programmers.ui_elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -15,8 +14,9 @@ public class Card extends Image implements Comparable<Card> {
     private CardContainer prevParent;
 
     public Card() {
-        super(new Texture("Sprites/Cards/empty.png"));
+        super(new Texture("Sprites/Cards/empty_h.png"));
         this.card = null;
+        setDebug(true);
     }
 
     public Card(final com.programmers.game.Card card) {
@@ -38,19 +38,16 @@ public class Card extends Image implements Comparable<Card> {
                 }
                 thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
                 touchDragged(event, x, y, pointer);
-                Gdx.app.log("Card", event.getStageX() + " " + event.getStageY());
                 return true;
             }
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 thisCard.setPosition(event.getStageX(), event.getStageY(), Align.center);
-                Gdx.app.log("Card", event.getStageX() + " " + event.getStageY());
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.log("Card", event.getStageX() + " " + event.getStageY());
                 x = event.getStageX();
                 y = event.getStageY();
                 CardContainer cardContainer = null;
@@ -73,12 +70,12 @@ public class Card extends Image implements Comparable<Card> {
 
     @Override
     public int compareTo(Card other) {
-        if (getCard() == null) {
+        if (this.getCard() == null) {
             return -1;
         } else if (other.getCard() == null) {
             return 1;
         }
-        return getCard().getType().compareTo(other.getCard().getType());
+        return this.getCard().getType().compareTo(other.getCard().getType());
     }
 
     public com.programmers.game.Card getCard() {
