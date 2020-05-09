@@ -9,7 +9,7 @@ public final class Player {
     private int score;
     private final Car car;
     private final Array<Life> lives;
-    private final Array<Card> cards;
+    private final Array<GameCard> cards;
 
     public Player(final Car car) {
         this.car = car;
@@ -32,9 +32,9 @@ public final class Player {
         score += 2;
     }
 
-    public void addCard(Card card) {
-        card.setPlayer(this);
-        cards.add(card);
+    public void addCard(GameCard gameCard) {
+        gameCard.setPlayer(this);
+        cards.add(gameCard);
     }
 
     public Car getCar() {
@@ -45,7 +45,7 @@ public final class Player {
         return lives;
     }
 
-    public Array<Card> getCards() {
+    public Array<GameCard> getCards() {
         return cards;
     }
 }

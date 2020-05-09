@@ -1,11 +1,13 @@
 package com.programmers.ui_elements;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Sort;
 import com.programmers.enums.CardType;
+import com.programmers.game.GameCard;
 
 import java.util.Comparator;
 
@@ -18,7 +20,7 @@ public class CardContainer extends VerticalGroup {
 
     private int prevChildrenCount;
 
-    public CardContainer(final Array<com.programmers.game.Card> cards,
+    public CardContainer(final Array<GameCard> cards,
                          final Content content, final boolean sorting) {
         this.sorting = sorting;
         this.content = content;
@@ -26,7 +28,7 @@ public class CardContainer extends VerticalGroup {
         setSize(100, 100);
         setPosition(0, 0, Align.bottomLeft);
         if (cards != null) {
-            for (com.programmers.game.Card card : cards) addCard(new Card(card));
+            for (GameCard gameCard : cards) addCard(new Card(gameCard));
         }
         prevChildrenCount = getChildren().size;
         cardContainers.add(this);
@@ -54,21 +56,29 @@ public class CardContainer extends VerticalGroup {
             }
         }
         prevChildrenCount = getChildren().size;
+        setTouchable();
+    }
+
+    protected void setTouchable() {
+        if (getChildren().size < 4)
+            setTouchable(Touchable.disabled);
+        else
+            setTouchable(Touchable.enabled);
     }
 
     public void addCard(final Card card) {
         switch (content) {
             case Cycles:
-                if (card.getCard().getType() == CardType.Cycle2
-                        || card.getCard().getType() == CardType.Cycle3) {
+                if (card.getGameCard().getType() == CardType.Cycle2
+                        || card.getGameCard().getType() == CardType.Cycle3) {
                     addActor(card);
                 } else {
                     card.getPrevParent().addActor(card);
                 }
                 break;
             case Actions:
-                if (card.getCard().getType() != CardType.Cycle2
-                        && card.getCard().getType() != CardType.Cycle3) {
+                if (card.getGameCard().getType() != CardType.Cycle2
+                        && card.getGameCard().getType() != CardType.Cycle3) {
                     addActor(card);
                 } else {
                     card.getPrevParent().addActor(card);

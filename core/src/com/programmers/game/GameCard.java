@@ -5,13 +5,13 @@ import com.programmers.enums.CardType;
 import com.programmers.interfaces.ICard;
 import com.programmers.interfaces.Procedure;
 
-public final class Card implements ICard {
+public final class GameCard implements ICard {
 
     private final CardType type;
-    private final Array<Card> cards;
+    private final Array<GameCard> cards;
     private Player player;
 
-    public Card(final CardType type, final Player player) {
+    public GameCard(final CardType type, final Player player) {
         this.type = type;
         this.player = player;
         cards = new Array<>(2);
@@ -21,7 +21,7 @@ public final class Card implements ICard {
         return type;
     }
 
-    public Array<Card> getCards() {
+    public Array<GameCard> getCards() {
         return cards;
     }
 

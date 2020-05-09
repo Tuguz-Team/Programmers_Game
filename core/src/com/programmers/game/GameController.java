@@ -15,10 +15,11 @@ public final class GameController {
     private Player thisPlayer;
     private final Player[] players;
     private final Field field;
+    private final Difficulty difficulty;
 
-    private final Array<Card> algorithm;
-    private final Array<Card> discardPile;
-    private final Stack<Card> talon = new Stack<>();
+    private final Array<GameCard> algorithm;
+    private final Array<GameCard> discardPile;
+    private final Stack<GameCard> talon = new Stack<>();
 
     public GameController(final Player[] players, final Field field) {
         this.players = players;
@@ -26,24 +27,25 @@ public final class GameController {
         thisPlayer = players[0];
         algorithm = new Array<>();
         // Use discardPile as place where cards are initializing
-        int cardsCount = field.getGameScreen().getDifficulty() == Difficulty.Easy ? 36 : 52;
+        difficulty = field.getGameScreen().getDifficulty();
+        int cardsCount = difficulty == Difficulty.Easy ? 36 : 52;
         discardPile = new Array<>(cardsCount);
         for (int i = 0; i < 6; i++) {
-            discardPile.add(new Card(CardType.StepForward, null));
-            discardPile.add(new Card(CardType.StepForwardToFloor, null));
-            discardPile.add(new Card(CardType.Jump, null));
-            discardPile.add(new Card(CardType.Turn90Left, null));
-            discardPile.add(new Card(CardType.Turn90Right, null));
-            discardPile.add(new Card(CardType.Turn180, null));
+            discardPile.add(new GameCard(CardType.StepForward, null));
+            discardPile.add(new GameCard(CardType.StepForwardToFloor, null));
+            discardPile.add(new GameCard(CardType.Jump, null));
+            discardPile.add(new GameCard(CardType.Turn90Left, null));
+            discardPile.add(new GameCard(CardType.Turn90Right, null));
+            discardPile.add(new GameCard(CardType.Turn180, null));
         }
         // Add Cycles and Teleports
-        if (field.getGameScreen().getDifficulty() == Difficulty.Hard) {
+        if (difficulty == Difficulty.Hard) {
             for (int i = 0; i < 5; i++) {
-                discardPile.add(new Card(CardType.Cycle2, null));
-                discardPile.add(new Card(CardType.Cycle3, null));
+                discardPile.add(new GameCard(CardType.Cycle2, null));
+                discardPile.add(new GameCard(CardType.Cycle3, null));
             }
             for (int i = 0; i < 6; i++)
-                discardPile.add(new Card(CardType.Teleport, null));
+                discardPile.add(new GameCard(CardType.Teleport, null));
         }
         // Make a talon of cards
         makeTalon();
@@ -55,7 +57,7 @@ public final class GameController {
         }
     }
 
-    private void makeTalon() {
+    public void makeTalon() {
         while (!discardPile.isEmpty()) {
             final int i = random.nextInt(discardPile.size);
             talon.push(discardPile.get(i));
@@ -63,20 +65,20 @@ public final class GameController {
         }
     }
 
-    private void discardThisPlayerCards() {
-        for (Card card : thisPlayer.getCards()) {
-            card.setPlayer(null);
-            discardPile.add(card);
-        }
-        thisPlayer.getCards().clear();
+    public Array<GameCard> getDiscardPile() {
+        return discardPile;
     }
 
-    public Array<Card> getAlgorithm() {
+    public Array<GameCard> getAlgorithm() {
         return algorithm;
     }
 
     public Player getThisPlayer() {
         return thisPlayer;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
     public Player nextPlayer() {
@@ -94,8 +96,8 @@ public final class GameController {
 
     public Player getWinner() {
         for (Player player : players) {
-            if ((field.getGameScreen().getDifficulty() == Difficulty.Easy && player.getScore() >= 7)
-                    || (field.getGameScreen().getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {
+            if ((difficulty == Difficulty.Easy && player.getScore() >= 7)
+                    || (difficulty == Difficulty.Hard && player.getScore() >= 9)) {
                 return player;
             }
         }

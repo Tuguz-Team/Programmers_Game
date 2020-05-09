@@ -7,21 +7,22 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
+import com.programmers.game.GameCard;
 
 public class Card extends Image implements Comparable<Card> {
 
-    private final com.programmers.game.Card card;
+    private final GameCard gameCard;
     private CardContainer prevParent;
 
     public Card() {
-        super(new Texture("Sprites/Cards/empty_h.png"));
-        this.card = null;
+        super(new Texture("Sprites/Cards/empty.png"));
+        this.gameCard = null;
         setDebug(true);
     }
 
-    public Card(final com.programmers.game.Card card) {
-        super(new Texture("Sprites/Cards/".concat(card.getType().toString()).concat(".png")));
-        this.card = card;
+    public Card(final GameCard gameCard) {
+        super(new Texture("Sprites/Cards/".concat(gameCard.getType().toString()).concat(".png")));
+        this.gameCard = gameCard;
         setDebug(true);
         addListener(new InputListener() {
             final Vector2 prevPosition = new Vector2();
@@ -70,16 +71,16 @@ public class Card extends Image implements Comparable<Card> {
 
     @Override
     public int compareTo(Card other) {
-        if (this.getCard() == null) {
+        if (this.getGameCard() == null) {
             return -1;
-        } else if (other.getCard() == null) {
+        } else if (other.getGameCard() == null) {
             return 1;
         }
-        return this.getCard().getType().compareTo(other.getCard().getType());
+        return this.getGameCard().getType().compareTo(other.getGameCard().getType());
     }
 
-    public com.programmers.game.Card getCard() {
-        return card;
+    public GameCard getGameCard() {
+        return gameCard;
     }
 
     public CardContainer getPrevParent() {

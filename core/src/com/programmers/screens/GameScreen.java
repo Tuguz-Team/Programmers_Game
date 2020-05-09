@@ -254,24 +254,18 @@ public final class GameScreen extends Stage implements Screen {
 		pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight()).row();
 		pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
 
-		ImageTextButton toDialogButton =
-				new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
-					@Override
-					public void call() {
-						gameInputProcessor.lockCamera();
-						pauseMenu.show(GameScreen.this);
-					}
-				};
+		ImageTextButton toDialogButton = new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
+			@Override
+			public void call() {
+				gameInputProcessor.lockCamera();
+				pauseMenu.show(GameScreen.this);
+			}
+		};
 		addActor(toDialogButton);
 		toDialogButton.setPosition(
 				Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.02f),
 				Gdx.graphics.getHeight() * 0.98f,
 				Align.topRight);
-
-		final SelectBox<String> selectBox = new SelectBox<>(skin);
-		selectBox.setItems("RED CAR INFO", "BLUE CAR INFO", "YELLOW CAR INFO", "GREEN CAR INFO");
-		addActor(selectBox);
-		selectBox.setPosition(0, Gdx.graphics.getHeight(), Align.topLeft);
 
 		CardContainer playerCardContainer = new CardContainer(
 				gameController.getThisPlayer().getCards(),
@@ -280,8 +274,7 @@ public final class GameScreen extends Stage implements Screen {
 		PlayerCardWindow playerCardWindow = new PlayerCardWindow("Player cards", playerCardContainer);
 		addActor(playerCardWindow);
 
-		AlgorithmCardWindow algorithmCardWindow
-                = new AlgorithmCardWindow("Algorithm", gameController.getAlgorithm(), difficulty);
+		AlgorithmCardWindow algorithmCardWindow = new AlgorithmCardWindow("Algorithm", gameController);
 		addActor(algorithmCardWindow);
 	}
 

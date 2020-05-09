@@ -190,6 +190,8 @@ public final class Car extends GameObject implements ICard {
         switch (direction) {
             case Forward:
                 isInBounds = getZ() != size - 1;
+                if (!isInBounds)
+                    return false;
                 nextChunk = base.getField().getChunks()[getX()][getZ() + 1];
                 isWall = thisChunk.getWallForward() != null;
                 move = new Procedure() {
@@ -201,6 +203,8 @@ public final class Car extends GameObject implements ICard {
                 break;
             case Back:
                 isInBounds = getZ() != 0;
+                if (!isInBounds)
+                    return false;
                 nextChunk = base.getField().getChunks()[getX()][getZ() - 1];
                 isWall = thisChunk.getWallBack() != null;
                 move = new Procedure() {
@@ -212,6 +216,8 @@ public final class Car extends GameObject implements ICard {
                 break;
             case Left:
                 isInBounds = getX() != size - 1;
+                if (!isInBounds)
+                    return false;
                 nextChunk = base.getField().getChunks()[getX() + 1][getZ()];
                 isWall = thisChunk.getWallLeft() != null;
                 move = new Procedure() {
@@ -224,6 +230,8 @@ public final class Car extends GameObject implements ICard {
             case Right:
             default:
                 isInBounds = getX() != 0;
+                if (!isInBounds)
+                    return false;
                 nextChunk = base.getField().getChunks()[getX() - 1][getZ()];
                 isWall = thisChunk.getWallRight() != null;
                 move = new Procedure() {
@@ -266,6 +274,8 @@ public final class Car extends GameObject implements ICard {
         switch (direction) {
             case Forward:
                 isInBounds = getZ() != size - 1;
+                if (!isInBounds)
+                    return;
                 nextChunk = base.getField().getChunks()[getX()][getZ() + 1];
                 move = new Procedure() {
                     @Override
@@ -276,6 +286,8 @@ public final class Car extends GameObject implements ICard {
                 break;
             case Back:
                 isInBounds = getZ() != 0;
+                if (!isInBounds)
+                    return;
                 nextChunk = base.getField().getChunks()[getX()][getZ() - 1];
                 move = new Procedure() {
                     @Override
@@ -286,6 +298,8 @@ public final class Car extends GameObject implements ICard {
                 break;
             case Left:
                 isInBounds = getX() != size - 1;
+                if (!isInBounds)
+                    return;
                 nextChunk = base.getField().getChunks()[getX() + 1][getZ()];
                 move = new Procedure() {
                     @Override
@@ -297,6 +311,8 @@ public final class Car extends GameObject implements ICard {
             case Right:
             default:
                 isInBounds = getX() != 0;
+                if (!isInBounds)
+                    return;
                 nextChunk = base.getField().getChunks()[getX() - 1][getZ()];
                 move = new Procedure() {
                     @Override
