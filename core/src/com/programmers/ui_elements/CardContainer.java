@@ -34,8 +34,10 @@ public class CardContainer extends VerticalGroup {
         setSize(100, 100);
         setPosition(0, 0, Align.bottomLeft);
         if (gameCards != null) {
-            for (GameCard gameCard : gameCards)
-                addCard(new Card(gameCard));
+            for (GameCard gameCard : gameCards) {
+                Card card = new Card(gameCard);
+                addCard(card);
+            }
         }
         prevChildrenCount = getChildren().size;
         cardContainers.add(this);

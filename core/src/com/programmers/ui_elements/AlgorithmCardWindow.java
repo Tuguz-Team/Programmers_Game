@@ -69,6 +69,7 @@ public final class AlgorithmCardWindow extends Table {
                             continue;
                         cards.add(gameCard);
                         gameCard.apply();
+                        gameController.getDiscardPile().add(gameCard);
                         iterator.remove();
                         actionsCardContainer.childrenChanged();
                     }

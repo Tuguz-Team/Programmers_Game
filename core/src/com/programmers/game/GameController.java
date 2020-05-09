@@ -57,13 +57,15 @@ public final class GameController {
         }
         // Make a talon of cards
         makeTalon();
-        // Add 5 cards from talon to each player
+        // Add 5 cards from talon to each player from talon
         for (Player player : players) {
             for (int i = 0; i < 5; i++) {
-                player.addCard(talon.pop());
+                GameCard gameCard = talon.pop();
+                player.addCard(gameCard);
+                gameCard.setPlayer(player);
             }
         }
-        //
+        // add UI objects that are necessary for the game
         CardContainer playerCardContainer = new CardContainer(
                 thisPlayer.getGameCards(),
                 CardContainer.Content.All, true
@@ -77,7 +79,9 @@ public final class GameController {
     public void makeTalon() {
         while (!discardPile.isEmpty()) {
             final int i = random.nextInt(discardPile.size);
-            talon.push(discardPile.get(i));
+            final GameCard gameCard = discardPile.get(i);
+            talon.push(gameCard);
+            gameCard.setPlayer(null);
             discardPile.removeIndex(i);
         }
     }
@@ -103,25 +107,46 @@ public final class GameController {
     }
 
     public void toNextPlayer() {
-        Array<GameCard> gameCards = thisPlayer.getGameCards();
-        gameCards.clear();
-        for (Actor actor : playerCardWindow.getCardContainer().getChildren()) {
-            gameCards.add(((Card) actor).getGameCard());
+        // add new cards to the player and clear playerCardWindow
+        final Array<GameCard> gameCards = thisPlayer.getGameCards();
+        final CardContainer playerCardContainer = playerCardWindow.getCardContainer();
+        if (((Card) playerCardContainer.getChild(0)).getGameCard() != null) {
+            gameCards.clear();
+            for (Actor actor : playerCardContainer.getChildren()) {
+                gameCards.add(((Card) actor).getGameCard());
+            }
+            while (gameCards.size < 5) {
+                if (talon.empty()) {
+                    makeTalon();
+                }
+                GameCard gameCard = talon.pop();
+                gameCards.add(gameCard);
+                gameCard.setPlayer(thisPlayer);
+            }
+            playerCardContainer.clearChildren();
+        } else {
+            gameCards.clear();
+            while (gameCards.size < 5) {
+                if (talon.empty()) {
+                    makeTalon();
+                }
+                GameCard gameCard = talon.pop();
+                gameCards.add(gameCard);
+                gameCard.setPlayer(thisPlayer);
+            }
         }
-        while (gameCards.size < 5) {
-            gameCards.add(talon.pop());
-        }
-        playerCardWindow.getCardContainer().clearChildren();
-        //
+        // set this player
         int i;
         for (i = 0; i < players.length; i++) {
             if (thisPlayer.equals(players[i]))
                 break;
         }
         thisPlayer = players[(i + 1) % players.length];
-        //
+        // add this player cards to the playerCardWindow
         for (GameCard gameCard : thisPlayer.getGameCards()) {
-            playerCardWindow.getCardContainer().addCard(new Card(gameCard));
+            Card card = new Card(gameCard);
+            playerCardContainer.addCard(card);
+            gameCard.setPlayer(thisPlayer);
         }
     }
 
