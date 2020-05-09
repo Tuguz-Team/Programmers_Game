@@ -56,15 +56,17 @@ public class AlgorithmCardWindow extends Table {
                 if (gameController.getDifficulty() == Difficulty.Easy) {
                     Array<GameCard> cards = new Array<>();
                     Iterator<Actor> iterator = actionsCardContainer.getChildren().iterator();
-                    iterator.next();
                     while (iterator.hasNext()) {
                         Card card = (Card) iterator.next();
                         GameCard gameCard = card.getGameCard();
+                        if (gameCard == null)
+                            continue;
                         cards.add(gameCard);
                         gameCard.apply();
                         iterator.remove();
                         actionsCardContainer.childrenChanged();
                     }
+                    actionsCardContainer.addEmpty();
                 }
             }
         });

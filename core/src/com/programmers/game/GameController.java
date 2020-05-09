@@ -73,6 +73,10 @@ public final class GameController {
         return algorithm;
     }
 
+    public Stack<GameCard> getTalon() {
+        return talon;
+    }
+
     public Player getThisPlayer() {
         return thisPlayer;
     }
