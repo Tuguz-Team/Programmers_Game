@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -13,8 +14,6 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
-
-import java.util.Iterator;
 
 public final class AlgorithmCardWindow extends Table {
 
@@ -45,7 +44,8 @@ public final class AlgorithmCardWindow extends Table {
                     false
             ) {
                 @Override
-                protected void setTouchable() { }
+                protected void setTouchable() {
+                }
 
                 @Override
                 protected void childrenChanged() {
@@ -65,7 +65,8 @@ public final class AlgorithmCardWindow extends Table {
                 gameController.getAlgorithmCards(),
                 CardContainer.Content.Actions, false) {
             @Override
-            protected void setTouchable() { }
+            protected void setTouchable() {
+            }
 
             @Override
             protected void childrenChanged() {
@@ -84,20 +85,23 @@ public final class AlgorithmCardWindow extends Table {
             @Override
             public void call() {
                 if (gameController.getDifficulty() == Difficulty.Easy) {
-                    Array<GameCard> cards = new Array<>();
-                    Iterator<Actor> iterator = actionsCardContainer.getChildren().iterator();
-                    while (iterator.hasNext()) {
-                        Card card = (Card) iterator.next();
+                    Array<Actor> array = actionsCardContainer.getChildren();
+                    for (int i = 0; i < array.size + 10; i++) {
+                        Card card = (Card) array.get(0);
                         GameCard gameCard = card.getGameCard();
                         if (gameCard == null)
                             continue;
-                        cards.add(gameCard);
                         gameCard.apply();
                         gameController.getDiscardPile().add(gameCard);
-                        iterator.remove();
+
+                        Cell cell = getCell(array.get(0));
+                        array.get(0).remove();
+                        getCells().removeValue(cell, true);
+                        invalidate();
+
                         actionsCardContainer.childrenChanged();
                     }
-                    actionsCardContainer.addEmpty();
+                    actionsCardContainer.controlEmpty();
                 }
                 gameController.toNextPlayer();
             }

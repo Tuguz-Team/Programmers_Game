@@ -35,6 +35,7 @@ public final class PlayerCardWindow extends Table {
                 super.childrenChanged();
                 Card card = (Card)getChild(0);
                 if (card.getGameCard() != null) {
+                    removeEmpty();
                     GameCard gameCard = card.getGameCard();
                     gameCard.setPlayer(null);
                     gameController.getDiscardPile().add(gameCard);

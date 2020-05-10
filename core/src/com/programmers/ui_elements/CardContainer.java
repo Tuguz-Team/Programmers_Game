@@ -2,8 +2,8 @@ package com.programmers.ui_elements;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Sort;
 import com.programmers.enums.CardType;
@@ -11,7 +11,7 @@ import com.programmers.game.GameCard;
 
 import java.util.Comparator;
 
-public class CardContainer extends VerticalGroup {
+public class CardContainer extends Table {
 
     public static final Array<CardContainer> cardContainers = new Array<>(3);
     private static final Sort sort = new Sort();
@@ -20,19 +20,15 @@ public class CardContainer extends VerticalGroup {
     private final Card emptyCard;
 
     private int prevChildrenCount;
-    private Array<GameCard> gameCards;
 
     public boolean discardMode = false;
 
     public CardContainer(final Array<GameCard> gameCards,
                          final Content content, final boolean sorting) {
-        this.gameCards = gameCards;
         this.sorting = sorting;
         this.content = content;
         emptyCard = new Card();
-        addActor(emptyCard);
-        setSize(100, 100);
-        setPosition(0, 0, Align.bottomLeft);
+        addEmpty();
         if (gameCards != null) {
             for (GameCard gameCard : gameCards) {
                 Card card = new Card(gameCard);
@@ -47,12 +43,8 @@ public class CardContainer extends VerticalGroup {
     @Override
     protected void childrenChanged() {
         super.childrenChanged();
-        if (getChildren().size > 1) {
-            removeActor(emptyCard);
-        } else if (getChildren().isEmpty()) {
-            addActor(emptyCard);
-        }
-        setSize(getPrefWidth(), getPrefHeight());
+        controlEmpty();
+
         if (prevChildrenCount < getChildren().size && sorting) {
             sort.sort(getChildren(), new Comparator<Actor>() {
                 @Override
@@ -65,6 +57,20 @@ public class CardContainer extends VerticalGroup {
         setTouchable();
     }
 
+    public void controlEmpty() {
+        if (getChildren().size > 1)
+            removeEmpty();
+        else if (getChildren().isEmpty())
+            addEmpty();
+    }
+
+    public void removeEmpty() {
+        Cell cell = getCell(emptyCard);
+        emptyCard.remove();
+        getCells().removeValue(cell, true);
+        invalidate();
+    }
+
     protected void setTouchable() {
         if (!discardMode) {
             if (getChildren().size < 3)
@@ -75,15 +81,7 @@ public class CardContainer extends VerticalGroup {
     }
 
     public void addEmpty() {
-        addActor(emptyCard);
-    }
-
-    public Array<GameCard> getGameCards() {
-        return gameCards;
-    }
-
-    public void setGameCards(Array<GameCard> gameCards) {
-        this.gameCards = gameCards;
+        add(emptyCard).row();
     }
 
     public void addCard(final Card card) {
@@ -91,28 +89,28 @@ public class CardContainer extends VerticalGroup {
             case Cycles:
                 if (card.getGameCard().getType() == CardType.Cycle2
                         || card.getGameCard().getType() == CardType.Cycle3) {
-                    addActor(card);
+                    add(card).row();
                 } else {
-                    card.getPrevParent().addActor(card);
+                    card.getPrevParent().add(card).row();
                 }
                 break;
             case Actions:
                 if (card.getGameCard().getType() != CardType.Cycle2
                         && card.getGameCard().getType() != CardType.Cycle3) {
-                    addActor(card);
+                    add(card).row();
                 } else {
-                    card.getPrevParent().addActor(card);
+                    card.getPrevParent().add(card).row();
                 }
                 break;
             case All:
-                addActor(card);
+                add(card).row();
         }
     }
 
     @Override
     public void clearChildren() {
         super.clearChildren();
-        addEmpty();
+        controlEmpty();
     }
 
     public enum Content {
