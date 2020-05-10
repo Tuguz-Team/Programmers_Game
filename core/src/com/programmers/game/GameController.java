@@ -145,7 +145,7 @@ public final class GameController {
         // add this player cards to the playerCardWindow
         for (GameCard gameCard : thisPlayer.getGameCards()) {
             Card card = new Card(gameCard);
-            playerCardContainer.addCard(card);
+            playerCardContainer.addCard(card, 0, 0);
             gameCard.setPlayer(thisPlayer);
         }
     }

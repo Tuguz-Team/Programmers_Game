@@ -2,9 +2,11 @@ package com.programmers.ui_elements;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.game.GameCard;
@@ -14,8 +16,11 @@ public class Card extends Image implements Comparable<Card> {
     private final GameCard gameCard;
     private CardContainer prevParent;
 
-    public Card() {
-        super(new Texture("Sprites/Cards/empty.png"));
+    private Cell<Card> cell;
+    private int indexForCycles;
+
+    public Card(final String name) {
+        super(new Texture(name));
         this.gameCard = null;
         setDebug(true);
     }
@@ -25,17 +30,20 @@ public class Card extends Image implements Comparable<Card> {
         this.gameCard = gameCard;
         setDebug(true);
         addListener(new InputListener() {
-            final Vector2 prevPosition = new Vector2();
             final Card thisCard = Card.this;
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 prevParent = (CardContainer) thisCard.getParent();
-                prevPosition.set(thisCard.getX(), thisCard.getY());
                 Group group = prevParent.getParent();
                 while (group != null) {
                     group.addActor(thisCard);
                     group = group.getParent();
+                }
+                if (thisCard.getCell() != null) {
+                    thisCard.getCell().setActor(
+                            prevParent.getCycleCards().get(thisCard.getIndexForCycles())
+                    );
                 }
                 thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
                 touchDragged(event, x, y, pointer);
@@ -49,23 +57,33 @@ public class Card extends Image implements Comparable<Card> {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Vector2 stagePos;
                 x = event.getStageX();
                 y = event.getStageY();
                 CardContainer cardContainer = null;
                 for (CardContainer container : CardContainer.cardContainers) {
-                    Vector2 tmp = container.localToStageCoordinates(new Vector2());
-                    if (x >= tmp.x && x < tmp.x + container.getWidth()
-                            && y >= tmp.y && y < tmp.y + container.getHeight()
-                            && container.getChildren().size < 5) {
-                        cardContainer = container;
-                        break;
+                    stagePos = container.localToStageCoordinates(new Vector2());
+                    if (x >= stagePos.x && x < stagePos.x + container.getWidth()
+                            && y >= stagePos.y && y < stagePos.y + container.getHeight())
+                    {
+                        if (container.getChildren().size < 5) {
+                            cardContainer = container;
+                            break;
+                        } else if (container.getContent() == CardContainer.Content.Cycles) {
+                            cardContainer = container;
+                            break;
+                        }
                     }
                 }
                 if (cardContainer == null) {
-                    cardContainer = prevParent;
+                    if (thisCard.cell == null) {
+                        cardContainer = prevParent;
+                    } else {
+                        thisCard.cell.setActor(thisCard);
+                        return;
+                    }
                 }
-                cardContainer.addCard(thisCard);
-                thisCard.setPosition(prevPosition.x, prevPosition.y);
+                cardContainer.addCard(thisCard, x, y);
             }
         });
     }
@@ -86,5 +104,21 @@ public class Card extends Image implements Comparable<Card> {
 
     public CardContainer getPrevParent() {
         return prevParent;
+    }
+
+    public Cell<Card> getCell() {
+        return cell;
+    }
+
+    public void setCell(Cell<Card> cell) {
+        this.cell = cell;
+    }
+
+    public void setIndexForCycles(int indexForCycles) {
+        this.indexForCycles = indexForCycles;
+    }
+
+    public int getIndexForCycles() {
+        return indexForCycles;
     }
 }

@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
@@ -23,18 +24,33 @@ public class CardContainer extends Table {
 
     public boolean discardMode = false;
 
+    private final Array<Card> cycleCards;
+
     public CardContainer(final Array<GameCard> gameCards,
                          final Content content, final boolean sorting) {
         this.sorting = sorting;
         this.content = content;
-        emptyCard = new Card();
+        emptyCard = new Card("Sprites/Cards/empty.png");
         addEmpty();
         if (gameCards != null) {
             for (GameCard gameCard : gameCards) {
                 Card card = new Card(gameCard);
-                addCard(card);
+                addCard(card, 0, 0);
             }
         }
+        //
+        if (content == Content.Cycles) {
+            cycleCards = new Array<>(9);
+            pad(47, 0, 47, 0);
+            for (int i = 0; i < 9; i++) {
+                cycleCards.add(new Card("Sprites/Cards/CyclePoint.png"));
+                Card card = cycleCards.get(i);
+                add(card).spaceBottom(37).row();
+            }
+        } else {
+            cycleCards = null;
+        }
+        //
         prevChildrenCount = getChildren().size;
         cardContainers.add(this);
         setDebug(true);
@@ -84,12 +100,33 @@ public class CardContainer extends Table {
         add(emptyCard).row();
     }
 
-    public void addCard(final Card card) {
+    public void addCard(final Card card, final float globalX, final float globalY) {
         switch (content) {
             case Cycles:
                 if (card.getGameCard().getType() == CardType.Cycle2
                         || card.getGameCard().getType() == CardType.Cycle3) {
-                    add(card).row();
+                    // логика для сложного уровня
+                    Card cycleCard = null;
+                    Vector2 stagePos;
+                    int i = 0;
+                    for (; i < cycleCards.size; i++) {
+                        Card _card = cycleCards.get(i);
+                        stagePos = _card.localToStageCoordinates(new Vector2());
+                        if (globalX >= stagePos.x && globalX < stagePos.x + _card.getWidth()
+                                && globalY >= stagePos.y && globalY < stagePos.y + _card.getHeight()) {
+                            cycleCard = _card;
+                            break;
+                        }
+                    }
+                    if (cycleCard != null) {
+                        Cell<Card> cell = getCell(cycleCard).setActor(card);
+                        card.setIndexForCycles(i);
+                        card.setCell(cell);
+                    } else if (card.getCell() == null) {
+                        card.getPrevParent().add(card).row();
+                    } else {
+                        card.getCell().setActor(card);
+                    }
                 } else {
                     card.getPrevParent().add(card).row();
                 }
@@ -97,13 +134,20 @@ public class CardContainer extends Table {
             case Actions:
                 if (card.getGameCard().getType() != CardType.Cycle2
                         && card.getGameCard().getType() != CardType.Cycle3) {
-                    add(card).row();
+                    if (card.getCell() == null)
+                        add(card).row();
+                    else
+                        card.getCell().setActor(card);
                 } else {
-                    card.getPrevParent().add(card).row();
+                    if (card.getCell() == null)
+                        card.getPrevParent().add(card).row();
+                    else
+                        card.getCell().setActor(card);
                 }
                 break;
             case All:
                 add(card).row();
+                card.setCell(null);
         }
     }
 
@@ -111,6 +155,14 @@ public class CardContainer extends Table {
     public void clearChildren() {
         super.clearChildren();
         controlEmpty();
+    }
+
+    public Content getContent() {
+        return content;
+    }
+
+    public Array<Card> getCycleCards() {
+        return cycleCards;
     }
 
     public enum Content {
