@@ -55,7 +55,8 @@ public class Card extends Image implements Comparable<Card> {
                 for (CardContainer container : CardContainer.cardContainers) {
                     Vector2 tmp = container.localToStageCoordinates(new Vector2());
                     if (x >= tmp.x && x < tmp.x + container.getWidth()
-                            && y >= tmp.y && y < tmp.y + container.getHeight()) {
+                            && y >= tmp.y && y < tmp.y + container.getHeight()
+                            && container.getChildren().size < 5) {
                         cardContainer = container;
                         break;
                     }

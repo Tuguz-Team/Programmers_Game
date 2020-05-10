@@ -33,29 +33,53 @@ public final class AlgorithmCardWindow extends Table {
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOn.png")),
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
         );
-        table.add(button).row();
         add(new Label(name, new Skin(Gdx.files.internal("uiskin.json")))).bottom();
-        add(table);
+        add(table).right().bottom();
+        table.setDebug(true);
+        // if difficulty is hard
         if (gameController.getDifficulty() == Difficulty.Hard) {
+            table.add(button).colspan(2).top().row();
             cyclesCardContainer = new CardContainer(
                     gameController.getAlgorithmCards(),
                     CardContainer.Content.Cycles,
                     false
-            );
-            table.add(cyclesCardContainer).spaceRight(10).bottom();
-            actionsCardContainer = new CardContainer(
-                    gameController.getAlgorithmCards(),
-                    CardContainer.Content.Actions, false);
-        } else {
-            actionsCardContainer = new CardContainer(
-                    gameController.getAlgorithmCards(),
-                    CardContainer.Content.Actions, false) {
+            ) {
                 @Override
                 protected void setTouchable() { }
+
+                @Override
+                protected void childrenChanged() {
+                    super.childrenChanged();
+                    if (areContainersEmpty()) {
+                        gameController.getPlayerCardWindow().enableButton();
+                    } else {
+                        gameController.getPlayerCardWindow().disableButton();
+                    }
+                }
             };
+            table.add(cyclesCardContainer).spaceRight(10).bottom();
+        } else {
+            table.add(button).top().row();
         }
+        actionsCardContainer = new CardContainer(
+                gameController.getAlgorithmCards(),
+                CardContainer.Content.Actions, false) {
+            @Override
+            protected void setTouchable() { }
+
+            @Override
+            protected void childrenChanged() {
+                super.childrenChanged();
+                if (areContainersEmpty()) {
+                    gameController.getPlayerCardWindow().enableButton();
+                } else {
+                    gameController.getPlayerCardWindow().disableButton();
+                }
+            }
+        };
         table.add(actionsCardContainer).bottom();
         right().bottom();
+        //
         button.addListener(new MyButton.Listener() {
             @Override
             public void call() {
@@ -100,7 +124,14 @@ public final class AlgorithmCardWindow extends Table {
         }
     }
 
-    public Button getButton() {
-        return button;
+    public boolean areContainersEmpty() {
+        if (actionsCardContainer != null) {
+            boolean flag = ((Card)actionsCardContainer.getChild(0)).getGameCard() == null;
+            if (gameController.getDifficulty() == Difficulty.Hard) {
+                return flag && (((Card)cyclesCardContainer.getChild(0)).getGameCard() == null);
+            }
+            return flag;
+        }
+        return true;
     }
 }

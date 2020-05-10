@@ -16,6 +16,8 @@ public final class PlayerCardWindow extends Table {
     private boolean discarding = false;
     private CardContainer cardContainer;
 
+    private final Button discardButton;
+
     public PlayerCardWindow(final String name, final CardContainer cardContainer,
                             final GameController gameController) {
         setFillParent(true);
@@ -23,7 +25,7 @@ public final class PlayerCardWindow extends Table {
         this.cardContainer = cardContainer;
         final Table tableTemp = new Table();
         final Table table = new Table();
-        final Button button = new Button(
+        discardButton = new Button(
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOn.png")),
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
         );
@@ -47,9 +49,9 @@ public final class PlayerCardWindow extends Table {
         table.setFillParent(true);
         CardContainer.cardContainers.removeValue(discardContainer, false);
         discardContainer.setVisible(false);
-        table.add(button).left();
+        table.add(discardButton).left();
         table.add(discardContainer).left().row();
-        button.addListener(new MyButton.Listener() {
+        discardButton.addListener(new MyButton.Listener() {
             @Override
             public void call() {
                 discarding = !discarding;
@@ -74,5 +76,13 @@ public final class PlayerCardWindow extends Table {
 
     public CardContainer getCardContainer() {
         return cardContainer;
+    }
+
+    public void enableButton() {
+        discardButton.setTouchable(Touchable.enabled);
+    }
+
+    public void disableButton() {
+        discardButton.setTouchable(Touchable.disabled);
     }
 }

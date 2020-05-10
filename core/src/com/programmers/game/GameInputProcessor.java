@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.programmers.game_objects.Chunk;
 import com.programmers.screens.GameScreen;
 
-public class GameInputProcessor implements GestureDetector.GestureListener {
+public final class GameInputProcessor implements GestureDetector.GestureListener {
 
     private final float MIN_ZOOM;
     private final float MAX_ZOOM;
