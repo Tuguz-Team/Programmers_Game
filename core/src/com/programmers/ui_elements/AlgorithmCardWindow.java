@@ -38,25 +38,7 @@ public final class AlgorithmCardWindow extends Table {
         // if difficulty is hard
         if (gameController.getDifficulty() == Difficulty.Hard) {
             table.add(button).colspan(2).top().row();
-            cyclesCardContainer = new CardContainer(
-                    gameController.getAlgorithmCards(),
-                    CardContainer.Content.Cycles,
-                    false
-            ) {
-                @Override
-                protected void setTouchable() {
-                }
-
-                @Override
-                protected void childrenChanged() {
-                    super.childrenChanged();
-                    if (areContainersEmpty()) {
-                        gameController.getPlayerCardWindow().enableButton();
-                    } else {
-                        gameController.getPlayerCardWindow().disableButton();
-                    }
-                }
-            };
+            cyclesCardContainer = new CycleCardContainer(gameController);
             table.add(cyclesCardContainer).spaceRight(10).bottom();
         } else {
             table.add(button).top().row();
@@ -65,8 +47,7 @@ public final class AlgorithmCardWindow extends Table {
                 gameController.getAlgorithmCards(),
                 CardContainer.Content.Actions, false) {
             @Override
-            protected void setTouchable() {
-            }
+            protected void setTouchable() { }
 
             @Override
             protected void childrenChanged() {
