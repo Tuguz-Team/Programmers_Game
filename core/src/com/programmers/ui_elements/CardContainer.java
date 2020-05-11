@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -60,7 +61,6 @@ public class CardContainer extends Table {
     protected void childrenChanged() {
         super.childrenChanged();
         controlEmpty();
-
         if (prevChildrenCount < getChildren().size && sorting) {
             sort.sort(getChildren(), new Comparator<Actor>() {
                 @Override
@@ -118,14 +118,180 @@ public class CardContainer extends Table {
                             break;
                         }
                     }
-                    if (cycleCard != null) {
+                    if (cycleCard != null && getCell(cycleCard).getActor().isCellEnabled()) {
                         Cell<Card> cell = getCell(cycleCard).setActor(card);
                         card.setIndexForCycles(i);
                         card.setCell(cell);
+                        if (i > 0) {
+                            Cell cardCell = getCells().get(i - 1);
+                            if (cardCell.getActor() != null && ((Card) cardCell.getActor()).getGameCard() == null) {
+                                ((Card) cardCell.getActor()).setCellEnabled(false);
+                                cardCell.setActor(null);
+                            }
+                        } else {
+                            padTop(0);
+                            card.getCell().spaceBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i + 1).spaceBottom(47);
+                            if (getCells().get(i + 1).getActor() != null)
+                                ((Card) getCells().get(i + 1).getActor()).setCellEnabled(false);
+                        }
+                        if (i < getCells().size - 1) {
+                            Cell cardCell = getCells().get(i + 1);
+                            if (cardCell.getActor() != null && ((Card) cardCell.getActor()).getGameCard() == null) {
+                                ((Card) cardCell.getActor()).setCellEnabled(false);
+                                cardCell.setActor(null);
+                            }
+                        } else {
+                            padBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i - 1).spaceBottom(0);
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            getCells().get(i - 2).spaceBottom(47);
+                        }
+                        if (i == 1) {
+                            padTop(58);
+                            card.getCell().spaceBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i - 1).spaceBottom(0);
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            getCells().get(i + 1).spaceBottom(47);
+                            if (getCells().get(i + 1).getActor() != null)
+                                ((Card) getCells().get(i + 1).getActor()).setCellEnabled(false);
+                        } else if (i == getCells().size - 2) {
+                            padBottom(58);
+                            card.getCell().spaceBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i - 1).spaceBottom(0);
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            getCells().get(i - 2).spaceBottom(47);
+                            if (getCells().get(i - 2).getActor() != null)
+                                ((Card) getCells().get(i - 2).getActor()).setCellEnabled(false);
+                        } else if (i > 1 && i < getCells().size - 2) {
+                            card.getCell().spaceBottom(0);
+                            getCells().get(i + 1).spaceBottom(47);
+                            getCells().get(i - 1).spaceBottom(0);
+                            getCells().get(i - 2).spaceBottom(47);
+                            if (i % 2 != 0) {
+                                if (getCells().get(i - 2).getActor() != null)
+                                    ((Card) getCells().get(i - 2).getActor()).setCellEnabled(false);
+                                if (getCells().get(i + 2).getActor() != null)
+                                    ((Card) getCells().get(i + 2).getActor()).setCellEnabled(false);
+                            }
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            if (getCells().get(i + 1).getActor() != null)
+                                ((Card) getCells().get(i + 1).getActor()).setCellEnabled(false);
+                        }
+                        /*if (i % 2 == 0) {
+                            if (i != getCells().size - 1)
+                                if (getCells().get(i + 1) == null)
+                                    card.getCell().spaceBottom(0);
+                            if (i != 0)
+                                if (getCells().get(i - 1) == null)
+                                    getCells().get(i - 2).spaceBottom(0);
+                        } else {
+                            if (i != getCells().size - 2)
+                                if (getCells().get(i + 1) == null)
+                                    card.getCell().spaceBottom(0);
+                            if (i != 1)
+                                if (getCells().get(i - 1) == null)
+                                    getCells().get(i - 2).spaceBottom(0);
+                        }*/
+                        // logging
+                        StringBuilder stringBuilder = new StringBuilder();
+                        for (Cell cell1 : card.getPrevParent().getCells()) {
+                            if (cell1.getActor() != null)
+                                stringBuilder.append(((Card) cell1.getActor()).isCellEnabled()).append(' ');
+                            else
+                                stringBuilder.append("null ");
+                        }
+                        Gdx.app.log("Card touchUp", stringBuilder.toString());
+                        //
                     } else if (card.getCell() == null) {
                         card.getPrevParent().add(card).row();
                     } else {
                         card.getCell().setActor(card);
+                        i = card.getIndexForCycles();
+                        if (i > 0) {
+                            Cell cardCell = getCells().get(i - 1);
+                            if (cardCell.getActor() != null && ((Card) cardCell.getActor()).getGameCard() == null) {
+                                ((Card) cardCell.getActor()).setCellEnabled(false);
+                                cardCell.setActor(null);
+                            }
+                        } else {
+                            padTop(0);
+                            card.getCell().spaceBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i + 1).spaceBottom(47);
+                            if (getCells().get(i + 1).getActor() != null)
+                                ((Card) getCells().get(i + 1).getActor()).setCellEnabled(false);
+                        }
+                        if (i < getCells().size - 1) {
+                            Cell cardCell = getCells().get(i + 1);
+                            if (cardCell.getActor() != null && ((Card) cardCell.getActor()).getGameCard() == null) {
+                                ((Card) cardCell.getActor()).setCellEnabled(false);
+                                cardCell.setActor(null);
+                            }
+                        } else {
+                            padBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i - 1).spaceBottom(0);
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            getCells().get(i - 2).spaceBottom(47);
+                        }
+                        if (i == 1) {
+                            padTop(58);
+                            card.getCell().spaceBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i - 1).spaceBottom(0);
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            getCells().get(i + 1).spaceBottom(47);
+                            if (getCells().get(i + 1).getActor() != null)
+                                ((Card) getCells().get(i + 1).getActor()).setCellEnabled(false);
+                        } else if (i == getCells().size - 2) {
+                            padBottom(58);
+                            card.getCell().spaceBottom(0);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            getCells().get(i - 1).spaceBottom(0);
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            getCells().get(i - 2).spaceBottom(47);
+                            if (getCells().get(i - 2).getActor() != null)
+                                ((Card) getCells().get(i - 2).getActor()).setCellEnabled(false);
+                        } else if (i > 1 && i < getCells().size - 2) {
+                            card.getCell().spaceBottom(0);
+                            getCells().get(i + 1).spaceBottom(47);
+                            getCells().get(i - 1).spaceBottom(0);
+                            getCells().get(i - 2).spaceBottom(47);
+                            if (i % 2 != 0) {
+                                if (getCells().get(i - 2).getActor() != null)
+                                    ((Card) getCells().get(i - 2).getActor()).setCellEnabled(false);
+                                if (getCells().get(i + 2).getActor() != null)
+                                    ((Card) getCells().get(i + 2).getActor()).setCellEnabled(false);
+                            }
+                            if (getCells().get(i - 1).getActor() != null)
+                                ((Card) getCells().get(i - 1).getActor()).setCellEnabled(false);
+                            if (card.getCell().getActor() != null)
+                                card.getCell().getActor().setCellEnabled(false);
+                            if (getCells().get(i + 1).getActor() != null)
+                                ((Card) getCells().get(i + 1).getActor()).setCellEnabled(false);
+                        }
                     }
                 } else {
                     card.getPrevParent().add(card).row();
