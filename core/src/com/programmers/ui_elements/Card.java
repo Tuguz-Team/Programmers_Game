@@ -87,6 +87,8 @@ public class Card extends Image implements Comparable<Card> {
                     }
                 }
                 cardContainer.addCard(thisCard, x, y);
+                if (thisCard.getPrevParent() instanceof CycleCardContainer)
+                    ((CycleCardContainer) thisCard.getPrevParent()).removeSpace(thisCard, thisCard.getPrevParent().getCells());
             }
         });
     }

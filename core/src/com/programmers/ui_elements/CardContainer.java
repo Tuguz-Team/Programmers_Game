@@ -87,12 +87,12 @@ public class CardContainer extends Table {
                 if (card.getGameCard().getType() != CardType.Cycle2
                         && card.getGameCard().getType() != CardType.Cycle3) {
                     if (card.getCell() == null)
-                        add(card).spaceBottom(1).row();
+                        add(card).row();
                     else
                         card.getCell().setActor(card);
                 } else {
                     if (card.getCell() == null)
-                        card.getPrevParent().add(card).spaceBottom(1).row();
+                        card.getPrevParent().add(card).row();
                     else {
                         card.getCell().setActor(card);
                         ((CycleCardContainer) card.getPrevParent()).removeSpace(
@@ -102,7 +102,7 @@ public class CardContainer extends Table {
                 }
                 break;
             case All:
-                add(card).spaceBottom(1).row();
+                add(card).row();
                 card.setCell(null);
         }
     }
