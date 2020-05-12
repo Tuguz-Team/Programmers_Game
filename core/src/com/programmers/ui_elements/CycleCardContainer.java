@@ -77,6 +77,16 @@ public final class CycleCardContainer extends CardContainer {
             card.getCell().getActor().setCellEnabled(false);
             int i = card.getIndexForCycles();
             card.getCell().spaceBottom(0);
+
+            if (i > 0 && cells.get(i - 1).getPadBottom() != 0)
+                cells.get(i - 1).padBottom(0);
+            else if (i < cells.size - 1 && cells.get(i + 1).getPadBottom() != 0)
+                cells.get(i + 1).padBottom(0);
+            else if (i > 1 && cells.get(i - 2).getPadBottom() != 0)
+                cells.get(i - 2).padBottom(0);
+            else if (i < cells.size - 2 && cells.get(i + 2).getPadBottom() != 0)
+                cells.get(i + 2).padBottom(0);
+
             if (i > 0) {
                 Cell prevCell = cells.get(i - 1);
                 prevCell.spaceBottom(0);
@@ -121,11 +131,13 @@ public final class CycleCardContainer extends CardContainer {
                 if (cells.get(i + 3).getActor() == null || ((Card) cells.get(i + 3).getActor()).getGameCard() == null)
                     cells.get(i + 1).spaceBottom(48);
             } else if (i == cells.size - 2) {
-                /** !!! */
                 padBottom(58);
                 if (cells.get(i - 2).getActor() != null)
                     ((Card) cells.get(i - 2).getActor()).setCellEnabled(false);
-                cells.get(i - 2).spaceBottom(48);
+                if (cells.get(i - 3).getActor() != null)
+                    cells.get(i - 2).spaceBottom(59);
+                if (cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() == null)
+                    cells.get(i - 2).spaceBottom(48);
             } else if (i > 1 && i < cells.size - 2) {
                 /** !!! */
                 if (i % 2 != 0) {
@@ -181,6 +193,16 @@ public final class CycleCardContainer extends CardContainer {
         }
         card.getCell().getActor().setCellEnabled(true);
         i = card.getIndexForCycles();
+
+        if (i > 0 && cells.get(i - 1).getPadBottom() != 0)
+            cells.get(i - 1).padBottom(0);
+        else if (i < cells.size - 1 && cells.get(i + 1).getPadBottom() != 0)
+            cells.get(i + 1).padBottom(0);
+        else if (i > 1 && cells.get(i - 2).getPadBottom() != 0)
+            cells.get(i - 2).padBottom(0);
+        else if (i < cells.size - 2 && cells.get(i + 2).getPadBottom() != 0)
+            cells.get(i + 2).padBottom(0);
+
         if (i == 0) {
             card.getPrevParent().padTop(47);
             card.getCell().spaceBottom(37);
@@ -203,7 +225,6 @@ public final class CycleCardContainer extends CardContainer {
             else
                 cells.get(i + 1).spaceBottom(37);
         } else if (i == cells.size - 2) {
-            /** !!! */
             card.getPrevParent().padBottom(47);
             card.getCell().spaceBottom(37);
             cells.get(i - 1).spaceBottom(37);
