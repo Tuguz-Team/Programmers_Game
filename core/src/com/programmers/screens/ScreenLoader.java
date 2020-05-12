@@ -11,6 +11,10 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.programmers.game.GameAssets;
+import com.programmers.network.GameClient;
+import com.programmers.network.GameServer;
+
+import java.io.IOException;
 
 public final class ScreenLoader extends Game {
 

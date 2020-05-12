@@ -10,7 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.programmers.enums.Difficulty;
+import com.programmers.network.GameServer;
 import com.programmers.ui_elements.MyButton;
+
+import java.io.IOException;
 
 public final class NewGameScreen extends ReturnableScreen {
 
@@ -76,8 +79,7 @@ public final class NewGameScreen extends ReturnableScreen {
                         getChecked().getText().toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard,
                         (int)playerCountSlider.getValue()));
             }
-        })
-                .space(0.1f * Gdx.graphics.getHeight());
+        }).space(0.1f * Gdx.graphics.getHeight());
 
         ui.center();
     }

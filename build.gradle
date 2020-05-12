@@ -68,6 +68,10 @@ project(":core") {
 
 
     dependencies {
+        implementation "com.esotericsoftware:kryo:3.0.1"
+        implementation ("com.esotericsoftware:kryonet:2.22.0-RC1") {
+            exclude module : 'kryo'
+        }
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"

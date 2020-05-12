@@ -30,9 +30,12 @@ import com.programmers.game.GameInputProcessor;
 import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
+import com.programmers.network.GameServer;
 import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.ExitDialog;
 import com.programmers.ui_elements.MyButton;
+
+import java.io.IOException;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
@@ -42,6 +45,7 @@ public final class GameScreen extends Stage implements Screen {
     private final int playersCount;
 
     private final ScreenLoader screenLoader;
+    private GameServer gameServer;
 
     private final Field field;
     private final GameController gameController;
@@ -61,14 +65,15 @@ public final class GameScreen extends Stage implements Screen {
         this.difficulty = difficulty;
         this.playersCount = playersCount;
 
-        switch (difficulty) {
-            case Hard:
-                size = 9;
-                break;
-            case Easy:
-            default:
-                size = 6;
-        }
+        try {
+            gameServer = new GameServer();
+            gameServer.start();
+        } catch (IOException ignored) { }
+
+        if (difficulty == Difficulty.Hard)
+            size = 9;
+        else
+            size = 6;
 
         instances = new Array<>();
         assetManager = screenLoader.getAssetManager();
@@ -186,6 +191,7 @@ public final class GameScreen extends Stage implements Screen {
     public void dispose() {
         modelBatch.dispose();
         instances.clear();
+        gameServer.stop();
         CardContainer.cardContainers.clear();
         super.dispose();
     }
