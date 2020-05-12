@@ -31,6 +31,7 @@ public final class Wall extends GameObject {
             default:
                 offset = new Vector3(0.001f, 0.001f, -Chunk.width / 2 + 0.001f);
         }
+        setModelFileName("Models/Terrain/Walls/Wall1/Wall1.obj");
     }
 
     public Direction getDirection() {
@@ -38,13 +39,7 @@ public final class Wall extends GameObject {
     }
 
     @Override
-    public void loading() {
-        setModelFileName("Models/Terrain/Walls/Wall1/Wall1.obj");
-        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
-    }
-
-    @Override
-    public void doneLoading() {
+    public void loadModel() {
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(

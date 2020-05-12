@@ -161,7 +161,7 @@ public class Chunk extends GameObject {
     }
 
     @Override
-    public void loading() {
+    public void loadModel() {
         StringBuilder stringBuilder = new StringBuilder("Models/Terrain/Layer");
         int nextInt = getRandomChunkIndex();
         if (nextInt % 2 == 0) {
@@ -172,18 +172,7 @@ public class Chunk extends GameObject {
             stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
         }
         setModelFileName(stringBuilder.toString());
-        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
-        for (Life life : lives) {
-            life.loading();
-        }
-        if (wallForward != null) wallForward.loading();
-        if (wallBack != null) wallBack.loading();
-        if (wallLeft != null) wallLeft.loading();
-        if (wallRight != null) wallRight.loading();
-    }
-
-    @Override
-    public void doneLoading() {
+        //
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
@@ -195,12 +184,12 @@ public class Chunk extends GameObject {
         getModelInstance().transform.rotate(Vector3.Y, 90f * random.nextInt(4));
         getGameScreen().getInstances().add(getModelInstance());
         for (Life life : lives) {
-            life.doneLoading();
+            life.loadModel();
         }
-        if (wallForward != null) wallForward.doneLoading();
-        if (wallBack != null) wallBack.doneLoading();
-        if (wallLeft != null) wallLeft.doneLoading();
-        if (wallRight != null) wallRight.doneLoading();
+        if (wallForward != null) wallForward.loadModel();
+        if (wallBack != null) wallBack.loadModel();
+        if (wallLeft != null) wallLeft.loadModel();
+        if (wallRight != null) wallRight.loadModel();
     }
 
     private int getRandomChunkIndex() {

@@ -470,18 +470,10 @@ public final class Field {
         }
     }
 
-    public void loading() {
-        for (Chunk[] chunks : chunks) {
-            for (Chunk chunk : chunks) {
-                chunk.loading();
-            }
-        }
-    }
-
     public void doneLoading() {
         for (Chunk[] chunks : chunks) {
             for (Chunk chunk : chunks) {
-                chunk.doneLoading();
+                chunk.loadModel();
             }
         }
     }

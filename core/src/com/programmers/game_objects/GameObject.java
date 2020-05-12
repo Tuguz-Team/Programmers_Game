@@ -20,9 +20,7 @@ public abstract class GameObject {
         this.gameScreen = gameScreen;
     }
 
-    abstract protected void loading();
-
-    abstract protected void doneLoading();
+    abstract protected void loadModel();
 
     protected GameScreen getGameScreen() {
         return gameScreen;

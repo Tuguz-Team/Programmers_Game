@@ -15,16 +15,9 @@ public final class Lift extends Chunk {
     }
 
     @Override
-    public void loading() {
+    public void loadModel() {
         setModelFileName("Models/Terrain/Lift/Lift.obj");
-        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
-        for (Life life : getLives()) {
-            life.loading();
-        }
-    }
-
-    @Override
-    public void doneLoading() {
+        //
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
@@ -42,7 +35,7 @@ public final class Lift extends Chunk {
         }
         getGameScreen().getInstances().add(getModelInstance());
         for (Life life : getLives()) {
-            life.doneLoading();
+            life.loadModel();
         }
     }
 }

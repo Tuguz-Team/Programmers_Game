@@ -2,28 +2,41 @@ package com.programmers.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.programmers.game.GameAssets;
 
 public final class ScreenLoader extends Game {
 
     private MainMenuScreen mainMenu;
+    private AssetManager assetManager;
 
+    private static Skin defaultGdxSkin;
     private Skin buttonSkin;
     private BitmapFont font;
     private ImageTextButton.ImageTextButtonStyle buttonStyle;
 
     @Override
     public void create() {
+        assetManager = new GameAssets();
+        while (!assetManager.update());
+
+        defaultGdxSkin = assetManager.get("uiskin.json");
         buttonSkin = new Skin();
-        buttonSkin.addRegions(new TextureAtlas("buttons.pack"));
-        final Texture fontTexture = new Texture(Gdx.files.internal("CustomFont.png"));
+
+        final TextureAtlas textureAtlas = assetManager.get("buttons.pack");
+        buttonSkin.addRegions(textureAtlas);
+
+        final Texture fontTexture = assetManager.get("CustomFont.png");
         font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"),
                 new TextureRegion(fontTexture), false);
+
         buttonStyle = new ImageTextButton.ImageTextButtonStyle();
         buttonStyle.up = buttonSkin.getDrawable("start_button");
         buttonStyle.down = buttonSkin.getDrawable("exit_button");
@@ -38,7 +51,16 @@ public final class ScreenLoader extends Game {
         mainMenu.dispose();
         buttonSkin.dispose();
         font.dispose();
+        assetManager.dispose();
         super.dispose();
+    }
+
+    public AssetManager getAssetManager() {
+        return assetManager;
+    }
+
+    public static Skin getDefaultGdxSkin() {
+        return defaultGdxSkin;
     }
 
     public MainMenuScreen getMainMenu() {

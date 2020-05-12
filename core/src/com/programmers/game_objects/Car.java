@@ -119,12 +119,7 @@ public final class Car extends GameObject implements ICard {
     }
 
     @Override
-    public void loading() {
-        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
-    }
-
-    @Override
-    public void doneLoading() {
+    public void loadModel() {
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(

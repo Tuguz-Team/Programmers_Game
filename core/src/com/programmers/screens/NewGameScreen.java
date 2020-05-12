@@ -12,16 +12,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.programmers.enums.Difficulty;
 import com.programmers.ui_elements.MyButton;
 
-public final class PreGameScreen extends ReturnableScreen {
+public final class NewGameScreen extends ReturnableScreen {
 
-    public PreGameScreen(final ScreenLoader screenLoader, Screen previousScreen) {
+    public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
         super(screenLoader, previousScreen);
 
         Table ui = new Table();
         ui.setFillParent(true);
         addActor(ui);
 
-        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        final Skin skin = ScreenLoader.getDefaultGdxSkin();
 
         final Slider playerCountSlider = new Slider(2, 4, 1,
                 false, skin) {
@@ -61,7 +61,7 @@ public final class PreGameScreen extends ReturnableScreen {
         difficultyRadioButton.addActor(HardButton);
         difficultyRadioButton.space(0.05f * Gdx.graphics.getWidth());
 
-        final ButtonGroup<CheckBox> radioButtonController = new ButtonGroup(EasyButton, HardButton);
+        final ButtonGroup<CheckBox> radioButtonController = new ButtonGroup<>(EasyButton, HardButton);
         radioButtonController.setChecked("EASY");
 
         ui.add(difficultyRadioButton)

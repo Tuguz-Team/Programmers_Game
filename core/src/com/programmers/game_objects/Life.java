@@ -23,13 +23,7 @@ public final class Life extends GameObject {
     }
 
     @Override
-    public void loading() {
-        getGameScreen().getAssetManager().load(getModelFileName(), Model.class);
-        getGameScreen().getAssetManager().load(typeModelFileName, Model.class);
-    }
-
-    @Override
-    public void doneLoading() {
+    public void loadModel() {
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         typeModel = getGameScreen().getAssetManager().get(typeModelFileName, Model.class);
         setModelInstance(new ModelInstance(getModel()));

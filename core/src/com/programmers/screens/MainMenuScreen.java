@@ -19,7 +19,7 @@ public final class MainMenuScreen extends Stage implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        final Skin skin = ScreenLoader.getDefaultGdxSkin();
         final ExitDialog exitDialog =
                 new ExitDialog("Are you sure you want to exit the game?", skin) {
             @Override
@@ -36,8 +36,8 @@ public final class MainMenuScreen extends Stage implements Screen {
                 new MyButton("START", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                screenLoader.setScreen(new PreGameScreen
-                        (screenLoader, MainMenuScreen.this)
+                screenLoader.setScreen(new ChooseGameScreen(
+                        screenLoader, MainMenuScreen.this)
                 );
             }
         };

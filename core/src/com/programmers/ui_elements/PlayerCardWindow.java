@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
+import com.programmers.screens.ScreenLoader;
 
 public final class PlayerCardWindow extends Table {
 
@@ -71,7 +72,7 @@ public final class PlayerCardWindow extends Table {
                 cardContainer.setTouchable();
             }
         });
-        table.add(new Label(name, new Skin(Gdx.files.internal("uiskin.json")))).bottom();
+        table.add(new Label(name, ScreenLoader.getDefaultGdxSkin())).bottom();
         left().bottom();
     }
 

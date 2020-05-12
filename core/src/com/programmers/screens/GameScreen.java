@@ -49,7 +49,6 @@ public final class GameScreen extends Stage implements Screen {
 
     private final Array<ModelInstance> instances;
     private final AssetManager assetManager;
-    private boolean loading;
 
     private final PerspectiveCamera camera;
     private final Environment environment;
@@ -72,7 +71,7 @@ public final class GameScreen extends Stage implements Screen {
         }
 
         instances = new Array<>();
-        assetManager = new AssetManager();
+        assetManager = screenLoader.getAssetManager();
         modelBatch = new ModelBatch();
 
         environment = new Environment();
@@ -108,7 +107,10 @@ public final class GameScreen extends Stage implements Screen {
         }
         gameController = new GameController(players, field);
 
-        loading();
+        doneLoading();
+        gameInputProcessor.unlockCamera();
+        addAxises();
+        addUI();
     }
 
     public int getSize() {
@@ -131,18 +133,10 @@ public final class GameScreen extends Stage implements Screen {
         return assetManager;
     }
 
-    private void loading() {
-        field.loading();
-        for (Player player : gameController.getPlayers())
-            player.getCar().loading();
-        loading = true;
-    }
-
     private void doneLoading() {
         field.doneLoading();
         for (Player player : gameController.getPlayers())
-            player.getCar().doneLoading();
-        loading = false;
+            player.getCar().loadModel();
     }
 
     @Override
@@ -152,13 +146,6 @@ public final class GameScreen extends Stage implements Screen {
 
     @Override
     public void render(float delta) {
-        if (loading && assetManager.update()) {
-            doneLoading();
-            gameInputProcessor.unlockCamera();
-            addAxises();
-            addUI();
-        }
-
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -199,13 +186,12 @@ public final class GameScreen extends Stage implements Screen {
     public void dispose() {
         modelBatch.dispose();
         instances.clear();
-        assetManager.dispose();
         CardContainer.cardContainers.clear();
         super.dispose();
     }
 
     private void addUI() {
-        final Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        final Skin skin = ScreenLoader.getDefaultGdxSkin();
 
         final ExitDialog exitDialog = new ExitDialog
                 ("Are you sure you want to return to main menu?", skin) {

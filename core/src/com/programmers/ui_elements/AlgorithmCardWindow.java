@@ -1,19 +1,18 @@
 package com.programmers.ui_elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
+import com.programmers.screens.ScreenLoader;
 
 public final class AlgorithmCardWindow extends Table {
 
@@ -32,7 +31,7 @@ public final class AlgorithmCardWindow extends Table {
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOn.png")),
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
         );
-        add(new Label(name, new Skin(Gdx.files.internal("uiskin.json")))).bottom();
+        add(new Label(name, ScreenLoader.getDefaultGdxSkin())).bottom();
         add(table).right().bottom();
         table.setDebug(true);
         // if difficulty is hard
