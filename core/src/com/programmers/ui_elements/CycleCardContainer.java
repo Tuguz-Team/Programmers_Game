@@ -78,15 +78,6 @@ public final class CycleCardContainer extends CardContainer {
             int i = card.getIndexForCycles();
             card.getCell().spaceBottom(0);
 
-            if (i > 0 && cells.get(i - 1).getPadBottom() != 0)
-                cells.get(i - 1).padBottom(0);
-            else if (i < cells.size - 1 && cells.get(i + 1).getPadBottom() != 0)
-                cells.get(i + 1).padBottom(0);
-            else if (i > 1 && cells.get(i - 2).getPadBottom() != 0)
-                cells.get(i - 2).padBottom(0);
-            else if (i < cells.size - 2 && cells.get(i + 2).getPadBottom() != 0)
-                cells.get(i + 2).padBottom(0);
-
             if (i > 0) {
                 Cell prevCell = cells.get(i - 1);
                 prevCell.spaceBottom(0);
@@ -169,6 +160,17 @@ public final class CycleCardContainer extends CardContainer {
                 }
             }
         }
+
+        for (int i = 0; i < cells.size - 1; i++) {
+            if (i > 0 && cells.get(i - 1).getPadBottom() != 0)
+                cells.get(i - 1).padBottom(0);
+            else if (i < cells.size - 1 && cells.get(i + 1).getPadBottom() != 0)
+                cells.get(i + 1).padBottom(0);
+            else if (i > 1 && cells.get(i - 2).getPadBottom() != 0)
+                cells.get(i - 2).padBottom(0);
+            else if (i < cells.size - 2 && cells.get(i + 2).getPadBottom() != 0)
+                cells.get(i + 2).padBottom(0);
+        }
     }
 
     public void restoreSpace(Card card) {
@@ -189,6 +191,14 @@ public final class CycleCardContainer extends CardContainer {
                 }
             } else if (((Card) cells.get(i).getActor()).getGameCard() == null) {
                 ((Card) cells.get(i).getActor()).setCellEnabled(true);
+            }
+            else if (i % 2 != 0) {
+                if (i > 1 && cells.get(i - 2).getActor() != null) {
+                    ((Card) cells.get(i - 2).getActor()).setCellEnabled(false);
+                }
+                if (i < cells.size - 2 && cells.get(i + 2).getActor() != null) {
+                    ((Card) cells.get(i + 2).getActor()).setCellEnabled(false);
+                }
             }
         }
         card.getCell().getActor().setCellEnabled(true);
@@ -243,6 +253,17 @@ public final class CycleCardContainer extends CardContainer {
             cells.get(i - 2).spaceBottom(37);
             if (i > 2 && cells.get(i - 3).getActor() != null && ((Card) cells.get(i - 3).getActor()).getGameCard() != null)
                 cells.get(i - 2).padBottom(11);
+        }
+
+        if (i % 2 == 0) {
+            if (i > 0 && cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() != null) {
+                cells.get(i - 2).spaceBottom(11);
+                cells.get(i - 1).padBottom(0);
+            }
+            if (i < cells.size - 1 && cells.get(i + 2).getActor() != null && ((Card) cells.get(i + 2).getActor()).getGameCard() != null) {
+                cells.get(i + 1).spaceBottom(0);
+                cells.get(i).padBottom(11);
+            }
         }
     }
 
