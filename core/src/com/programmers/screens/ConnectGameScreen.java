@@ -7,12 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.programmers.network.GameClient;
-import com.programmers.network.GameNetwork;
-import com.programmers.network.GameServer;
 import com.programmers.ui_elements.MyButton;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 public class ConnectGameScreen extends ReturnableScreen {
 
@@ -38,10 +35,7 @@ public class ConnectGameScreen extends ReturnableScreen {
             @Override
             public void call() {
                 try {
-                    GameServer gameServer = new GameServer();
-                    gameServer.start();
                     gameClient.connectByUDP();
-                    gameServer.close();
                 } catch (IOException ignored) { }
             }
         };

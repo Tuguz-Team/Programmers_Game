@@ -19,12 +19,12 @@ public class GameServer extends Server {
             public void received(Connection connection, Object object) {
                 if (object instanceof TestMessage) {
                     TestMessage testMessage = (TestMessage) object;
-                    Gdx.app.log("GameServer", "Got message: " + testMessage.message);
+                    Gdx.app.log("GameServer", "Got message: " + testMessage.getMessage());
                 }
             }
         });
 
-        bind(GameNetwork.PORT, GameNetwork.PORT);
+        bind(GameNetwork.TCP_PORT, GameNetwork.UDP_PORT);
     }
 
     @Override
@@ -32,7 +32,5 @@ public class GameServer extends Server {
         return new PlayerConnection();
     }
 
-    static class PlayerConnection extends Connection {
-        public Player player;
-    }
+    static class PlayerConnection extends Connection { }
 }

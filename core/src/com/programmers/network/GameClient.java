@@ -17,14 +17,15 @@ public class GameClient extends Client {
         addListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                Gdx.app.log("GameClient", "Connected with TCP port: " + GameNetwork.PORT);
+                Gdx.app.log("GameClient", "Connected with TCP port: " + getRemoteAddressTCP());
+                sendTCP(new TestMessage("Hello!"));
             }
 
             @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof TestMessage) {
                     TestMessage testMessage = (TestMessage) object;
-                    Gdx.app.log("GameClient", "Got message: " + testMessage.message);
+                    Gdx.app.log("GameClient", "Got message: " + testMessage.getMessage());
                 }
             }
 
@@ -36,8 +37,8 @@ public class GameClient extends Client {
     }
 
     public void connectByUDP() throws IOException {
-        InetAddress inetAddress = discoverHost(GameNetwork.PORT, 1000);
+        InetAddress inetAddress = discoverHost(GameNetwork.UDP_PORT, 1000);
         if (inetAddress != null)
-            connect(1000, inetAddress.getHostAddress(), GameNetwork.PORT);
+            connect(1000, inetAddress.getHostAddress(), GameNetwork.TCP_PORT, GameNetwork.UDP_PORT);
     }
 }
