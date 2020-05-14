@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.utils.Array;
@@ -14,11 +15,11 @@ public final class CycleCardContainer extends CardContainer {
     public CycleCardContainer(final HotseatGameController hotseatGameController) {
         super(hotseatGameController.getAlgorithmCards(), null, false);
         this.hotseatGameController = hotseatGameController;
-        pad(47, 0, 47, 0);
+        pad(29, 0, 29, 0);
         for (int i = 0; i < cycleCards.length; i++) {
-            cycleCards[i] = new Card("Sprites/Cards/CyclePoint.png");
+            cycleCards[i] = new Card("Sprites/Cards/NewCyclePoint.png");
             Card card = cycleCards[i];
-            add(card).spaceBottom(37).row();
+            add(card).row();
         }
     }
 
@@ -87,12 +88,13 @@ public final class CycleCardContainer extends CardContainer {
             } else {
                 padTop(0);
                 if (cells.get(i + 2).getActor() != null && ((Card) cells.get(i + 2).getActor()).getGameCard() == null)
-                    cells.get(i + 1).spaceBottom(48);
+                    cells.get(i + 1).spaceBottom(29);
                 else if (cells.get(i + 2).getActor() == null)
                     cells.get(i + 1).spaceBottom(58);
                 else
                     cells.get(i + 1).spaceBottom(0);
             }
+
             if (i < cells.size - 1) {
                 Cell nextCell = cells.get(i + 1);
                 if (nextCell.getActor() != null && ((Card) nextCell.getActor()).getGameCard() == null) {
@@ -102,32 +104,31 @@ public final class CycleCardContainer extends CardContainer {
             } else {
                 padBottom(0);
                 if (cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() == null)
-                    cells.get(i - 2).spaceBottom(48);
+                    cells.get(i - 2).spaceBottom(29);
                 else if (cells.get(i - 2).getActor() == null)
-                    cells.get(i - 2).spaceBottom(59);
+                    cells.get(i - 2).spaceBottom(58);
                 else
-                    cells.get(i - 2).spaceBottom(1);
-                if (cells.get(i - 3).getActor() != null && ((Card) cells.get(i - 3).getActor()).getGameCard() != null) {
-                    cells.get(i - 2).padBottom(0);
-                }
+                    cells.get(i - 2).spaceBottom(0);
             }
+
             if (i == 1) {
                 padTop(58);
-                cells.get(i + 1).spaceBottom(48);
+                cells.get(i + 1).spaceBottom(29);
                 if (cells.get(i + 1).getActor() == null)
-                    cells.get(i + 1).spaceBottom(59);
+                    cells.get(i + 1).spaceBottom(58);
                 if (cells.get(i + 2).getActor() != null)
                     ((Card) cells.get(i + 2).getActor()).setCellEnabled(false);
-                if (cells.get(i + 3).getActor() == null || ((Card) cells.get(i + 3).getActor()).getGameCard() == null)
-                    cells.get(i + 1).spaceBottom(48);
+                if (cells.get(i + 3).getActor() != null && ((Card) cells.get(i + 3).getActor()).getGameCard() == null)
+                    cells.get(i + 1).spaceBottom(29);
             } else if (i == cells.size - 2) {
                 padBottom(58);
-                if (cells.get(i - 2).getActor() != null)
-                    ((Card) cells.get(i - 2).getActor()).setCellEnabled(false);
+                cells.get(i - 2).spaceBottom(29);
+                if (cells.get(i - 2).getActor() == null)
+                    cells.get(i - 2).spaceBottom(58);
                 if (cells.get(i - 3).getActor() != null)
-                    cells.get(i - 2).spaceBottom(59);
+                    ((Card) cells.get(i - 3).getActor()).setCellEnabled(false);
                 if (cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() == null)
-                    cells.get(i - 2).spaceBottom(48);
+                    cells.get(i - 2).spaceBottom(29);
             } else if (i > 1 && i < cells.size - 2) {
                 /** !!! */
                 if (i % 2 != 0) {
@@ -135,40 +136,46 @@ public final class CycleCardContainer extends CardContainer {
                         ((Card) cells.get(i - 2).getActor()).setCellEnabled(false);
                     if (cells.get(i + 2).getActor() != null)
                         ((Card) cells.get(i + 2).getActor()).setCellEnabled(false);
+
                     if (cells.get(i + 1).getActor() == null)
-                        cells.get(i + 1).spaceBottom(59);
-                    if (cells.get(i + 3).getActor() == null || ((Card) cells.get(i + 3).getActor()).getGameCard() == null)
-                        cells.get(i + 1).spaceBottom(48);
+                        cells.get(i + 1).spaceBottom(58);
+                    if (cells.get(i + 3).getActor() != null && ((Card) cells.get(i + 3).getActor()).getGameCard() == null)
+                        cells.get(i + 1).spaceBottom(29);
                     if (cells.get(i - 3).getActor() != null && ((Card) cells.get(i - 3).getActor()).getGameCard() != null)
-                        cells.get(i - 2).spaceBottom(59);
+                        cells.get(i - 2).spaceBottom(58);
                     else
-                        cells.get(i - 2).spaceBottom(48);
+                        cells.get(i - 2).spaceBottom(29);
                 } else {
                     if (cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() == null)
-                        cells.get(i - 2).spaceBottom(48);
+                        cells.get(i - 2).spaceBottom(29);
                     else if (cells.get(i - 2).getActor() == null)
-                        cells.get(i - 2).spaceBottom(59);
+                        cells.get(i - 2).spaceBottom(58);
                     else
-                        cells.get(i - 2).spaceBottom(1);
+                        cells.get(i - 2).spaceBottom(0);
+
                     if (cells.get(i + 2).getActor() != null && ((Card) cells.get(i + 2).getActor()).getGameCard() == null)
-                        cells.get(i + 1).spaceBottom(48);
+                        cells.get(i + 1).spaceBottom(29);
                     else if (cells.get(i + 2).getActor() == null)
-                        cells.get(i + 1).spaceBottom(59);
+                        cells.get(i + 1).spaceBottom(58);
                     else
                         cells.get(i + 1).spaceBottom(0);
                 }
             }
-        }
 
-        for (int i = 0; i < cells.size - 1; i++) {
-            if (i > 0 && cells.get(i - 1).getPadBottom() != 0)
-                cells.get(i - 1).padBottom(0);
-            else if (i < cells.size - 1 && cells.get(i + 1).getPadBottom() != 0)
-                cells.get(i + 1).padBottom(0);
-            else if (i > 1 && cells.get(i - 2).getPadBottom() != 0)
-                cells.get(i - 2).padBottom(0);
-            else if (i < cells.size - 2 && cells.get(i + 2).getPadBottom() != 0)
-                cells.get(i + 2).padBottom(0);
+            if (i > 2) {
+                if (cells.get(i - 3).getActor() != null && ((Card) cells.get(i - 3).getActor()).getGameCard() != null) {
+                    cells.get(i - 3).spaceBottom(0);
+                }
+            }
+
+            /*StringBuilder stringBuilder = new StringBuilder();
+            for (Cell cell : getCells()) {
+                if (cell.getActor() == null)
+                    stringBuilder.append("null ");
+                else
+                    stringBuilder.append(((Card) cell.getActor()).isCellEnabled()).append(' ');
+            }
+            Gdx.app.log("removeSpace  ", stringBuilder.toString());*/
         }
     }
 
@@ -176,8 +183,8 @@ public final class CycleCardContainer extends CardContainer {
         card.getCell().setActor(
                 ((CycleCardContainer) card.getPrevParent()).getCycleCards()[card.getIndexForCycles()]
         );
-        card.getCell().getActor().setCellEnabled(true);
         Array<Cell> cells = card.getPrevParent().getCells();
+
         int i = 0, n = cells.size;
         for (; i < n; i++) {
             if (cells.get(i).getActor() == null) {
@@ -189,7 +196,11 @@ public final class CycleCardContainer extends CardContainer {
                     cells.get(i).setActor(((CycleCardContainer) card.getPrevParent()).getCycleCards()[i]);
                 }
             } else if (((Card) cells.get(i).getActor()).getGameCard() == null) {
-                ((Card) cells.get(i).getActor()).setCellEnabled(true);
+                if (i % 2 != 0 && i > 1 && cells.get(i - 2).getActor() != null
+                        && ((Card) cells.get(i - 2).getActor()).getGameCard() != null)
+                    ((Card) cells.get(i).getActor()).setCellEnabled(false);
+                else
+                    ((Card) cells.get(i).getActor()).setCellEnabled(true);
             }
             else if (i % 2 != 0) {
                 if (i > 1 && cells.get(i - 2).getActor() != null) {
@@ -200,69 +211,62 @@ public final class CycleCardContainer extends CardContainer {
                 }
             }
         }
-        card.getCell().getActor().setCellEnabled(true);
+
         i = card.getIndexForCycles();
-
-        if (i > 0 && cells.get(i - 1).getPadBottom() != 0)
-            cells.get(i - 1).padBottom(0);
-        else if (i < cells.size - 1 && cells.get(i + 1).getPadBottom() != 0)
-            cells.get(i + 1).padBottom(0);
-        else if (i > 1 && cells.get(i - 2).getPadBottom() != 0)
-            cells.get(i - 2).padBottom(0);
-        else if (i < cells.size - 2 && cells.get(i + 2).getPadBottom() != 0)
-            cells.get(i + 2).padBottom(0);
-
         if (i == 0) {
-            card.getPrevParent().padTop(47);
-            card.getCell().spaceBottom(37);
+            card.getPrevParent().padTop(29);
+            card.getCell().spaceBottom(0);
             if (cells.get(i + 3).getActor() != null && ((Card) cells.get(i + 3).getActor()).getGameCard() != null)
-                cells.get(i + 1).spaceBottom(48);
+                cells.get(i + 1).spaceBottom(29);
             else
-                cells.get(i + 1).spaceBottom(37);
+                cells.get(i + 1).spaceBottom(0);
         } else if (i == cells.size - 1) {
-            card.getPrevParent().padBottom(47);
-            cells.get(i - 1).spaceBottom(37);
-            cells.get(i - 2).spaceBottom(37);
+            card.getPrevParent().padBottom(29);
+            cells.get(i - 1).spaceBottom(0);
+            cells.get(i - 2).spaceBottom(0);
             if (cells.get(i - 3).getActor() != null && ((Card) cells.get(i - 3).getActor()).getGameCard() != null)
-                cells.get(i - 2).padBottom(11);
+                cells.get(i - 2).spaceBottom(29);
         } else if (i == 1) {
-            card.getPrevParent().padTop(47);
-            card.getCell().spaceBottom(37);
-            cells.get(i - 1).spaceBottom(37);
+            card.getPrevParent().padTop(29);
+            card.getCell().spaceBottom(0);
+            cells.get(i - 1).spaceBottom(0);
             if (cells.get(i + 3).getActor() != null && ((Card) cells.get(i + 3).getActor()).getGameCard() != null)
-                cells.get(i + 1).spaceBottom(48);
+                cells.get(i + 1).spaceBottom(29);
             else
-                cells.get(i + 1).spaceBottom(37);
+                cells.get(i + 1).spaceBottom(0);
         } else if (i == cells.size - 2) {
-            card.getPrevParent().padBottom(47);
-            card.getCell().spaceBottom(37);
-            cells.get(i - 1).spaceBottom(37);
-            cells.get(i - 2).spaceBottom(37);
+            card.getPrevParent().padBottom(29);
+            card.getCell().spaceBottom(0);
+            cells.get(i - 1).spaceBottom(0);
+            cells.get(i - 2).spaceBottom(0);
             if (i > 2 && cells.get(i - 3).getActor() != null && ((Card) cells.get(i - 3).getActor()).getGameCard() != null)
-                cells.get(i - 2).padBottom(11);
+                cells.get(i - 2).spaceBottom(29);
         } else {
             /** !!! */
-            card.getCell().spaceBottom(37);
+            card.getCell().spaceBottom(0);
             if (i <= cells.size - 4
                     && cells.get(i + 3).getActor() != null && ((Card) cells.get(i + 3).getActor()).getGameCard() != null)
-                cells.get(i + 1).spaceBottom(48);
+                cells.get(i + 1).spaceBottom(29);
             else
-                cells.get(i + 1).spaceBottom(37);
-            cells.get(i - 1).spaceBottom(37);
-            cells.get(i - 2).spaceBottom(37);
+                cells.get(i + 1).spaceBottom(0);
+            cells.get(i - 1).spaceBottom(0);
+            cells.get(i - 2).spaceBottom(0);
             if (i > 2 && cells.get(i - 3).getActor() != null && ((Card) cells.get(i - 3).getActor()).getGameCard() != null)
-                cells.get(i - 2).padBottom(11);
+                cells.get(i - 2).spaceBottom(29);
         }
 
         if (i % 2 == 0) {
             if (i > 0 && cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() != null) {
-                cells.get(i - 2).spaceBottom(11);
-                cells.get(i - 1).padBottom(0);
+                cells.get(i - 2).spaceBottom(29);
             }
             if (i < cells.size - 1 && cells.get(i + 2).getActor() != null && ((Card) cells.get(i + 2).getActor()).getGameCard() != null) {
                 cells.get(i + 1).spaceBottom(0);
-                cells.get(i).padBottom(11);
             }
+        }
+
+        if (i < cells.size - 2) {
+            if (cells.get(i + 2).getActor() != null && ((Card) cells.get(i + 2).getActor()).getGameCard() != null)
+                cells.get(i).spaceBottom(29);
         }
     }
 
