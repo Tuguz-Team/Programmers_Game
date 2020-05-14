@@ -15,10 +15,16 @@ public class ChooseGameScreen extends ReturnableScreen {
         buttons.setFillParent(true);
         addActor(buttons);
 
-        ImageTextButton createNewGame = new MyButton("CREATE NEW GAME !", screenLoader.getButtonStyle()) {
+        ImageTextButton hotseatGame = new MyButton("CREATE HOTSEAT GAME", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this));
+                screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, true));
+            }
+        };
+        ImageTextButton createNewGame = new MyButton("CREATE NEW SERVER GAME !", screenLoader.getButtonStyle()) {
+            @Override
+            public void call() {
+                screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, false));
             }
         };
         ImageTextButton connectToGame = new MyButton("CONNECT TO EXISTING GAME !", screenLoader.getButtonStyle()) {
@@ -27,10 +33,11 @@ public class ChooseGameScreen extends ReturnableScreen {
                 screenLoader.setScreen(new ConnectGameScreen(screenLoader, ChooseGameScreen.this));
             }
         };
+        buttons.addActor(hotseatGame);
         buttons.addActor(createNewGame);
         buttons.addActor(connectToGame);
 
-        buttons.space(0.2f * Gdx.graphics.getHeight());
+        buttons.space(0.05f * Gdx.graphics.getHeight());
         buttons.center();
     }
 }

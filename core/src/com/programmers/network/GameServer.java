@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import com.programmers.game.Player;
 import com.programmers.network.GameNetwork.TestMessage;
 
 import java.io.IOException;

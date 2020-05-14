@@ -1,20 +1,19 @@
 package com.programmers.ui_elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.CardType;
-import com.programmers.game.GameController;
+import com.programmers.game.hotseat.HotseatGameController;
 
 public final class CycleCardContainer extends CardContainer {
 
     private final Card[] cycleCards = new Card[9];
-    private final GameController gameController;
+    private final HotseatGameController hotseatGameController;
 
-    public CycleCardContainer(final GameController gameController) {
-        super(gameController.getAlgorithmCards(), null, false);
-        this.gameController = gameController;
+    public CycleCardContainer(final HotseatGameController hotseatGameController) {
+        super(hotseatGameController.getAlgorithmCards(), null, false);
+        this.hotseatGameController = hotseatGameController;
         pad(47, 0, 47, 0);
         for (int i = 0; i < cycleCards.length; i++) {
             cycleCards[i] = new Card("Sprites/Cards/CyclePoint.png");
@@ -29,11 +28,11 @@ public final class CycleCardContainer extends CardContainer {
     @Override
     protected void childrenChanged() {
         super.childrenChanged();
-        if (gameController != null && gameController.getAlgorithmCardWindow() != null) {
-            if (gameController.getAlgorithmCardWindow().areContainersEmpty()) {
-                gameController.getPlayerCardWindow().enableButton();
+        if (hotseatGameController != null && hotseatGameController.getAlgorithmCardWindow() != null) {
+            if (hotseatGameController.getAlgorithmCardWindow().areContainersEmpty()) {
+                hotseatGameController.getPlayerCardWindow().enableButton();
             } else {
-                gameController.getPlayerCardWindow().disableButton();
+                hotseatGameController.getPlayerCardWindow().disableButton();
             }
         }
     }

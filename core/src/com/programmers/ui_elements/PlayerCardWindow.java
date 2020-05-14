@@ -1,15 +1,13 @@
 package com.programmers.ui_elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.programmers.game.GameCard;
-import com.programmers.game.GameController;
+import com.programmers.game.hotseat.HotseatGameController;
 import com.programmers.screens.ScreenLoader;
 
 public final class PlayerCardWindow extends Table {
@@ -20,7 +18,7 @@ public final class PlayerCardWindow extends Table {
     private final Button discardButton;
 
     public PlayerCardWindow(final String name, final CardContainer cardContainer,
-                            final GameController gameController) {
+                            final HotseatGameController hotseatGameController) {
         setFillParent(true);
         setDebug(true);
         this.cardContainer = cardContainer;
@@ -38,8 +36,8 @@ public final class PlayerCardWindow extends Table {
                 if (card.getGameCard() != null) {
                     removeEmpty();
                     GameCard gameCard = card.getGameCard();
-                    gameCard.setPlayer(null);
-                    gameController.getDiscardPile().add(gameCard);
+                    gameCard.setHotseatPlayer(null);
+                    hotseatGameController.getDiscardPile().add(gameCard);
                     clearChildren();
                     addEmpty();
                 }
@@ -59,15 +57,15 @@ public final class PlayerCardWindow extends Table {
                 discarding = !discarding;
                 discardContainer.setVisible(discarding);
                 if (discarding) {
-                    gameController.getAlgorithmCardWindow().disable();
+                    hotseatGameController.getAlgorithmCardWindow().disable();
                     cardContainer.setTouchable(Touchable.enabled);
                     cardContainer.discardMode = true;
                     CardContainer.cardContainers.add(discardContainer);
                 } else {
-                    gameController.getAlgorithmCardWindow().enable();
+                    hotseatGameController.getAlgorithmCardWindow().enable();
                     cardContainer.discardMode = false;
                     CardContainer.cardContainers.removeValue(discardContainer, false);
-                    gameController.toNextPlayer();
+                    hotseatGameController.toNextPlayer();
                 }
                 cardContainer.setTouchable();
             }

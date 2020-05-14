@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.programmers.enums.Difficulty;
+import com.programmers.game.hotseat.HotseatGame;
 import com.programmers.network.GameServer;
 import com.programmers.ui_elements.MyButton;
 
@@ -17,7 +18,7 @@ import java.io.IOException;
 
 public final class NewGameScreen extends ReturnableScreen {
 
-    public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
+    public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
         super(screenLoader, previousScreen);
 
         Table ui = new Table();
@@ -74,10 +75,13 @@ public final class NewGameScreen extends ReturnableScreen {
         ui.add(new MyButton("START PLAYING !", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                dispose();
-                screenLoader.setScreen(new GameScreen(screenLoader, radioButtonController.
-                        getChecked().getText().toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard,
-                        (int)playerCountSlider.getValue()));
+                if (isHotseat) {
+                    dispose();
+                    screenLoader.setScreen(new HotseatGame(screenLoader, radioButtonController.
+                            getChecked().getText().toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard,
+                            (int)playerCountSlider.getValue())
+                    );
+                }
             }
         }).space(0.1f * Gdx.graphics.getHeight());
 
