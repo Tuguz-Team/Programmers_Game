@@ -1,13 +1,19 @@
 package com.programmers.game.online;
 
 import com.programmers.enums.Difficulty;
+import com.programmers.network.GameServer;
 import com.programmers.screens.GameScreen;
 import com.programmers.screens.ScreenLoader;
 
-public class OnlineGameServer extends GameScreen {
+public final class OnlineGameServer extends GameScreen {
 
-    protected OnlineGameServer(ScreenLoader screenLoader, Difficulty difficulty, int playersCount) {
+    private final GameServer gameServer;
+
+    public OnlineGameServer(final ScreenLoader screenLoader, final Difficulty difficulty,
+                               final int playersCount, final GameServer gameServer) {
         super(screenLoader, difficulty, playersCount);
+
+        this.gameServer = gameServer;
 
         constructorEnd();
     }
@@ -25,5 +31,11 @@ public class OnlineGameServer extends GameScreen {
     @Override
     protected void loadModels() {
 
+    }
+
+    @Override
+    public void dispose() {
+        gameServer.close();
+        super.dispose();
     }
 }

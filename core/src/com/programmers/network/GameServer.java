@@ -8,7 +8,7 @@ import com.programmers.network.GameNetwork.TestMessage;
 
 import java.io.IOException;
 
-public class GameServer extends Server {
+public final class GameServer extends Server {
 
     public GameServer() throws IOException {
         GameNetwork.register(this);

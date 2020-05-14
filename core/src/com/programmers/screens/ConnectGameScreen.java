@@ -2,16 +2,22 @@ package com.programmers.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Align;
+import com.programmers.enums.Difficulty;
+import com.programmers.game.online.OnlineGameServer;
 import com.programmers.network.GameClient;
+import com.programmers.network.GameServer;
 import com.programmers.ui_elements.MyButton;
 
 import java.io.IOException;
 
-public class ConnectGameScreen extends ReturnableScreen {
+public final class ConnectGameScreen extends ReturnableScreen {
 
     private GameClient gameClient;
 
@@ -34,9 +40,7 @@ public class ConnectGameScreen extends ReturnableScreen {
         ImageTextButton updateGames = new MyButton("UPDATE", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                try {
-                    gameClient.connectByUDP();
-                } catch (IOException ignored) { }
+                new GameFinder(gameClient, ConnectGameScreen.this).start();
             }
         };
         table.add(updateGames).spaceBottom(0.1f * Gdx.graphics.getHeight()).row();
@@ -54,5 +58,39 @@ public class ConnectGameScreen extends ReturnableScreen {
     public void dispose() {
         super.dispose();
         gameClient.stop();
+    }
+
+    private static class GameFinder extends Thread {
+
+        private final GameClient gameClient;
+        private final ConnectGameScreen connectGameScreen;
+
+        GameFinder(final GameClient gameClient, final ConnectGameScreen connectGameScreen) {
+            this.gameClient = gameClient;
+            this.connectGameScreen = connectGameScreen;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Dialog waitingDialog = new Dialog("Waiting...", ScreenLoader.getDefaultGdxSkin());
+                waitingDialog.setMovable(false);
+                waitingDialog.show(connectGameScreen);
+                if (gameClient.connectByUDP()) {
+                    Dialog dialog = new Dialog("Connected!", ScreenLoader.getDefaultGdxSkin());
+                    dialog.setMovable(false);
+                    dialog.show(connectGameScreen);
+                    sleep(1000);
+                    dialog.hide();
+                    // new dialog (in new thread) displaying count of connected players
+                } else {
+                    Dialog dialog = new Dialog("No games were found!", ScreenLoader.getDefaultGdxSkin());
+                    dialog.setMovable(false);
+                    dialog.button("OK");
+                    dialog.show(connectGameScreen);
+                }
+                waitingDialog.hide();
+            } catch (IOException | InterruptedException ignored) { }
+        }
     }
 }

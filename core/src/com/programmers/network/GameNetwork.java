@@ -5,7 +5,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 import com.programmers.game_objects.GameObject;
 
-public class GameNetwork {
+public final class GameNetwork {
 
     public static final int TCP_PORT = 54555, UDP_PORT = 54777;
 

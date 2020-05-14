@@ -9,7 +9,7 @@ import com.programmers.network.GameNetwork.TestMessage;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class GameClient extends Client {
+public final class GameClient extends Client {
 
     public GameClient() throws IOException {
         GameNetwork.register(this);
@@ -36,9 +36,12 @@ public class GameClient extends Client {
         });
     }
 
-    public void connectByUDP() throws IOException {
+    public boolean connectByUDP() throws IOException {
         InetAddress inetAddress = discoverHost(GameNetwork.UDP_PORT, 1000);
-        if (inetAddress != null)
+        if (inetAddress != null) {
             connect(1000, inetAddress.getHostAddress(), GameNetwork.TCP_PORT, GameNetwork.UDP_PORT);
+            return true;
+        }
+        return false;
     }
 }

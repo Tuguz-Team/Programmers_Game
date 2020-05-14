@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game.GameCard;
 
-public class Card extends Image implements Comparable<Card> {
+public final class Card extends Image implements Comparable<Card> {
 
     private final GameCard gameCard;
     private CardContainer prevParent;

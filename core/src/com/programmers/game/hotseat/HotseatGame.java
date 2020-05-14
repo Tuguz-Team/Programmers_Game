@@ -10,7 +10,7 @@ import com.programmers.screens.ScreenLoader;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public class HotseatGame extends GameScreen {
+public final class HotseatGame extends GameScreen {
 
     private final HotseatGameController hotseatGameController;
 

@@ -4,13 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.hotseat.HotseatGame;
+import com.programmers.game.online.OnlineGameServer;
 import com.programmers.network.GameServer;
 import com.programmers.ui_elements.MyButton;
 
@@ -18,8 +21,11 @@ import java.io.IOException;
 
 public final class NewGameScreen extends ReturnableScreen {
 
+    private final ScreenLoader screenLoader;
+
     public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
         super(screenLoader, previousScreen);
+        this.screenLoader = screenLoader;
 
         Table ui = new Table();
         ui.setFillParent(true);
@@ -60,7 +66,7 @@ public final class NewGameScreen extends ReturnableScreen {
         CheckBox EasyButton = new CheckBox("EASY", skin);
         CheckBox HardButton = new CheckBox("HARD", skin);
 
-        HorizontalGroup difficultyRadioButton = new HorizontalGroup();
+        final HorizontalGroup difficultyRadioButton = new HorizontalGroup();
         difficultyRadioButton.addActor(EasyButton);
         difficultyRadioButton.addActor(HardButton);
         difficultyRadioButton.space(0.05f * Gdx.graphics.getWidth());
@@ -81,10 +87,70 @@ public final class NewGameScreen extends ReturnableScreen {
                             getChecked().getText().toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard,
                             (int)playerCountSlider.getValue())
                     );
+                } else {
+                    Difficulty difficulty = radioButtonController
+                            .getChecked().getText().toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard;
+                    new WaitDialog(
+                            "Waiting for players...", ScreenLoader.getDefaultGdxSkin(),
+                            (int)playerCountSlider.getValue(),
+                            NewGameScreen.this, difficulty
+                    );
                 }
             }
         }).space(0.1f * Gdx.graphics.getHeight());
 
         ui.center();
+    }
+
+    private static class WaitDialog extends Dialog {
+
+        private Thread thread;
+        private GameServer gameServer;
+
+        private WaitDialog(final String title, final Skin skin,
+                           final int playerCount, final NewGameScreen newGameScreen,
+                           final Difficulty difficulty) {
+            super(title, skin);
+            setMovable(false);
+            button("OK");
+            final Label label = new Label("Connected players: 0", ScreenLoader.getDefaultGdxSkin());
+            label.setWrap(true);
+            label.setAlignment(Align.center);
+            getContentTable().add(label);
+            show(newGameScreen);
+            try {
+                gameServer = new GameServer();
+            } catch (IOException ignored) { }
+            gameServer.start();
+            thread = new Thread() {
+                @Override
+                public void run() {
+                    while (!isInterrupted()) {
+                        try {
+                            if (gameServer.getConnections().length < playerCount - 1) {
+                                Gdx.app.log("ServerWait", "Connected players: " + gameServer.getConnections().length);
+                                label.setText("Connected players: " + gameServer.getConnections().length);
+                                sleep(1000);
+                            } else {
+                                newGameScreen.dispose();
+                                newGameScreen.screenLoader.setScreen(new OnlineGameServer(
+                                        newGameScreen.screenLoader, difficulty, playerCount, gameServer
+                                ));
+                                interrupt();
+                            }
+                        } catch (InterruptedException e) {
+                            return;
+                        }
+                    }
+                }
+            };
+            thread.start();
+        }
+
+        @Override
+        protected void result(Object object) {
+            gameServer.close();
+            thread.interrupt();
+        }
     }
 }

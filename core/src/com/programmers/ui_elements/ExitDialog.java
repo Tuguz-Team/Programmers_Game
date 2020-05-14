@@ -8,9 +8,9 @@ public abstract class ExitDialog extends Dialog implements Procedure {
 
     public ExitDialog (String title, Skin skin) {
         super(title, skin);
-        this.button("YES", true);
-        this.button("NO", false);
-        this.setMovable(false);
+        button("YES", true);
+        button("NO", false);
+        setMovable(false);
     }
 
     @Override

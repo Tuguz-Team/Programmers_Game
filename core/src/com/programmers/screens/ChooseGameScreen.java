@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.programmers.ui_elements.MyButton;
 
-public class ChooseGameScreen extends ReturnableScreen {
+public final class ChooseGameScreen extends ReturnableScreen {
 
     public ChooseGameScreen(final ScreenLoader screenLoader, Screen previousScreen) {
         super(screenLoader, previousScreen);
