@@ -27,7 +27,7 @@ import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameInputProcessor;
 import com.programmers.ui_elements.CardContainer;
-import com.programmers.ui_elements.ExitDialog;
+import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
 
 public abstract class GameScreen extends Stage implements Screen {
@@ -81,7 +81,7 @@ public abstract class GameScreen extends Stage implements Screen {
     private void addUI() {
         final Skin skin = ScreenLoader.getDefaultGdxSkin();
 
-        final ExitDialog exitDialog = new ExitDialog
+        final YesNoDialog yesNoDialog = new YesNoDialog
                 ("Are you sure you want to return to main menu?", skin) {
             @Override
             public void call() {
@@ -113,7 +113,7 @@ public abstract class GameScreen extends Stage implements Screen {
                 new MyButton("QUIT ROOM", screenLoader.getButtonStyle()) {
                     @Override
                     public void call() {
-                        exitDialog.show(GameScreen.this);
+                        yesNoDialog.show(GameScreen.this);
                     }
                 };
 

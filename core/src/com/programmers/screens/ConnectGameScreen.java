@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.online.OnlineGameServer;
 import com.programmers.network.GameClient;
+import com.programmers.network.GameNetwork;
 import com.programmers.network.GameServer;
 import com.programmers.ui_elements.MyButton;
 

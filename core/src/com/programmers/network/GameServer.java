@@ -18,7 +18,7 @@ public final class GameServer extends Server {
             public void received(Connection connection, Object object) {
                 if (object instanceof TestMessage) {
                     TestMessage testMessage = (TestMessage) object;
-                    Gdx.app.log("GameServer", "Got message: " + testMessage.getMessage());
+                    Gdx.app.log("GameServer", "Got message: " + testMessage.message);
                 }
             }
         });

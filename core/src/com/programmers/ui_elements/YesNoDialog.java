@@ -4,9 +4,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.programmers.interfaces.Procedure;
 
-public abstract class ExitDialog extends Dialog implements Procedure {
+public abstract class YesNoDialog extends Dialog implements Procedure {
 
-    public ExitDialog (String title, Skin skin) {
+    public YesNoDialog(String title, Skin skin) {
         super(title, skin);
         button("YES", true);
         button("NO", false);

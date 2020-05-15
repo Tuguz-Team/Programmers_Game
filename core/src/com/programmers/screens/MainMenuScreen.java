@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.programmers.ui_elements.ExitDialog;
+import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
 
 public final class MainMenuScreen extends Stage implements Screen {
@@ -20,8 +20,8 @@ public final class MainMenuScreen extends Stage implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         final Skin skin = ScreenLoader.getDefaultGdxSkin();
-        final ExitDialog exitDialog =
-                new ExitDialog("Are you sure you want to exit the game?", skin) {
+        final YesNoDialog yesNoDialog =
+                new YesNoDialog("Are you sure you want to exit the game?", skin) {
             @Override
             public void call() {
                 Gdx.app.exit();
@@ -45,7 +45,7 @@ public final class MainMenuScreen extends Stage implements Screen {
                 new MyButton("END", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                exitDialog.show(MainMenuScreen.this);
+                yesNoDialog.show(MainMenuScreen.this);
             }
         };
 

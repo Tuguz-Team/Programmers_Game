@@ -16,22 +16,11 @@ public final class GameClient extends Client {
 
         addListener(new Listener() {
             @Override
-            public void connected(Connection connection) {
-                Gdx.app.log("GameClient", "Connected with TCP port: " + getRemoteAddressTCP());
-                sendTCP(new TestMessage("Hello!"));
-            }
-
-            @Override
             public void received(Connection connection, Object object) {
                 if (object instanceof TestMessage) {
                     TestMessage testMessage = (TestMessage) object;
-                    Gdx.app.log("GameClient", "Got message: " + testMessage.getMessage());
+                    Gdx.app.log("GameClient", "Got message: " + testMessage.message);
                 }
-            }
-
-            @Override
-            public void disconnected(Connection connection) {
-                Gdx.app.log("GameClient", "Disconnected!");
             }
         });
     }
