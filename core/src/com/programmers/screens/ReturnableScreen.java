@@ -13,7 +13,7 @@ import com.programmers.ui_elements.MyButton;
 
 public abstract class ReturnableScreen extends Stage implements Screen, InputProcessor {
 
-    private final ScreenLoader screenLoader;
+    protected final ScreenLoader screenLoader;
     private final Screen previousScreen;
 
     private final OrthographicCamera camera;

@@ -6,12 +6,12 @@ import com.programmers.network.GameNetwork.Disconnect;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import static com.programmers.network.GameNetwork.BUF;
+
 public final class GameClient extends Client {
 
     public GameClient() throws IOException {
         GameNetwork.register(this);
-
-        //addListener(new Listener());
     }
 
     public boolean connectByUDP() throws IOException {

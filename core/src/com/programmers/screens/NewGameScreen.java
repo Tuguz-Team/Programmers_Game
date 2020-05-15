@@ -25,12 +25,14 @@ import java.io.IOException;
 
 public final class NewGameScreen extends ReturnableScreen {
 
-    private final ScreenLoader screenLoader;
     private GameServer gameServer;
+    private Difficulty difficulty;
+    private int playersCount;
+
+    private boolean launchOnlineGame;
 
     public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
         super(screenLoader, previousScreen);
-        this.screenLoader = screenLoader;
 
         Table ui = new Table();
         ui.setFillParent(true);
@@ -109,17 +111,29 @@ public final class NewGameScreen extends ReturnableScreen {
     }
 
     @Override
+    public void render(float delta) {
+        super.render(delta);
+        if (launchOnlineGame) {
+            dispose();
+            screenLoader.setScreen(new OnlineGameServer(
+                    screenLoader, difficulty, playersCount, gameServer
+            ));
+            GameNetwork.LoadGame loadGame = new GameNetwork.LoadGame();
+            loadGame.difficulty = difficulty;
+            loadGame.playersCount = playersCount;
+            gameServer.sendToAllTCP(loadGame);
+        }
+    }
+
+    @Override
     public void dispose() {
-        if (gameServer != null)
+        if (gameServer != null && !launchOnlineGame)
             gameServer.stop();
         super.dispose();
     }
 
     private class WaitDialog extends Dialog {
 
-        private int playersCount;
-        private NewGameScreen newGameScreen;
-        private Difficulty difficulty;
         private final Listener listener;
 
         private WaitDialog(final String title, final Skin skin) {
@@ -151,11 +165,8 @@ public final class NewGameScreen extends ReturnableScreen {
                 private void doStuff() {
                     label.setText("Connected players: " + gameServer.getConnections().length);
                     if (gameServer.getConnections().length == playersCount - 1) {
-                        newGameScreen.dispose();
                         gameServer.removeListener(this);
-                        newGameScreen.screenLoader.setScreen(new OnlineGameServer(
-                                newGameScreen.screenLoader, difficulty, playersCount, gameServer
-                        ));
+                        launchOnlineGame = true;
                     }
                     PlayersCount playersCount = new PlayersCount();
                     playersCount.playersCount = gameServer.getConnections().length;
@@ -165,9 +176,8 @@ public final class NewGameScreen extends ReturnableScreen {
         }
 
         private void show(final int playersCount, final NewGameScreen newGameScreen, final Difficulty difficulty) {
-            this.playersCount = playersCount;
-            this.newGameScreen = newGameScreen;
-            this.difficulty = difficulty;
+            NewGameScreen.this.playersCount = playersCount;
+            NewGameScreen.this.difficulty = difficulty;
             try {
                 gameServer = new GameServer();
             } catch (IOException ignored) { }

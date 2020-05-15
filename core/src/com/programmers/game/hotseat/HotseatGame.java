@@ -3,6 +3,8 @@ package com.programmers.game.hotseat;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
+import com.programmers.game.GameController;
+import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 import com.programmers.screens.GameScreen;
@@ -10,33 +12,33 @@ import com.programmers.screens.ScreenLoader;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public final class HotseatGame extends GameScreen {
+public class HotseatGame extends GameScreen {
 
-    private final HotseatGameController hotseatGameController;
+    private final GameController gameController;
 
     public HotseatGame(final ScreenLoader screenLoader, final Difficulty difficulty, final int playersCount) {
         super(screenLoader, difficulty, playersCount);
 
         field = new Field(this);
-        HotseatPlayer[] hotseatPlayers = new HotseatPlayer[playersCount];
+        Player[] players = new Player[playersCount];
         Array<Base> bases = new Array<>(new Base[] {
                 (Base)field.getChunks()[0][0], (Base)field.getChunks()[0][size - 1],
                 (Base)field.getChunks()[size - 1][0], (Base)field.getChunks()[size - 1][size - 1]
         });
-        for (int i = 0; i < hotseatPlayers.length; i++) {
+        for (int i = 0; i < players.length; i++) {
             int index = random.nextInt(bases.size);
-            hotseatPlayers[i] = new HotseatPlayer(new Car(bases.get(index)));
+            players[i] = new Player(new Car(bases.get(index)));
             bases.removeIndex(index);
         }
-        hotseatGameController = new HotseatGameController(hotseatPlayers, field);
+        gameController = new GameController(players, field);
 
-        constructorEnd();
+        loadGame();
     }
 
     @Override
     protected void setCameraPosition() {
         int x, z;
-        Car car = hotseatGameController.getThisHotseatPlayer().getCar();
+        Car car = gameController.getThisPlayer().getCar();
         if (car.getX() == 0 && car.getZ() == 0) {
             x = z = -size;
         } else if (car.getX() == 0 && car.getZ() == size - 1) {
@@ -54,14 +56,14 @@ public final class HotseatGame extends GameScreen {
 
     @Override
     protected void addCardWindows() {
-        addActor(hotseatGameController.getPlayerCardWindow());
-        addActor(hotseatGameController.getAlgorithmCardWindow());
+        addActor(gameController.getPlayerCardWindow());
+        addActor(gameController.getAlgorithmCardWindow());
     }
 
     @Override
     protected void loadModels() {
         field.loadModels();
-        for (HotseatPlayer hotseatPlayer : hotseatGameController.getHotseatPlayers())
-            hotseatPlayer.getCar().loadModel();
+        for (Player player : gameController.getPlayers())
+            player.getCar().loadModel();
     }
 }

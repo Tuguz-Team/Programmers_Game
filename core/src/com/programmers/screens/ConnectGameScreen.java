@@ -11,7 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.programmers.enums.Difficulty;
+import com.programmers.game.online.OnlineGameClient;
 import com.programmers.network.GameClient;
+import com.programmers.network.GameNetwork;
 import com.programmers.ui_elements.MyButton;
 import com.programmers.network.GameNetwork.PlayersCount;
 
@@ -20,6 +23,9 @@ import java.io.IOException;
 public final class ConnectGameScreen extends ReturnableScreen {
 
     private GameClient gameClient;
+    private boolean launchOnlineGame;
+    private Difficulty difficulty;
+    private int playersCount;
 
     public ConnectGameScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
         super(screenLoader, previousScreen);
@@ -59,12 +65,25 @@ public final class ConnectGameScreen extends ReturnableScreen {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        gameClient.disconnect();
+    public void render(float delta) {
+        super.render(delta);
+        if (launchOnlineGame) {
+            dispose();
+            screenLoader.setScreen(new OnlineGameClient(
+                    screenLoader, difficulty, playersCount, gameClient
+            ));
+        }
     }
 
-    private static class GameFinder extends Thread {
+    @Override
+    public void dispose() {
+        if (!launchOnlineGame) {
+            gameClient.disconnect();
+        }
+        super.dispose();
+    }
+
+    private class GameFinder extends Thread {
 
         private final GameClient gameClient;
         private final ConnectGameScreen connectGameScreen;
@@ -107,6 +126,12 @@ public final class ConnectGameScreen extends ReturnableScreen {
                             if (object instanceof PlayersCount) {
                                 PlayersCount playersCount = (PlayersCount) object;
                                 label.setText("Connected players: " + playersCount.playersCount);
+                            } else if (object instanceof GameNetwork.LoadGame) {
+                                GameNetwork.LoadGame loadGame = (GameNetwork.LoadGame) object;
+                                gameClient.removeListener(this);
+                                difficulty = loadGame.difficulty;
+                                playersCount = loadGame.playersCount;
+                                ConnectGameScreen.this.launchOnlineGame = true;
                             }
                         }
 

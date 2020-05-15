@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.programmers.enums.Direction;
+import com.programmers.game.Player;
 import com.programmers.interfaces.ICard;
-import com.programmers.game.hotseat.HotseatPlayer;
 import com.programmers.interfaces.Procedure;
 import static com.badlogic.gdx.math.MathUtils.random;
 
@@ -15,7 +15,7 @@ public final class Car extends GameObject implements ICard {
 
     private final int size;
 
-    private HotseatPlayer hotseatPlayer;
+    private Player player;
     private final Array<Life> lives = new Array<>(3);
     private final Base base;
 
@@ -54,12 +54,12 @@ public final class Car extends GameObject implements ICard {
         setModelFileName(stringBuilder.toString());
     }
 
-    public HotseatPlayer getHotseatPlayer() {
-        return hotseatPlayer;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setHotseatPlayer(HotseatPlayer hotseatPlayer) {
-        this.hotseatPlayer = hotseatPlayer;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Array<Life> getLives() {
@@ -514,9 +514,9 @@ public final class Car extends GameObject implements ICard {
         // if [chunk] is base:
         if (chunk instanceof Base
                 && ((Base)chunk).getLabColors().contains(base.getBaseColor(), true)) {
-            hotseatPlayer.getLives().addAll(lives);
+            player.getLives().addAll(lives);
             for (Life life : lives) {
-                hotseatPlayer.addScore(life.getType());
+                player.addScore(life.getType());
             }
             lives.clear();
         }

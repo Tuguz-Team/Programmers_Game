@@ -34,10 +34,6 @@ public final class Wall extends GameObject {
         setModelFileName("Models/Terrain/Walls/Wall1/Wall1.obj");
     }
 
-    public Direction getDirection() {
-        return direction;
-    }
-
     @Override
     public void loadModel() {
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));

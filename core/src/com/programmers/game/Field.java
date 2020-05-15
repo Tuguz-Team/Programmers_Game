@@ -21,16 +21,12 @@ public final class Field {
 
     private final int size;
     private GameScreen gameScreen;
-    private final Chunk[][] chunks;
+    private Chunk[][] chunks;
     private final Vector3 offset;
 
-    public Field(final OnlineGameClient onlineGameClient) {
-        this(onlineGameClient, null);
-    }
-
-    public Field(final OnlineGameServer onlineGameServer) {
-        this(onlineGameServer, null);
-        generateField();
+    public Field(final OnlineGameClient onlineGameClient, final Chunk[][] chunks) {
+        this(onlineGameClient, (Void)null);
+        this.chunks = chunks;
     }
 
     public Field(final HotseatGame hotseatGame) {

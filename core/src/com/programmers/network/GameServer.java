@@ -5,13 +5,12 @@ import com.esotericsoftware.kryonet.Server;
 
 import java.io.IOException;
 
+import static com.programmers.network.GameNetwork.BUF;
+
 public final class GameServer extends Server {
 
     public GameServer() throws IOException {
         GameNetwork.register(this);
-
-        //addListener(new Listener());
-
         bind(GameNetwork.TCP_PORT, GameNetwork.UDP_PORT);
     }
 

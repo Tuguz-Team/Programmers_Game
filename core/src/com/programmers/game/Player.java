@@ -1,20 +1,20 @@
-package com.programmers.game.hotseat;
+package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game.GameCard;
 import com.programmers.game_objects.Car;
 import com.programmers.game_objects.Life;
 
-public final class HotseatPlayer {
+public class Player {
 
     private int score;
     private final Car car;
     private final Array<Life> lives;
     private final Array<GameCard> cards;
 
-    public HotseatPlayer(final Car car) {
+    public Player(final Car car) {
         this.car = car;
-        car.setHotseatPlayer(this);
+        car.setPlayer(this);
         lives = new Array<>(10);
         cards = new Array<>(5);
     }
@@ -34,7 +34,7 @@ public final class HotseatPlayer {
     }
 
     public void addCard(GameCard gameCard) {
-        gameCard.setHotseatPlayer(this);
+        gameCard.setPlayer(this);
         cards.add(gameCard);
     }
 

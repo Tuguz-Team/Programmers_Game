@@ -177,7 +177,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         instances.add(new ModelInstance(modelBuilder3.end()));
     }
 
-    protected void constructorEnd() {
+    protected void loadGame() {
         loadModels();
         gameInputProcessor.unlockCamera();
         addUI();

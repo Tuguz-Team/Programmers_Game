@@ -2,7 +2,6 @@ package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.CardType;
-import com.programmers.game.hotseat.HotseatPlayer;
 import com.programmers.interfaces.ICard;
 import com.programmers.interfaces.Procedure;
 
@@ -10,11 +9,11 @@ public final class GameCard implements ICard {
 
     private final CardType type;
     private final Array<GameCard> cards;
-    private HotseatPlayer hotseatPlayer;
+    private Player player;
 
-    public GameCard(final CardType type, final HotseatPlayer hotseatPlayer) {
+    public GameCard(final CardType type, final Player player) {
         this.type = type;
-        this.hotseatPlayer = hotseatPlayer;
+        this.player = player;
         cards = new Array<>(2);
     }
 
@@ -26,12 +25,12 @@ public final class GameCard implements ICard {
         return cards;
     }
 
-    public HotseatPlayer getHotseatPlayer() {
-        return hotseatPlayer;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setHotseatPlayer(HotseatPlayer hotseatPlayer) {
-        this.hotseatPlayer = hotseatPlayer;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public void apply() {
@@ -89,46 +88,46 @@ public final class GameCard implements ICard {
 
     @Override
     public boolean stepForward() {
-        return hotseatPlayer.getCar().stepForward();
+        return player.getCar().stepForward();
     }
 
     @Override
     public void stepForwardToFloor() {
-        hotseatPlayer.getCar().stepForwardToFloor();
+        player.getCar().stepForwardToFloor();
     }
 
     @Override
     public void jump() {
-        hotseatPlayer.getCar().jump();
+        player.getCar().jump();
     }
 
     @Override
     public void turn90Left() {
-        hotseatPlayer.getCar().turn90Left();
+        player.getCar().turn90Left();
     }
 
     @Override
     public void turn90Right() {
-        hotseatPlayer.getCar().turn90Right();
+        player.getCar().turn90Right();
     }
 
     @Override
     public void turn180() {
-        hotseatPlayer.getCar().turn180();
+        player.getCar().turn180();
     }
 
     @Override
     public void cycle2(Procedure[] procedures) {
-        hotseatPlayer.getCar().cycle2(procedures);
+        player.getCar().cycle2(procedures);
     }
 
     @Override
     public void cycle3(Procedure[] procedures) {
-        hotseatPlayer.getCar().cycle3(procedures);
+        player.getCar().cycle3(procedures);
     }
 
     @Override
     public void teleport() {
-        hotseatPlayer.getCar().teleport();
+        player.getCar().teleport();
     }
 }

@@ -1,4 +1,4 @@
-package com.programmers.game.hotseat;
+package com.programmers.game;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
@@ -7,6 +7,7 @@ import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameCard;
+import com.programmers.game.Player;
 import com.programmers.game_objects.Chunk;
 import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
@@ -17,10 +18,10 @@ import java.util.Stack;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public final class HotseatGameController {
+public final class GameController {
 
-    private HotseatPlayer thisHotseatPlayer;
-    private final HotseatPlayer[] hotseatPlayers;
+    private Player thisPlayer;
+    private final Player[] players;
     private final Field field;
     private final Difficulty difficulty;
 
@@ -31,10 +32,10 @@ public final class HotseatGameController {
     private final Array<GameCard> discardPile;
     private final Stack<GameCard> talon = new Stack<>();
 
-    public HotseatGameController(final HotseatPlayer[] hotseatPlayers, final Field field) {
-        this.hotseatPlayers = hotseatPlayers;
+    public GameController(final Player[] players, final Field field) {
+        this.players = players;
         this.field = field;
-        thisHotseatPlayer = hotseatPlayers[0];
+        thisPlayer = players[0];
         algorithmCards = new Array<>();
         // Use discardPile as place where cards are initializing
         difficulty = field.getGameScreen().getDifficulty();
@@ -60,20 +61,20 @@ public final class HotseatGameController {
         // Make a talon of cards
         makeTalon();
         // Add 5 cards from talon to each player from talon
-        for (HotseatPlayer hotseatPlayer : hotseatPlayers) {
+        for (Player player : players) {
             for (int i = 0; i < 5; i++) {
                 GameCard gameCard = talon.pop();
-                hotseatPlayer.addCard(gameCard);
-                gameCard.setHotseatPlayer(hotseatPlayer);
+                player.addCard(gameCard);
+                gameCard.setPlayer(player);
             }
         }
         // add UI objects that are necessary for the game
         CardContainer playerCardContainer = new CardContainer(
-                thisHotseatPlayer.getGameCards(),
+                thisPlayer.getGameCards(),
                 CardContainer.Content.All, true
         );
         playerCardWindow = new PlayerCardWindow(
-                "HotseatPlayer cards", playerCardContainer, this
+                "Player cards", playerCardContainer, this
         );
         algorithmCardWindow = new AlgorithmCardWindow("Algorithm", this);
     }
@@ -83,7 +84,7 @@ public final class HotseatGameController {
             final int i = random.nextInt(discardPile.size);
             final GameCard gameCard = discardPile.get(i);
             talon.push(gameCard);
-            gameCard.setHotseatPlayer(null);
+            gameCard.setPlayer(null);
             discardPile.removeIndex(i);
         }
     }
@@ -100,8 +101,8 @@ public final class HotseatGameController {
         return talon;
     }
 
-    public HotseatPlayer getThisHotseatPlayer() {
-        return thisHotseatPlayer;
+    public Player getThisPlayer() {
+        return thisPlayer;
     }
 
     public Difficulty getDifficulty() {
@@ -110,7 +111,7 @@ public final class HotseatGameController {
 
     public void toNextPlayer() {
         // add new cards to the player and clear playerCardWindow
-        final Array<GameCard> gameCards = thisHotseatPlayer.getGameCards();
+        final Array<GameCard> gameCards = thisPlayer.getGameCards();
         final CardContainer playerCardContainer = playerCardWindow.getCardContainer();
         if (((Card) playerCardContainer.getChild(0)).getGameCard() != null) {
             gameCards.clear();
@@ -123,7 +124,7 @@ public final class HotseatGameController {
                 }
                 GameCard gameCard = talon.pop();
                 gameCards.add(gameCard);
-                gameCard.setHotseatPlayer(thisHotseatPlayer);
+                gameCard.setPlayer(thisPlayer);
             }
             playerCardContainer.clearChildren();
         } else {
@@ -134,33 +135,33 @@ public final class HotseatGameController {
                 }
                 GameCard gameCard = talon.pop();
                 gameCards.add(gameCard);
-                gameCard.setHotseatPlayer(thisHotseatPlayer);
+                gameCard.setPlayer(thisPlayer);
             }
         }
         // set this player
         int i;
-        for (i = 0; i < hotseatPlayers.length; i++) {
-            if (thisHotseatPlayer.equals(hotseatPlayers[i]))
+        for (i = 0; i < players.length; i++) {
+            if (thisPlayer.equals(players[i]))
                 break;
         }
-        thisHotseatPlayer = hotseatPlayers[(i + 1) % hotseatPlayers.length];
+        thisPlayer = players[(i + 1) % players.length];
         // add this player cards to the playerCardWindow
-        for (GameCard gameCard : thisHotseatPlayer.getGameCards()) {
+        for (GameCard gameCard : thisPlayer.getGameCards()) {
             Card card = new Card(gameCard);
             playerCardContainer.addCard(card, 0, 0);
-            gameCard.setHotseatPlayer(thisHotseatPlayer);
+            gameCard.setPlayer(thisPlayer);
         }
     }
 
-    public HotseatPlayer[] getHotseatPlayers() {
-        return hotseatPlayers;
+    public Player[] getPlayers() {
+        return players;
     }
 
-    public HotseatPlayer getWinner() {
-        for (HotseatPlayer hotseatPlayer : hotseatPlayers) {
-            if ((difficulty == Difficulty.Easy && hotseatPlayer.getScore() >= 7)
-                    || (difficulty == Difficulty.Hard && hotseatPlayer.getScore() >= 9)) {
-                return hotseatPlayer;
+    public Player getWinner() {
+        for (Player player : players) {
+            if ((difficulty == Difficulty.Easy && player.getScore() >= 7)
+                    || (difficulty == Difficulty.Hard && player.getScore() >= 9)) {
+                return player;
             }
         }
         for (Chunk[] chunks : field.getChunks()) {
@@ -170,15 +171,15 @@ public final class HotseatGameController {
                 }
             }
         }
-        for (HotseatPlayer hotseatPlayer : hotseatPlayers) {
-            if (!hotseatPlayer.getCar().getLives().isEmpty()) {
+        for (Player player : players) {
+            if (!player.getCar().getLives().isEmpty()) {
                 return null;
             }
         }
-        HotseatPlayer winner = hotseatPlayers[0];
-        for (int i = 1; i < hotseatPlayers.length; i++) {
-            if (hotseatPlayers[i].getScore() > winner.getScore()) {
-                winner = hotseatPlayers[i];
+        Player winner = players[0];
+        for (int i = 1; i < players.length; i++) {
+            if (players[i].getScore() > winner.getScore()) {
+                winner = players[i];
             }
         }
         return winner;
