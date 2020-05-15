@@ -1,10 +1,7 @@
 package com.programmers.network;
 
-import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
-import com.programmers.network.GameNetwork.TestMessage;
+import com.programmers.network.GameNetwork.Disconnect;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -14,15 +11,7 @@ public final class GameClient extends Client {
     public GameClient() throws IOException {
         GameNetwork.register(this);
 
-        addListener(new Listener() {
-            @Override
-            public void received(Connection connection, Object object) {
-                if (object instanceof TestMessage) {
-                    TestMessage testMessage = (TestMessage) object;
-                    Gdx.app.log("GameClient", "Got message: " + testMessage.message);
-                }
-            }
-        });
+        //addListener(new Listener());
     }
 
     public boolean connectByUDP() throws IOException {
@@ -32,5 +21,10 @@ public final class GameClient extends Client {
             return true;
         }
         return false;
+    }
+
+    public void disconnect() {
+        sendTCP(new Disconnect());
+        stop();
     }
 }

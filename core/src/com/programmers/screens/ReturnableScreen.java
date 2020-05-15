@@ -1,6 +1,8 @@
 package com.programmers.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -9,11 +11,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.ui_elements.MyButton;
 
-public abstract class ReturnableScreen extends Stage implements Screen {
+public abstract class ReturnableScreen extends Stage implements Screen, InputProcessor {
+
+    private final ScreenLoader screenLoader;
+    private final Screen previousScreen;
 
     private final OrthographicCamera camera;
 
     public ReturnableScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
+        this.screenLoader = screenLoader;
+        this.previousScreen = previousScreen;
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -21,8 +29,7 @@ public abstract class ReturnableScreen extends Stage implements Screen {
                 new MyButton("RETURN", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                dispose();
-                screenLoader.setScreen(previousScreen);
+                returnToPreviousScreen();
             }
         };
 
@@ -31,6 +38,11 @@ public abstract class ReturnableScreen extends Stage implements Screen {
                 Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.01f),
                 Gdx.graphics.getHeight() * 0.99f,
                 Align.topRight);
+    }
+
+    public void returnToPreviousScreen() {
+        dispose();
+        screenLoader.setScreen(previousScreen);
     }
 
     @Override
@@ -67,5 +79,14 @@ public abstract class ReturnableScreen extends Stage implements Screen {
     @Override
     public void hide() {
 
+    }
+
+    @Override
+    public boolean keyDown(int keyCode) {
+        if (keyCode == Input.Keys.BACK) {
+            returnToPreviousScreen();
+            return true;
+        }
+        return false;
     }
 }

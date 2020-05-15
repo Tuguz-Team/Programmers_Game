@@ -1,6 +1,8 @@
 package com.programmers.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,7 +13,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
 
-public final class MainMenuScreen extends Stage implements Screen {
+public final class MainMenuScreen extends Stage implements Screen, InputProcessor {
+
+    private final YesNoDialog yesNoDialog;
+    private boolean isYesNoDialogHidden = true;
 
     private OrthographicCamera camera;
 
@@ -20,11 +25,16 @@ public final class MainMenuScreen extends Stage implements Screen {
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         final Skin skin = ScreenLoader.getDefaultGdxSkin();
-        final YesNoDialog yesNoDialog =
-                new YesNoDialog("Are you sure you want to exit the game?", skin) {
+        yesNoDialog = new YesNoDialog("Are you sure you want to exit the game?", skin) {
             @Override
             public void call() {
                 Gdx.app.exit();
+            }
+
+            @Override
+            protected void result(Object object) {
+                super.result(object);
+                isYesNoDialogHidden = true;
             }
         };
 
@@ -45,7 +55,10 @@ public final class MainMenuScreen extends Stage implements Screen {
                 new MyButton("END", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                yesNoDialog.show(MainMenuScreen.this);
+                if (isYesNoDialogHidden) {
+                    yesNoDialog.show(MainMenuScreen.this);
+                    isYesNoDialogHidden = false;
+                }
             }
         };
 
@@ -88,5 +101,15 @@ public final class MainMenuScreen extends Stage implements Screen {
     @Override
     public void hide() {
 
+    }
+
+    @Override
+    public boolean keyDown(int keyCode) {
+        if (keyCode == Input.Keys.BACK && isYesNoDialogHidden) {
+            yesNoDialog.show(this);
+            isYesNoDialogHidden = false;
+            return true;
+        }
+        return false;
     }
 }

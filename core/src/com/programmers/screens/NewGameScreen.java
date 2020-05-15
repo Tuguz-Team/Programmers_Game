@@ -16,6 +16,8 @@ import com.esotericsoftware.kryonet.Listener;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.hotseat.HotseatGame;
 import com.programmers.game.online.OnlineGameServer;
+import com.programmers.network.GameNetwork;
+import com.programmers.network.GameNetwork.PlayersCount;
 import com.programmers.network.GameServer;
 import com.programmers.ui_elements.MyButton;
 
@@ -24,6 +26,7 @@ import java.io.IOException;
 public final class NewGameScreen extends ReturnableScreen {
 
     private final ScreenLoader screenLoader;
+    private GameServer gameServer;
 
     public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
         super(screenLoader, previousScreen);
@@ -105,9 +108,15 @@ public final class NewGameScreen extends ReturnableScreen {
         ui.center();
     }
 
-    private static class WaitDialog extends Dialog {
+    @Override
+    public void dispose() {
+        if (gameServer != null)
+            gameServer.stop();
+        super.dispose();
+    }
 
-        private GameServer gameServer;
+    private class WaitDialog extends Dialog {
+
         private int playersCount;
         private NewGameScreen newGameScreen;
         private Difficulty difficulty;
@@ -130,8 +139,13 @@ public final class NewGameScreen extends ReturnableScreen {
                 }
 
                 @Override
-                public void disconnected(Connection connection) {
-                    doStuff();
+                public void received(Connection connection, Object object) {
+                    if (object instanceof GameNetwork.Disconnect) {
+                        try {
+                            gameServer.update(0);
+                            doStuff();
+                        } catch (IOException ignored) { }
+                    }
                 }
 
                 private void doStuff() {
@@ -143,6 +157,9 @@ public final class NewGameScreen extends ReturnableScreen {
                                 newGameScreen.screenLoader, difficulty, playersCount, gameServer
                         ));
                     }
+                    PlayersCount playersCount = new PlayersCount();
+                    playersCount.playersCount = gameServer.getConnections().length;
+                    gameServer.sendToAllTCP(playersCount);
                 }
             };
         }
@@ -161,7 +178,7 @@ public final class NewGameScreen extends ReturnableScreen {
 
         @Override
         protected void result(Object object) {
-            gameServer.close();
+            gameServer.stop();
         }
     }
 }

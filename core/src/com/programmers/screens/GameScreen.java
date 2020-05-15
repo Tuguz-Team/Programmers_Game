@@ -1,7 +1,9 @@
 package com.programmers.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -30,7 +32,7 @@ import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
 
-public abstract class GameScreen extends Stage implements Screen {
+public abstract class GameScreen extends Stage implements Screen, InputProcessor {
 
     protected final int size;
     protected final int playersCount;
@@ -46,6 +48,8 @@ public abstract class GameScreen extends Stage implements Screen {
     protected final GameInputProcessor gameInputProcessor;
     protected final InputMultiplexer multiplexer;
 
+    private Dialog pauseMenu;
+    private boolean isPauseMenuHidden = true;
     protected Field field;
 
     protected GameScreen(final ScreenLoader screenLoader, final Difficulty difficulty, final int playersCount) {
@@ -90,7 +94,7 @@ public abstract class GameScreen extends Stage implements Screen {
             }
         };
 
-        final Dialog pauseMenu = new Dialog("PAUSE MENU", skin);
+        pauseMenu = new Dialog("PAUSE MENU", skin);
         pauseMenu.getContentTable().setFillParent(true);
         pauseMenu.setMovable(false);
 
@@ -99,6 +103,7 @@ public abstract class GameScreen extends Stage implements Screen {
                     @Override
                     public void call() {
                         pauseMenu.hide();
+                        isPauseMenuHidden = true;
                         gameInputProcessor.unlockCamera();
                     }
                 };
@@ -128,8 +133,11 @@ public abstract class GameScreen extends Stage implements Screen {
         ImageTextButton toDialogButton = new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                gameInputProcessor.lockCamera();
-                pauseMenu.show(GameScreen.this);
+                if (isPauseMenuHidden) {
+                    gameInputProcessor.lockCamera();
+                    pauseMenu.show(GameScreen.this);
+                    isPauseMenuHidden = false;
+                }
             }
         };
         addActor(toDialogButton);
@@ -248,5 +256,15 @@ public abstract class GameScreen extends Stage implements Screen {
         instances.clear();
         CardContainer.cardContainers.clear();
         super.dispose();
+    }
+
+    @Override
+    public boolean keyDown(int keyCode) {
+        if (keyCode == Input.Keys.BACK && isPauseMenuHidden) {
+            pauseMenu.show(this);
+            isPauseMenuHidden = false;
+            return true;
+        }
+        return false;
     }
 }

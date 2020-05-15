@@ -2,6 +2,7 @@ package com.programmers.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -28,6 +29,8 @@ public final class ScreenLoader extends Game {
 
     @Override
     public void create() {
+        Gdx.input.setCatchKey(Input.Keys.BACK, true);
+
         assetManager = new GameAssets();
         while (!assetManager.update());
 
