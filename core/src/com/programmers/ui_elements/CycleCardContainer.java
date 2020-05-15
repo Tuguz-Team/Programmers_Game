@@ -15,7 +15,7 @@ public final class CycleCardContainer extends CardContainer {
     private static final int PAD = 29;
 
     CycleCardContainer(final GameController gameController) {
-        super(gameController.getAlgorithmCards(), null, false);
+        super(gameController.getAlgorithmCards(), gameController.getDifficulty(), null, gameController);
         this.gameController = gameController;
         pad(PAD, 0, PAD, 0);
         for (int i = 0; i < cycleCards.length; i++) {
@@ -275,5 +275,32 @@ public final class CycleCardContainer extends CardContainer {
                 card.setDrawable(new TextureRegionDrawable(new Texture("Sprites/Cards/CyclePointOff.png")));
         }
         card.setCellEnabled(cellEnabled);
+    }
+
+    public void drawPoints(int prevSize, int curSize) {
+        int i, n;
+        if (prevSize < curSize) {
+            i = cycleCards.length - curSize * 2 + 1;
+            n = (prevSize == 0) ? (cycleCards.length - prevSize) : (cycleCards.length - prevSize * 2 + 1);
+
+            for (; i < n; i++) {
+                getCells().get(i).setActor(new Card("Sprites/Cards/CyclePointOn.png"));
+            }
+        } else if (curSize < prevSize) {
+            i = cycleCards.length - prevSize * 2 + 1;
+            n = (curSize == 0) ? (cycleCards.length - curSize) : (cycleCards.length - curSize * 2 + 1);
+
+            for (; i < n; i++) {
+                getCells().get(i).setActor(null);
+            }
+        }
+
+        //if (actionSize > 1)
+        //    size = (actionSize * 2) - 1;
+        //else size = actionSize;
+
+        //for (int i = 0; i < size; i++) {
+        //    getCells().get(i).setActor(null);
+        //}
     }
 }

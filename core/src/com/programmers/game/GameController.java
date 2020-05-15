@@ -5,9 +5,6 @@ import com.badlogic.gdx.utils.Array;
 
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
-import com.programmers.game.Field;
-import com.programmers.game.GameCard;
-import com.programmers.game.Player;
 import com.programmers.game_objects.Chunk;
 import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
@@ -69,9 +66,8 @@ public final class GameController {
             }
         }
         // add UI objects that are necessary for the game
-        CardContainer playerCardContainer = new CardContainer(
-                thisPlayer.getGameCards(),
-                CardContainer.Content.All, true
+        CardContainer playerCardContainer = new CardContainer(thisPlayer.getGameCards(),
+                difficulty, CardContainer.Content.All, this
         );
         playerCardWindow = new PlayerCardWindow(
                 "Player cards", playerCardContainer, this
