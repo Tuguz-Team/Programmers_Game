@@ -9,7 +9,8 @@ import com.programmers.enums.Direction;
 import com.programmers.game.Player;
 import com.programmers.interfaces.ICard;
 import com.programmers.interfaces.Procedure;
-import static com.badlogic.gdx.math.MathUtils.random;
+
+import static com.programmers.screens.ScreenLoader.random;
 
 public final class Car extends GameObject implements ICard {
 

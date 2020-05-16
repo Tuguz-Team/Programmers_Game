@@ -5,9 +5,6 @@ import com.badlogic.gdx.utils.Array;
 
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
-import com.programmers.game.Field;
-import com.programmers.game.GameCard;
-import com.programmers.game.Player;
 import com.programmers.game_objects.Chunk;
 import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
@@ -16,7 +13,7 @@ import com.programmers.ui_elements.PlayerCardWindow;
 
 import java.util.Stack;
 
-import static com.badlogic.gdx.math.MathUtils.random;
+import static com.programmers.screens.ScreenLoader.random;
 
 public final class GameController {
 

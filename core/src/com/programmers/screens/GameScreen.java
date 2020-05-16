@@ -89,8 +89,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                 ("Are you sure you want to return to main menu?", skin) {
             @Override
             public void call() {
-                dispose();
-                screenLoader.setScreen(screenLoader.getMainMenu());
+                exit();
             }
         };
 
@@ -185,6 +184,11 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         setCameraPosition();
     }
 
+    protected void exit() {
+        dispose();
+        screenLoader.setScreen(screenLoader.getMainMenu());
+    }
+
     public int getSize() {
         return size;
     }
@@ -261,8 +265,15 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
     @Override
     public boolean keyDown(int keyCode) {
         if (keyCode == Input.Keys.BACK && isPauseMenuHidden) {
-            pauseMenu.show(this);
-            isPauseMenuHidden = false;
+            if (pauseMenu != null) {
+                pauseMenu.show(this);
+                isPauseMenuHidden = false;
+            } else {
+                modelBatch.dispose();
+                instances.clear();
+                CardContainer.cardContainers.clear();
+                screenLoader.setScreen(screenLoader.getMainMenu());
+            }
             return true;
         }
         return false;

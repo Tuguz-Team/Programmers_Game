@@ -1,7 +1,6 @@
 package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
-import com.programmers.game.GameCard;
 import com.programmers.game_objects.Car;
 import com.programmers.game_objects.Life;
 

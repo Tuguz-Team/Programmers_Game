@@ -16,6 +16,7 @@ import com.programmers.network.GameClient;
 import com.programmers.network.GameServer;
 
 import java.io.IOException;
+import java.util.Random;
 
 public final class ScreenLoader extends Game {
 
@@ -23,6 +24,9 @@ public final class ScreenLoader extends Game {
     private AssetManager assetManager;
 
     private static Skin defaultGdxSkin;
+    public static long seed = System.nanoTime();
+    public final static Random random = new Random(seed);
+
     private Skin buttonSkin;
     private BitmapFont font;
     private ImageTextButton.ImageTextButtonStyle buttonStyle;

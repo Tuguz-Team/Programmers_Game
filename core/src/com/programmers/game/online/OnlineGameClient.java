@@ -1,15 +1,19 @@
 package com.programmers.game.online;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
-import com.programmers.game_objects.Chunk;
 import com.programmers.network.GameClient;
 import com.programmers.network.GameNetwork;
 import com.programmers.screens.GameScreen;
 import com.programmers.screens.ScreenLoader;
+
+import java.util.Random;
+
+import static com.badlogic.gdx.math.MathUtils.random;
+import static com.programmers.screens.ScreenLoader.seed;
 
 public final class OnlineGameClient extends GameScreen {
 
@@ -20,38 +24,29 @@ public final class OnlineGameClient extends GameScreen {
         super(screenLoader, difficulty, playersCount);
         this.gameClient = gameClient;
 
-        final Chunk[][] chunks = new Chunk[size][size];
-        field = new Field(this, chunks);
         gameClient.addListener(new Listener() {
             @Override
             public void received(Connection connection, Object object) {
-                if (object instanceof GameNetwork.Ready) {
+                if (object instanceof GameNetwork.Seed) {
+                    GameNetwork.Seed seedNet = (GameNetwork.Seed) object;
+                    seed = seedNet.seed;
+                    random.setSeed(seedNet.seed);
+                    field = new Field(OnlineGameClient.this);
                     loadGame();
-                    Gdx.app.log("OnlineGameClient", "Load Game!");
-                } else if (object instanceof GameNetwork.Chunk[][]) {
-                    Gdx.app.log("OnlineGameClient", "Got data!");
-                    for (int i = 0; i < size; i++) {
-                        for (int j = 0; j < size; j++) {
-                            GameNetwork.Chunk chunk = ((GameNetwork.Chunk[][]) object)[i][j];
-                            chunks[i][j] = new Chunk(chunk.x, chunk.y, chunk.z, chunk.color, field);
-                        }
-                    }
                 }
-                gameClient.sendTCP(new GameNetwork.Ready());
-                Gdx.app.log("OnlineGameClient", "Send ready message");
             }
 
             @Override
             public void disconnected(Connection connection) {
-                dispose();
-                screenLoader.setScreen(screenLoader.getMainMenu());
+                exit();
             }
         });
     }
 
     @Override
     protected void setCameraPosition() {
-        //
+        camera.position.set(-size, size, -size);
+        camera.update();
     }
 
     @Override
@@ -68,5 +63,13 @@ public final class OnlineGameClient extends GameScreen {
     public void dispose() {
         gameClient.disconnect();
         super.dispose();
+    }
+
+    @Override
+    public boolean keyDown(int keyCode) {
+        if (keyCode == Input.Keys.BACK) {
+            gameClient.disconnect();
+        }
+        return super.keyDown(keyCode);
     }
 }

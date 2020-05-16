@@ -6,8 +6,6 @@ import com.programmers.network.GameNetwork.Disconnect;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import static com.programmers.network.GameNetwork.BUF;
-
 public final class GameClient extends Client {
 
     public GameClient() throws IOException {
@@ -15,9 +13,9 @@ public final class GameClient extends Client {
     }
 
     public boolean connectByUDP() throws IOException {
-        InetAddress inetAddress = discoverHost(GameNetwork.UDP_PORT, 1000);
+        InetAddress inetAddress = discoverHost(GameNetwork.UDP_PORT, 2000);
         if (inetAddress != null) {
-            connect(1000, inetAddress.getHostAddress(), GameNetwork.TCP_PORT, GameNetwork.UDP_PORT);
+            connect(2000, inetAddress.getHostAddress(), GameNetwork.TCP_PORT, GameNetwork.UDP_PORT);
             return true;
         }
         return false;

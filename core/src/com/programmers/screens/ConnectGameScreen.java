@@ -32,7 +32,6 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
         try {
             gameClient = new GameClient();
-            gameClient.start();
         } catch (IOException ignored) { }
 
         Table table = new Table();
@@ -47,10 +46,6 @@ public final class ConnectGameScreen extends ReturnableScreen {
             @Override
             public void call() {
                 new GameFinder(gameClient, ConnectGameScreen.this).start();
-                try {
-                    gameClient = new GameClient();
-                    gameClient.start();
-                } catch (IOException ignored) { }
             }
         };
         table.add(updateGames).spaceBottom(0.1f * Gdx.graphics.getHeight()).row();
@@ -89,8 +84,10 @@ public final class ConnectGameScreen extends ReturnableScreen {
         private final ConnectGameScreen connectGameScreen;
 
         GameFinder(final GameClient gameClient, final ConnectGameScreen connectGameScreen) {
+            super("THREAD_ConnectGameScreen");
             this.gameClient = gameClient;
             this.connectGameScreen = connectGameScreen;
+            gameClient.start();
         }
 
         @Override
@@ -132,6 +129,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
                                 difficulty = loadGame.difficulty;
                                 playersCount = loadGame.playersCount;
                                 ConnectGameScreen.this.launchOnlineGame = true;
+                                interrupt();
                             }
                         }
 
@@ -148,6 +146,9 @@ public final class ConnectGameScreen extends ReturnableScreen {
                     dialog.setMovable(false);
                     dialog.button("OK");
                     dialog.show(connectGameScreen);
+                    gameClient.stop();
+                    ConnectGameScreen.this.gameClient = new GameClient();
+                    interrupt();
                 }
                 waitingDialog.hide();
             } catch (IOException ignored) { }

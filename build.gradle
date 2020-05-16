@@ -68,7 +68,7 @@ project(":core") {
 
 
     dependencies {
-        implementation "com.esotericsoftware:kryo:3.0.1"
+        implementation "com.esotericsoftware:kryo:4.0.2"
         implementation ("com.esotericsoftware:kryonet:2.22.0-RC1") {
             exclude module : 'kryo'
         }

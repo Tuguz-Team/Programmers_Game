@@ -4,9 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector3;
 import com.programmers.enums.Direction;
-import com.programmers.game.hotseat.HotseatGame;
-import com.programmers.game.online.OnlineGameClient;
-import com.programmers.game.online.OnlineGameServer;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 import com.programmers.game_objects.Chunk;
@@ -15,7 +12,7 @@ import com.programmers.game_objects.Lift;
 import com.programmers.game_objects.Wall;
 import com.programmers.screens.GameScreen;
 
-import static com.badlogic.gdx.math.MathUtils.random;
+import static com.programmers.screens.ScreenLoader.random;
 
 public final class Field {
 
@@ -24,17 +21,7 @@ public final class Field {
     private Chunk[][] chunks;
     private final Vector3 offset;
 
-    public Field(final OnlineGameClient onlineGameClient, final Chunk[][] chunks) {
-        this(onlineGameClient, (Void)null);
-        this.chunks = chunks;
-    }
-
-    public Field(final HotseatGame hotseatGame) {
-        this(hotseatGame, null);
-        generateField();
-    }
-
-    private Field(final GameScreen gameScreen, Void v) {
+    public Field(final GameScreen gameScreen) {
         this.gameScreen = gameScreen;
         size = gameScreen.getSize();
         offset = new Vector3(
@@ -42,6 +29,7 @@ public final class Field {
                 0f,
                 (1 - size) * Chunk.width / 2f);
         chunks = new Chunk[size][size];
+        generateField();
     }
 
     public Vector3 getOffset() {
