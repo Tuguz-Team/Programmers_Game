@@ -13,7 +13,7 @@ import com.programmers.ui_elements.PlayerCardWindow;
 
 import java.util.Stack;
 
-import static com.programmers.screens.ScreenLoader.random;
+import static com.badlogic.gdx.math.MathUtils.random;
 
 public final class GameController {
 

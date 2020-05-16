@@ -12,7 +12,7 @@ import com.programmers.game_objects.Lift;
 import com.programmers.game_objects.Wall;
 import com.programmers.screens.GameScreen;
 
-import static com.programmers.screens.ScreenLoader.random;
+import static com.badlogic.gdx.math.MathUtils.random;
 
 public final class Field {
 

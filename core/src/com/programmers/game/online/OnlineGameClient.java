@@ -10,8 +10,6 @@ import com.programmers.network.GameNetwork;
 import com.programmers.screens.GameScreen;
 import com.programmers.screens.ScreenLoader;
 
-import java.util.Random;
-
 import static com.badlogic.gdx.math.MathUtils.random;
 import static com.programmers.screens.ScreenLoader.seed;
 
@@ -30,7 +28,7 @@ public final class OnlineGameClient extends GameScreen {
                 if (object instanceof GameNetwork.Seed) {
                     GameNetwork.Seed seedNet = (GameNetwork.Seed) object;
                     seed = seedNet.seed;
-                    random.setSeed(seedNet.seed);
+                    random.setSeed(seed);
                     field = new Field(OnlineGameClient.this);
                     loadGame();
                 }

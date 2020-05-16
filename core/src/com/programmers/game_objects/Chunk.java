@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.StringBuilder;
 import com.programmers.enums.Direction;
 import com.programmers.game.Field;
 
-import static com.programmers.screens.ScreenLoader.random;
+import static com.badlogic.gdx.math.MathUtils.random;
 
 public class Chunk extends GameObject {
 

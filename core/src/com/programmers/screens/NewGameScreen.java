@@ -86,7 +86,7 @@ public final class NewGameScreen extends ReturnableScreen {
         ui.row();
 
         final WaitDialog waitDialog = new WaitDialog("Waiting for players...", ScreenLoader.getDefaultGdxSkin());
-        ui.add(new MyButton("START PLAYING !", screenLoader.getButtonStyle()) {
+        ui.add(new MyButton("START PLAYING !", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 final Difficulty difficulty = radioButtonController.
@@ -148,29 +148,26 @@ public final class NewGameScreen extends ReturnableScreen {
 
             listener = new Listener() {
                 @Override
-                public void connected(Connection connection) {
-                    doStuff();
-                }
-
-                @Override
                 public void received(Connection connection, Object object) {
-                    if (object instanceof GameNetwork.Disconnect) {
+                    if (object instanceof GameNetwork.Disconnect
+                            || object instanceof GameNetwork.Connect) {
                         try {
                             gameServer.update(0);
-                            doStuff();
+                            label.setText("Connected players: " + gameServer.getConnections().length);
+                            if (gameServer.getConnections().length == playersCount - 1) {
+                                gameServer.removeListener(this);
+                                launchOnlineGame = true;
+                            }
+                            PlayersCount playersCount = new PlayersCount();
+                            playersCount.playersCount = gameServer.getConnections().length;
+                            gameServer.sendToAllTCP(playersCount);
                         } catch (IOException ignored) { }
+                    } else if (object instanceof GameNetwork.InfoRequest) {
+                        GameNetwork.InfoResponse response = new GameNetwork.InfoResponse();
+                        response.difficulty = difficulty;
+                        response.playersCount = playersCount;
+                        gameServer.sendToTCP(connection.getID(), response);
                     }
-                }
-
-                private void doStuff() {
-                    label.setText("Connected players: " + gameServer.getConnections().length);
-                    if (gameServer.getConnections().length == playersCount - 1) {
-                        gameServer.removeListener(this);
-                        launchOnlineGame = true;
-                    }
-                    PlayersCount playersCount = new PlayersCount();
-                    playersCount.playersCount = gameServer.getConnections().length;
-                    gameServer.sendToAllTCP(playersCount);
                 }
             };
         }
@@ -178,9 +175,7 @@ public final class NewGameScreen extends ReturnableScreen {
         private void show(final int playersCount, final NewGameScreen newGameScreen, final Difficulty difficulty) {
             NewGameScreen.this.playersCount = playersCount;
             NewGameScreen.this.difficulty = difficulty;
-            try {
-                gameServer = new GameServer();
-            } catch (IOException ignored) { }
+            gameServer = new GameServer();
             gameServer.addListener(listener);
             gameServer.start();
             show(newGameScreen);

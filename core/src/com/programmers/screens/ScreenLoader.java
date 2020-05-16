@@ -8,14 +8,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.programmers.game.GameAssets;
-import com.programmers.network.GameClient;
-import com.programmers.network.GameServer;
 
-import java.io.IOException;
+import static com.badlogic.gdx.math.MathUtils.random;
+
 import java.util.Random;
 
 public final class ScreenLoader extends Game {
@@ -24,16 +22,16 @@ public final class ScreenLoader extends Game {
     private AssetManager assetManager;
 
     private static Skin defaultGdxSkin;
-    public static long seed = System.nanoTime();
-    public final static Random random = new Random(seed);
+    public static long seed = new Random().nextLong();
 
     private Skin buttonSkin;
     private BitmapFont font;
-    private ImageTextButton.ImageTextButtonStyle buttonStyle;
+    private static ImageTextButton.ImageTextButtonStyle buttonStyle;
 
     @Override
     public void create() {
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
+        random.setSeed(seed);
 
         assetManager = new GameAssets();
         while (!assetManager.update());
@@ -78,7 +76,7 @@ public final class ScreenLoader extends Game {
         return mainMenu;
     }
 
-    public ImageTextButton.ImageTextButtonStyle getButtonStyle() {
+    public static ImageTextButton.ImageTextButtonStyle getButtonStyle() {
         return buttonStyle;
     }
 }

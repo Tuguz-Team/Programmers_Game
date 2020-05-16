@@ -10,7 +10,7 @@ import com.programmers.game.Player;
 import com.programmers.interfaces.ICard;
 import com.programmers.interfaces.Procedure;
 
-import static com.programmers.screens.ScreenLoader.random;
+import static com.badlogic.gdx.math.MathUtils.random;
 
 public final class Car extends GameObject implements ICard {
 
