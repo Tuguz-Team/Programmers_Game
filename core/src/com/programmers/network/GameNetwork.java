@@ -8,15 +8,16 @@ public final class GameNetwork {
 
     public static final int TCP_PORT = 54555;
     public static final int UDP_PORT = 54777;
+    public static final int BUF = (int)Math.pow(2, 16);
 
     static void register(EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();
+        kryo.register(Seed.class);
         kryo.register(Disconnect.class);
         kryo.register(PlayersCount.class);
         kryo.register(Ready.class);
         kryo.register(LoadGame.class);
         kryo.register(Difficulty.class);
-        kryo.register(Seed.class);
     }
 
     static public final class Seed {

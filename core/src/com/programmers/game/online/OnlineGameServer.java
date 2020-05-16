@@ -35,7 +35,6 @@ public final class OnlineGameServer extends HotseatGame {
                 }
             }
         });
-        loadGame();
 
         GameNetwork.Seed seedNet = new GameNetwork.Seed();
         seedNet.seed = seed;

@@ -23,9 +23,33 @@ import java.io.IOException;
 public final class ConnectGameScreen extends ReturnableScreen {
 
     private GameClient gameClient;
-    private boolean launchOnlineGame;
+    private boolean launchOnlineGame, connected;
     private Difficulty difficulty;
     private int playersCount;
+
+    private final Dialog notFoundDialog, foundDialog;
+    private final Label label;
+    private final Listener listener = new Listener() {
+        @Override
+        public void received(Connection connection, Object object) {
+            if (object instanceof PlayersCount) {
+                PlayersCount playersCount = (PlayersCount) object;
+                label.setText("Connected players: " + playersCount.playersCount);
+            } else if (object instanceof GameNetwork.LoadGame) {
+                GameNetwork.LoadGame loadGame = (GameNetwork.LoadGame) object;
+                gameClient.removeListener(this);
+                difficulty = loadGame.difficulty;
+                playersCount = loadGame.playersCount;
+                launchOnlineGame = true;
+            }
+        }
+
+        @Override
+        public void disconnected(Connection connection) {
+            foundDialog.hide();
+            label.setText("Connected players: 1");
+        }
+    };
 
     public ConnectGameScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
         super(screenLoader, previousScreen);
@@ -33,6 +57,25 @@ public final class ConnectGameScreen extends ReturnableScreen {
         try {
             gameClient = new GameClient();
         } catch (IOException ignored) { }
+
+        notFoundDialog = new Dialog("No games were found!", ScreenLoader.getDefaultGdxSkin());
+        notFoundDialog.setMovable(false);
+        notFoundDialog.button("OK");
+
+        foundDialog = new Dialog("Connected! Waiting for other players...",
+                ScreenLoader.getDefaultGdxSkin()) {
+            @Override
+            protected void result(Object object) {
+                gameClient.disconnect();
+            }
+        };
+        foundDialog.setMovable(false);
+        foundDialog.button("Disconnect from server");
+
+        label = new Label("Connected players: 1", ScreenLoader.getDefaultGdxSkin());
+        label.setWrap(true);
+        label.setAlignment(Align.center);
+        foundDialog.getContentTable().add(label);
 
         Table table = new Table();
         table.setFillParent(true);
@@ -62,6 +105,11 @@ public final class ConnectGameScreen extends ReturnableScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
+        if (connected) {
+            connected = false;
+            gameClient.addListener(listener);
+            foundDialog.show(this);
+        }
         if (launchOnlineGame) {
             dispose();
             screenLoader.setScreen(new OnlineGameClient(
@@ -102,55 +150,15 @@ public final class ConnectGameScreen extends ReturnableScreen {
                 waitingDialog.setMovable(false);
                 waitingDialog.show(connectGameScreen);
                 if (gameClient.connectByUDP()) {
-                    final Dialog dialog = new Dialog("Connected! Waiting for other players...",
-                            ScreenLoader.getDefaultGdxSkin()) {
-                        @Override
-                        protected void result(Object object) {
-                            gameClient.disconnect();
-                        }
-                    };
-                    dialog.setMovable(false);
-                    dialog.button("Disconnect from server");
-
-                    final Label label = new Label("Connected players: 1", ScreenLoader.getDefaultGdxSkin());
-                    label.setWrap(true);
-                    label.setAlignment(Align.center);
-                    dialog.getContentTable().add(label);
-
-                    final Listener listener = new Listener() {
-                        @Override
-                        public void received(Connection connection, Object object) {
-                            if (object instanceof PlayersCount) {
-                                PlayersCount playersCount = (PlayersCount) object;
-                                label.setText("Connected players: " + playersCount.playersCount);
-                            } else if (object instanceof GameNetwork.LoadGame) {
-                                GameNetwork.LoadGame loadGame = (GameNetwork.LoadGame) object;
-                                gameClient.removeListener(this);
-                                difficulty = loadGame.difficulty;
-                                playersCount = loadGame.playersCount;
-                                ConnectGameScreen.this.launchOnlineGame = true;
-                                interrupt();
-                            }
-                        }
-
-                        @Override
-                        public void disconnected(Connection connection) {
-                            dialog.hide();
-                            label.setText("Connected players: 1");
-                        }
-                    };
-                    gameClient.addListener(listener);
-                    dialog.show(connectGameScreen);
+                    connected = true;
                 } else {
-                    Dialog dialog = new Dialog("No games were found!", ScreenLoader.getDefaultGdxSkin());
-                    dialog.setMovable(false);
-                    dialog.button("OK");
-                    dialog.show(connectGameScreen);
+                    connected = false;
+                    notFoundDialog.show(connectGameScreen);
                     gameClient.stop();
                     ConnectGameScreen.this.gameClient = new GameClient();
-                    interrupt();
                 }
                 waitingDialog.hide();
+                interrupt();
             } catch (IOException ignored) { }
         }
     }
