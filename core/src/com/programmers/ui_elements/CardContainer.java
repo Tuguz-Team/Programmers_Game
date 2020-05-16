@@ -5,24 +5,26 @@ import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.CardType;
+import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
+import com.programmers.game.GameController;
 
 public class CardContainer extends Table {
 
     public static final Array<CardContainer> cardContainers = new Array<>(3);
-    //private static final Sort sort = new Sort();
-    private final boolean sorting;
     private final Content content;
     private final Card emptyCard;
+    private final Difficulty difficulty;
+    private final GameController gameController;
 
     private int prevChildrenCount;
-
     public boolean discardMode = false;
 
-    public CardContainer(final Array<GameCard> gameCards,
-                         final Content content, final boolean sorting) {
-        this.sorting = sorting;
+    public CardContainer(final Array<GameCard> gameCards, final Difficulty difficulty,
+                         final Content content, GameController gameController) {
         this.content = content;
+        this.difficulty = difficulty;
+        this.gameController = gameController;
         emptyCard = new Card("Sprites/Cards/empty.png");
         addEmpty();
         if (gameCards != null) {
@@ -40,16 +42,19 @@ public class CardContainer extends Table {
     protected void childrenChanged() {
         super.childrenChanged();
         controlEmpty();
-        if (prevChildrenCount < getChildren().size && sorting) {
-            /*
+        /*if (prevChildrenCount < getChildren().size && sorting) {
             sort.sort(getChildren(), new Comparator<Actor>() {
                 @Override
                 public int compare(Actor lhs, Actor rhs) {
                     return ((Card) lhs).compareTo((Card) rhs);
                 }
             });
-            */
-        }
+        }*/
+        AlgorithmCardWindow window = gameController.getAlgorithmCardWindow();
+        if (difficulty == Difficulty.Hard && prevChildrenCount != getChildren().size
+                && content == Content.Actions && window != null)
+            ((CycleCardContainer) window.getCyclesCardContainer()).drawPoints(prevChildrenCount, getChildren().size);
+
         prevChildrenCount = getChildren().size;
         setTouchable();
     }

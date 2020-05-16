@@ -28,7 +28,9 @@ public final class PlayerCardWindow extends Table {
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOn.png")),
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
         );
-        final CardContainer discardContainer = new CardContainer(null, CardContainer.Content.All, false) {
+        final CardContainer discardContainer = new CardContainer(null,
+                gameController.getDifficulty(), CardContainer.Content.All, gameController)
+        {
             @Override
             protected void childrenChanged() {
                 super.childrenChanged();

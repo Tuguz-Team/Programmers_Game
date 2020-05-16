@@ -66,9 +66,8 @@ public final class GameController {
             }
         }
         // add UI objects that are necessary for the game
-        CardContainer playerCardContainer = new CardContainer(
-                thisPlayer.getGameCards(),
-                CardContainer.Content.All, true
+        CardContainer playerCardContainer = new CardContainer(thisPlayer.getGameCards(),
+                difficulty, CardContainer.Content.All, this
         );
         playerCardWindow = new PlayerCardWindow(
                 "Player cards", playerCardContainer, this

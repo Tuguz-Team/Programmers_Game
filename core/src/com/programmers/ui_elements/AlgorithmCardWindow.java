@@ -43,8 +43,8 @@ public final class AlgorithmCardWindow extends Table {
             table.add(button).top().row();
         }
         actionsCardContainer = new CardContainer(
-                gameController.getAlgorithmCards(),
-                CardContainer.Content.Actions, false) {
+                gameController.getAlgorithmCards(), gameController.getDifficulty(),
+                CardContainer.Content.Actions, gameController) {
             @Override
             protected void setTouchable() { }
 
@@ -117,5 +117,9 @@ public final class AlgorithmCardWindow extends Table {
             return flag;
         }
         return true;
+    }
+
+    public CardContainer getCyclesCardContainer () {
+        return cyclesCardContainer;
     }
 }
