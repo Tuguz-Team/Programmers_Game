@@ -53,16 +53,12 @@ public final class AlgorithmCardWindow extends Table {
                 super.childrenChanged();
                 if (areContainersEmpty()) {
                     gameController.getPlayerCardWindow().enableButton();
-                    if (cyclesCardContainer != null) {
-                        ((CycleCardContainer) cyclesCardContainer).zeroingPoints();
-                        cyclesCardContainer.padLeft(69);
-                    }
+                    if (cyclesCardContainer != null)
+                        ((CycleCardContainer)cyclesCardContainer).zeroingPoints();
                 } else {
                     gameController.getPlayerCardWindow().disableButton();
-                    if (cyclesCardContainer != null) {
+                    if (cyclesCardContainer != null && actionsCardContainer.getChildren().size == 1)
                         ((CycleCardContainer) cyclesCardContainer).drawLast();
-                        cyclesCardContainer.padLeft(0);
-                    }
                 }
             }
         };

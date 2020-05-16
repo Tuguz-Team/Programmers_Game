@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
@@ -12,7 +13,7 @@ public final class CycleCardContainer extends CardContainer {
 
     private final Card[] cycleCards = new Card[9];
     private final GameController gameController;
-    private static final int PAD = 29;
+    private static final int PAD = 29, WIDTH = 69;
 
     CycleCardContainer(final GameController gameController) {
         super(gameController.getAlgorithmCards(), gameController.getDifficulty(), null, gameController);
@@ -174,6 +175,12 @@ public final class CycleCardContainer extends CardContainer {
             if (i > 2 && cells.get(i - 3).getActor() != null
                     && ((Card) cells.get(i - 3).getActor()).getGameCard() != null)
                 cells.get(i - 3).spaceBottom(0);
+
+            updatePoints(cells);
+            if (i == actionSizeToUse() + 1)
+                padTop(0);
+            else if (i == actionSizeToUse() + 2)
+                padTop(PAD * 2);
         }
     }
 
@@ -182,31 +189,10 @@ public final class CycleCardContainer extends CardContainer {
                 ((CycleCardContainer) card.getPrevParent()).getCycleCards()[card.getIndexForCycles()]
         );
         Array<Cell> cells = card.getPrevParent().getCells();
-
-        for (int i = 0; i < cells.size; i++) {
-            if (cells.get(i).getActor() == null) {
-                if ((i > 0 && cells.get(i - 1).getActor() != null && ((Card) cells.get(i - 1).getActor()).getGameCard() != null)
-                        || (i < cells.size - 1 && cells.get(i + 1).getActor() != null
-                        && ((Card) cells.get(i + 1).getActor()).getGameCard() != null)) {
-                    cells.get(i).setActor(null);
-                } else
-                    cells.get(i).setActor(((CycleCardContainer) card.getPrevParent()).getCycleCards()[i]);
-            } else if (((Card) cells.get(i).getActor()).getGameCard() == null) {
-                if (i % 2 != 0 && i > 1 && cells.get(i - 2).getActor() != null
-                        && ((Card) cells.get(i - 2).getActor()).getGameCard() != null)
-                    settingCellEnabled((Card) cells.get(i).getActor(), false);
-                else
-                    settingCellEnabled((Card) cells.get(i).getActor(), true);
-            }
-            else if (i % 2 != 0) {
-                if (i > 1 && cells.get(i - 2).getActor() != null)
-                    settingCellEnabled((Card) cells.get(i - 2).getActor(), false);
-                if (i < cells.size - 2 && cells.get(i + 2).getActor() != null)
-                    settingCellEnabled((Card) cells.get(i + 2).getActor(), false);
-            }
-        }
+        restoringCycle(cells, card);
 
         int i = card.getIndexForCycles();
+        updatePoints(cells);
         if (i == 0) {
             card.getPrevParent().padTop(PAD);
             card.getCell().spaceBottom(0);
@@ -252,6 +238,35 @@ public final class CycleCardContainer extends CardContainer {
                 cells.get(i - 2).spaceBottom(0);
         }
 
+        restoreCheck(cells, i);
+    }
+
+    public void restoringCycle (Array<Cell> cells, Card card) {
+        for (int i = 0; i < cells.size; i++) {
+            if (cells.get(i).getActor() == null) {
+                if ((i > 0 && cells.get(i - 1).getActor() != null && ((Card) cells.get(i - 1).getActor()).getGameCard() != null)
+                        || (i < cells.size - 1 && cells.get(i + 1).getActor() != null
+                        && ((Card) cells.get(i + 1).getActor()).getGameCard() != null)) {
+                    cells.get(i).setActor(null);
+                } else if (card != null)
+                    cells.get(i).setActor(((CycleCardContainer) card.getPrevParent()).getCycleCards()[i]);
+            } else if (((Card) cells.get(i).getActor()).getGameCard() == null) {
+                if (i % 2 != 0 && i > 1 && cells.get(i - 2).getActor() != null
+                        && ((Card) cells.get(i - 2).getActor()).getGameCard() != null)
+                    settingCellEnabled((Card) cells.get(i).getActor(), false);
+                else
+                    settingCellEnabled((Card) cells.get(i).getActor(), true);
+            }
+            else if (i % 2 != 0) {
+                if (i > 1 && cells.get(i - 2).getActor() != null)
+                    settingCellEnabled((Card) cells.get(i - 2).getActor(), false);
+                if (i < cells.size - 2 && cells.get(i + 2).getActor() != null)
+                    settingCellEnabled((Card) cells.get(i + 2).getActor(), false);
+            }
+        }
+    }
+
+    public void restoreCheck(Array<Cell> cells, int i) {
         if (i % 2 == 0) {
             if (i > 0 && cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() != null)
                 cells.get(i - 2).spaceBottom(PAD);
@@ -261,6 +276,9 @@ public final class CycleCardContainer extends CardContainer {
 
         if (i < cells.size - 2 && cells.get(i + 2).getActor() != null && ((Card) cells.get(i + 2).getActor()).getGameCard() != null)
             cells.get(i).spaceBottom(PAD);
+
+        if (i == actionSizeToUse() + 1 || i == actionSizeToUse() + 2)
+            padTop(PAD);
     }
 
     private Card[] getCycleCards() {
@@ -277,43 +295,53 @@ public final class CycleCardContainer extends CardContainer {
         card.setCellEnabled(cellEnabled);
     }
 
-    //cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
-    //Card card = cycleCards[i];
-    //add(card).row();
-
-    public void zeroingPoints() {
-        for (int i = 0; i < cycleCards.length; i++) {
-            cycleCards[i] = null;
-            getCells().get(i).setActor(cycleCards[i]);
+    public void updatePoints(Array<Cell> cells) {
+        for (int i = 0; i < actionSizeToUse() + 1; i++) {
+            cells.get(i).setActor(null);
+            cells.get(i).spaceBottom(0);
         }
     }
 
+    public void zeroingPoints() {
+        padLeft(WIDTH);
+        for (int i = 0; i < cycleCards.length; i++)
+            getCells().get(i).setActor(null);
+    }
+
     public void drawLast() {
+        padLeft(0);
         int i = cycleCards.length - 1;
 
         cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
         getCells().get(i).setActor(cycleCards[i]);
     }
 
-    public void drawPoints(int prevSize, int curSize) {
+    public void drawPoints(int prevSize, int currSize) {
         int i, n;
+        Array<Cell> cells = getCells();
 
-        if (prevSize < curSize) {
-            i = cycleCards.length - curSize * 2 + 1;
+        if (prevSize < currSize) {
+            i = cycleCards.length - currSize * 2 + 1;
             n = cycleCards.length - prevSize * 2 + 1;
 
             for (; i < n; i++) {
                 cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
-                getCells().get(i).setActor(cycleCards[i]);
+                cells.get(i).setActor(cycleCards[i]);
             }
-        } else if (curSize < prevSize) {
+        } else if (currSize < prevSize) {
             i = cycleCards.length - prevSize * 2 + 1;
-            n = cycleCards.length - curSize * 2 + 1;
+            n = cycleCards.length - currSize * 2 + 1;
 
-            for (; i < n; i++) {
-                cycleCards[i] = null;
-                getCells().get(i).setActor(cycleCards[i]);
-            }
+            for (; i < n; i++)
+                cells.get(i).setActor(null);
         }
+
+        restoringCycle(cells, null);
+        updatePoints(cells);
+    }
+
+    public int actionSizeToUse() {
+        return cycleCards.length - 2 * gameController.getAlgorithmCardWindow().
+                getActionsCardContainer().getChildren().size;
     }
 }
