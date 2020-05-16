@@ -277,30 +277,43 @@ public final class CycleCardContainer extends CardContainer {
         card.setCellEnabled(cellEnabled);
     }
 
+    //cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
+    //Card card = cycleCards[i];
+    //add(card).row();
+
+    public void zeroingPoints() {
+        for (int i = 0; i < cycleCards.length; i++) {
+            cycleCards[i] = null;
+            getCells().get(i).setActor(cycleCards[i]);
+        }
+    }
+
+    public void drawLast() {
+        int i = cycleCards.length - 1;
+
+        cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
+        getCells().get(i).setActor(cycleCards[i]);
+    }
+
     public void drawPoints(int prevSize, int curSize) {
         int i, n;
+
         if (prevSize < curSize) {
             i = cycleCards.length - curSize * 2 + 1;
-            n = (prevSize == 0) ? (cycleCards.length - prevSize) : (cycleCards.length - prevSize * 2 + 1);
+            n = cycleCards.length - prevSize * 2 + 1;
 
             for (; i < n; i++) {
-                getCells().get(i).setActor(new Card("Sprites/Cards/CyclePointOn.png"));
+                cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
+                getCells().get(i).setActor(cycleCards[i]);
             }
         } else if (curSize < prevSize) {
             i = cycleCards.length - prevSize * 2 + 1;
-            n = (curSize == 0) ? (cycleCards.length - curSize) : (cycleCards.length - curSize * 2 + 1);
+            n = cycleCards.length - curSize * 2 + 1;
 
             for (; i < n; i++) {
-                getCells().get(i).setActor(null);
+                cycleCards[i] = null;
+                getCells().get(i).setActor(cycleCards[i]);
             }
         }
-
-        //if (actionSize > 1)
-        //    size = (actionSize * 2) - 1;
-        //else size = actionSize;
-
-        //for (int i = 0; i < size; i++) {
-        //    getCells().get(i).setActor(null);
-        //}
     }
 }

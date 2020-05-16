@@ -53,8 +53,16 @@ public final class AlgorithmCardWindow extends Table {
                 super.childrenChanged();
                 if (areContainersEmpty()) {
                     gameController.getPlayerCardWindow().enableButton();
+                    if (cyclesCardContainer != null) {
+                        ((CycleCardContainer) cyclesCardContainer).zeroingPoints();
+                        cyclesCardContainer.padLeft(69);
+                    }
                 } else {
                     gameController.getPlayerCardWindow().disableButton();
+                    if (cyclesCardContainer != null) {
+                        ((CycleCardContainer) cyclesCardContainer).drawLast();
+                        cyclesCardContainer.padLeft(0);
+                    }
                 }
             }
         };
@@ -111,7 +119,7 @@ public final class AlgorithmCardWindow extends Table {
     public boolean areContainersEmpty() {
         if (actionsCardContainer != null) {
             boolean flag = ((Card)actionsCardContainer.getChild(0)).getGameCard() == null;
-            if (gameController.getDifficulty() == Difficulty.Hard) {
+            if (gameController.getDifficulty() == Difficulty.Hard && cyclesCardContainer.getChildren().size != 0) {
                 return flag && (((Card)cyclesCardContainer.getChild(0)).getGameCard() == null);
             }
             return flag;
@@ -121,5 +129,9 @@ public final class AlgorithmCardWindow extends Table {
 
     public CardContainer getCyclesCardContainer () {
         return cyclesCardContainer;
+    }
+
+    public CardContainer getActionsCardContainer () {
+        return actionsCardContainer;
     }
 }

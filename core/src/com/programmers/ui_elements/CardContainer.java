@@ -26,7 +26,8 @@ public class CardContainer extends Table {
         this.difficulty = difficulty;
         this.gameController = gameController;
         emptyCard = new Card("Sprites/Cards/empty.png");
-        addEmpty();
+        if (content != null)
+            addEmpty();
         if (gameCards != null) {
             for (GameCard gameCard : gameCards) {
                 Card card = new Card(gameCard);
@@ -51,19 +52,23 @@ public class CardContainer extends Table {
             });
         }*/
         AlgorithmCardWindow window = gameController.getAlgorithmCardWindow();
-        if (difficulty == Difficulty.Hard && prevChildrenCount != getChildren().size
-                && content == Content.Actions && window != null)
-            ((CycleCardContainer) window.getCyclesCardContainer()).drawPoints(prevChildrenCount, getChildren().size);
+        if (window != null) {
+            CycleCardContainer cycleCardContainer = (CycleCardContainer) window.getCyclesCardContainer();
+            if (difficulty == Difficulty.Hard && content == Content.Actions && prevChildrenCount != getChildren().size)
+                cycleCardContainer.drawPoints(prevChildrenCount, getChildren().size);
+        }
 
         prevChildrenCount = getChildren().size;
         setTouchable();
     }
 
     public void controlEmpty() {
-        if (getChildren().size > 1)
-            removeEmpty();
-        else if (getChildren().isEmpty())
-            addEmpty();
+        if (content != null) {
+            if (getChildren().size > 1)
+                removeEmpty();
+            else if (getChildren().isEmpty())
+                addEmpty();
+        }
     }
 
     public void removeEmpty() {
