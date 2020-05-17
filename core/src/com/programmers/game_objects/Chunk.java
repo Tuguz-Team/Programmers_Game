@@ -166,10 +166,10 @@ public class Chunk extends GameObject {
         int nextInt = getRandomChunkIndex();
         if (nextInt % 2 == 0) {
             nextInt = (nextInt >> 1) + 1;
-            stringBuilder.append(nextInt).append("/Layer").append(nextInt).append(".obj");
+            stringBuilder.append(nextInt).append("/Layer").append(nextInt).append(".g3db");
         } else {
             nextInt = (nextInt >> 1) + 1;
-            stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".obj");
+            stringBuilder.append("Bonus").append(nextInt).append("/LayerBonus").append(nextInt).append(".g3db");
         }
         setModelFileName(stringBuilder.toString());
         //

@@ -16,7 +16,7 @@ public final class Lift extends Chunk {
 
     @Override
     public void loadModel() {
-        setModelFileName("Models/Terrain/Lift/Lift.obj");
+        setModelFileName("Models/Terrain/Lift/Lift.g3db");
         //
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
         setModelInstance(new ModelInstance(getModel()));

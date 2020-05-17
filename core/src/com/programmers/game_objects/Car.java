@@ -51,7 +51,7 @@ public final class Car extends GameObject implements ICard {
         StringBuilder stringBuilder = new StringBuilder("Models/");
         stringBuilder.append(getGameScreen().getDifficulty()).append("Mode/Cars/");
         final Color color = base.getBaseColor();
-        stringBuilder.append(color).append("Car/").append(color).append("Car.obj");
+        stringBuilder.append(color).append("Car/").append(color).append("Car.g3db");
         setModelFileName(stringBuilder.toString());
     }
 

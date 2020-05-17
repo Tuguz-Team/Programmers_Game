@@ -10,22 +10,22 @@ public final class Life extends GameObject {
     private final Type type;
     private final Field field;
 
-    private Model typeModel;
-    private String typeModelFileName;
+    //private Model typeModel;
+    //private String typeModelFileName;
 
     public Life(final Chunk chunk, final Type type) {
         super(chunk.getX(), chunk.getY() + 1, chunk.getZ(), chunk.getGameScreen());
         this.type = type;
         this.field = chunk.getField();
         chunk.getLives().add(this);
-        typeModelFileName = "Models/LifeObjects/LifeObject" + type + "/LifeObject" + type + ".obj";
-        setModelFileName("Models/LifeObjects/LifeObjectUnknown/LifeObjectUnknown.obj");
+        //typeModelFileName = "Models/LifeObjects/LifeObject" + type + "/LifeObject" + type + ".obj";
+        setModelFileName("Models/LifeObjects/LifeObjectUnknown/LifeObjectUnknown.g3db");
     }
 
     @Override
     public void loadModel() {
         setModel(getGameScreen().getAssetManager().get(getModelFileName(), Model.class));
-        typeModel = getGameScreen().getAssetManager().get(typeModelFileName, Model.class);
+        //typeModel = getGameScreen().getAssetManager().get(typeModelFileName, Model.class);
         setModelInstance(new ModelInstance(getModel()));
         getModelInstance().transform.setTranslation(new Vector3(
                 getX() * Chunk.width + 0.002f,

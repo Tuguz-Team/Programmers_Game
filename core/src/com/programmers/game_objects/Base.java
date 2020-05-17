@@ -26,7 +26,7 @@ public final class Base extends Chunk {
                 labColors = new Array<>(2);
         }
         stringBuilder.append(getGameScreen().getDifficulty()).append("Mode/Bases/");
-        stringBuilder.append(baseColor).append("Base/").append(baseColor).append("Base.obj");
+        stringBuilder.append(baseColor).append("Base/").append(baseColor).append("Base.g3db");
         switch (baseColor) {
             case Red:
                 labColors.addAll(Car.Color.Blue, Car.Color.Yellow);
