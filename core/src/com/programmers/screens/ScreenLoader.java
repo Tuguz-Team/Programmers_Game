@@ -41,7 +41,6 @@ public final class ScreenLoader extends Game {
         skyBox = new SkyBox(
                 (Texture) assetManager.get("Sprites/SkyBox/Right.png"),
                 (Texture) assetManager.get("Sprites/SkyBox/Left.png"),
-                (Texture) assetManager.get("Sprites/SkyBox/Top.png"),
                 (Texture) assetManager.get("Sprites/SkyBox/Bottom.png"),
                 (Texture) assetManager.get("Sprites/SkyBox/Front.png"),
                 (Texture) assetManager.get("Sprites/SkyBox/Back.png")
