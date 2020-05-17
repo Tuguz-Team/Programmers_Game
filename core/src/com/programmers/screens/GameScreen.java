@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameInputProcessor;
+import com.programmers.game.SkyBox;
 import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
@@ -98,7 +99,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         pauseMenu.setMovable(false);
 
         ImageTextButton returnButton =
-                new MyButton("CONTINUE", screenLoader.getButtonStyle()) {
+                new MyButton("CONTINUE", ScreenLoader.getButtonStyle()) {
                     @Override
                     public void call() {
                         pauseMenu.hide();
@@ -107,14 +108,14 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                     }
                 };
         ImageTextButton settingsButton =
-                new MyButton("SETTINGS", screenLoader.getButtonStyle()) {
+                new MyButton("SETTINGS", ScreenLoader.getButtonStyle()) {
                     @Override
                     public void call() {
                         screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
                     }
                 };
         ImageTextButton mainMenuButton =
-                new MyButton("QUIT ROOM", screenLoader.getButtonStyle()) {
+                new MyButton("QUIT ROOM", ScreenLoader.getButtonStyle()) {
                     @Override
                     public void call() {
                         yesNoDialog.show(GameScreen.this);
@@ -129,7 +130,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight()).row();
         pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
 
-        ImageTextButton toDialogButton = new MyButton("PAUSE MENU", screenLoader.getButtonStyle()) {
+        ImageTextButton toDialogButton = new MyButton("PAUSE MENU", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 if (isPauseMenuHidden) {
@@ -224,6 +225,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
 
         gameInputProcessor.cameraPosChange();
         camera.update();
+        screenLoader.getSkyBox().render(camera);
 
         modelBatch.begin(camera);
         modelBatch.render(instances, environment);

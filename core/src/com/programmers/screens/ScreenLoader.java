@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.programmers.game.GameAssets;
+import com.programmers.game.SkyBox;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
@@ -20,6 +21,7 @@ public final class ScreenLoader extends Game {
 
     private MainMenuScreen mainMenu;
     private AssetManager assetManager;
+    private SkyBox skyBox;
 
     private static Skin defaultGdxSkin;
     public static long seed = new Random().nextLong();
@@ -35,6 +37,15 @@ public final class ScreenLoader extends Game {
 
         assetManager = new GameAssets();
         while (!assetManager.update());
+
+        skyBox = new SkyBox(
+                (Texture) assetManager.get("Sprites/SkyBox/Right.png"),
+                (Texture) assetManager.get("Sprites/SkyBox/Left.png"),
+                (Texture) assetManager.get("Sprites/SkyBox/Top.png"),
+                (Texture) assetManager.get("Sprites/SkyBox/Bottom.png"),
+                (Texture) assetManager.get("Sprites/SkyBox/Front.png"),
+                (Texture) assetManager.get("Sprites/SkyBox/Back.png")
+        );
 
         defaultGdxSkin = assetManager.get("uiskin.json");
         buttonSkin = new Skin();
@@ -61,6 +72,7 @@ public final class ScreenLoader extends Game {
         buttonSkin.dispose();
         font.dispose();
         assetManager.dispose();
+        skyBox.dispose();
         super.dispose();
     }
 
@@ -78,5 +90,9 @@ public final class ScreenLoader extends Game {
 
     public static ImageTextButton.ImageTextButtonStyle getButtonStyle() {
         return buttonStyle;
+    }
+
+    public SkyBox getSkyBox() {
+        return skyBox;
     }
 }
