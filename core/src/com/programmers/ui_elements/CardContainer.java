@@ -54,7 +54,7 @@ public class CardContainer extends Table {
         AlgorithmCardWindow window = gameController.getAlgorithmCardWindow();
         if (window != null) {
             CycleCardContainer cycleCardContainer = (CycleCardContainer) window.getCyclesCardContainer();
-            if (difficulty == Difficulty.Hard && content == Content.Actions && prevChildrenCount != getChildren().size)
+            if (difficulty == Difficulty.Hard && content == Content.Actions)
                 cycleCardContainer.drawPoints(prevChildrenCount, getChildren().size);
         }
 

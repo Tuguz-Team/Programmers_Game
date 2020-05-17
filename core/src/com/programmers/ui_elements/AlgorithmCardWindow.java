@@ -57,7 +57,8 @@ public final class AlgorithmCardWindow extends Table {
                         ((CycleCardContainer)cyclesCardContainer).zeroingPoints();
                 } else {
                     gameController.getPlayerCardWindow().disableButton();
-                    if (cyclesCardContainer != null && actionsCardContainer.getChildren().size == 1)
+                    if (cyclesCardContainer != null && actionsCardContainer.getChildren().size == 1
+                            && cyclesCardContainer.getCells().get(8).getActor() == null)
                         ((CycleCardContainer) cyclesCardContainer).drawLast();
                 }
             }

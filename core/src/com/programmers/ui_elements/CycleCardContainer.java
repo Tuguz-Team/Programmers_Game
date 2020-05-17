@@ -3,6 +3,7 @@ package com.programmers.ui_elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -33,11 +34,23 @@ public final class CycleCardContainer extends CardContainer {
     protected void childrenChanged() {
         super.childrenChanged();
         if (gameController != null && gameController.getAlgorithmCardWindow() != null) {
-            if (gameController.getAlgorithmCardWindow().areContainersEmpty()) {
+            if (gameController.getAlgorithmCardWindow().areContainersEmpty())
                 gameController.getPlayerCardWindow().enableButton();
-            } else {
+            else
                 gameController.getPlayerCardWindow().disableButton();
-            }
+
+            int size = actionSizeToUse();
+            boolean secondCard, firstCard = getCells().get(size + 1).getActor() != null
+                    && ((Card)getCells().get(size + 1).getActor()).getGameCard() != null;
+            if (size == cycleCards.length - 2)
+                secondCard = false;
+            else secondCard = getCells().get(size + 2).getActor() != null
+                    && ((Card) getCells().get(size + 2).getActor()).getGameCard() != null;
+
+            if (firstCard || secondCard) gameController.getAlgorithmCardWindow().
+                    getActionsCardContainer().setTouchable(Touchable.disabled);
+            else gameController.getAlgorithmCardWindow().
+                    getActionsCardContainer().setTouchable(Touchable.enabled);
         }
     }
 
@@ -176,7 +189,7 @@ public final class CycleCardContainer extends CardContainer {
                     && ((Card) cells.get(i - 3).getActor()).getGameCard() != null)
                 cells.get(i - 3).spaceBottom(0);
 
-            updatePoints(cells);
+            updatePoints(cells ,false);
             if (i == actionSizeToUse() + 1)
                 padTop(0);
             else if (i == actionSizeToUse() + 2)
@@ -192,7 +205,7 @@ public final class CycleCardContainer extends CardContainer {
         restoringCycle(cells, card);
 
         int i = card.getIndexForCycles();
-        updatePoints(cells);
+        updatePoints(cells, false);
         if (i == 0) {
             card.getPrevParent().padTop(PAD);
             card.getCell().spaceBottom(0);
@@ -295,10 +308,27 @@ public final class CycleCardContainer extends CardContainer {
         card.setCellEnabled(cellEnabled);
     }
 
-    public void updatePoints(Array<Cell> cells) {
-        for (int i = 0; i < actionSizeToUse() + 1; i++) {
-            cells.get(i).setActor(null);
-            cells.get(i).spaceBottom(0);
+    public void updatePoints(Array<Cell> cells, boolean actionChanging) {
+        for (int i = 0; i < cycleCards.length; i++) {
+            if (i < actionSizeToUse() + 1) {
+                cells.get(i).setActor(null);
+                cells.get(i).spaceBottom(0);
+            } else if (actionChanging && cells.get(i).getActor() != null
+                    && ((Card)cells.get(i).getActor()).getGameCard() != null) {
+                if (i == actionSizeToUse() + 3 && i > 1 && cells.get(i - 2).getActor() != null
+                        && ((Card)cells.get(i - 2).getActor()).getGameCard() == null) {
+                    cells.get(i - 1).setActor(null);
+                    cells.get(i - 2).spaceBottom(PAD);
+                    padTop(PAD);
+                } else if (i == actionSizeToUse() + 4 && i > 2 && cells.get(i - 3).getActor() != null
+                        && ((Card)cells.get(i - 3).getActor()).getGameCard() == null) {
+                    cells.get(i - 2).spaceBottom(PAD);
+                    padTop(PAD);
+                } else if (i == actionSizeToUse() + 2)
+                    padTop(PAD * 2);
+                else if (i == actionSizeToUse() + 1)
+                    padTop(0);
+            }
         }
     }
 
@@ -337,7 +367,7 @@ public final class CycleCardContainer extends CardContainer {
         }
 
         restoringCycle(cells, null);
-        updatePoints(cells);
+        updatePoints(cells, true);
     }
 
     public int actionSizeToUse() {
