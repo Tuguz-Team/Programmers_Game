@@ -20,7 +20,6 @@ public final class GameAssets extends AssetManager {
         load("Sprites/SkyBox/Front.png", Texture.class);
         load("Sprites/SkyBox/Left.png", Texture.class);
         load("Sprites/SkyBox/Right.png", Texture.class);
-        load("Sprites/SkyBox/Top.png", Texture.class);
     }
 
     private void loadUI() {
