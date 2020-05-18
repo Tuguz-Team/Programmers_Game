@@ -28,7 +28,6 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameInputProcessor;
-import com.programmers.game.SkyBox;
 import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
