@@ -301,7 +301,6 @@ public final class CycleCardContainer extends CardContainer {
     @Override
     public void clearChildren() {
         zeroingPoints();
-        //padTop(PAD);
     }
 
     public void settingCellEnabled (Card card, boolean cellEnabled) {
@@ -340,14 +339,16 @@ public final class CycleCardContainer extends CardContainer {
 
     public void zeroingPoints() {
         padLeft(WIDTH);
-        for (int i = 0; i < cycleCards.length; i++) {
+        for (int i = 0; i < cycleCards.length; i++)
             getCells().get(i).setActor(null);
-            getCells().get(i).spaceBottom(0);
-        }
     }
 
     public void drawLast() {
         padLeft(0);
+        if (getPadTop() != PAD)
+            padTop(PAD);
+        if (getPadBottom() != PAD)
+            padBottom(PAD);
         int i = cycleCards.length - 1;
 
         cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");

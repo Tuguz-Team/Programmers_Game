@@ -71,6 +71,10 @@ public final class Car extends GameObject implements ICard {
         return base.getField().getChunks()[getX()][getZ()];
     }
 
+    public void setCompensated(boolean compensated) {
+        this.compensated = compensated;
+    }
+
     @Override
     public void setX(final int x) {
         super.setX(x);
@@ -510,7 +514,7 @@ public final class Car extends GameObject implements ICard {
         }
     }
 
-    private void addLivesFrom(final Chunk chunk) {
+    public void addLivesFrom(final Chunk chunk) {
         for (int i = lives.size; i < 3 && !chunk.getLives().isEmpty(); i++) {
             lives.add(chunk.getLives().get(chunk.getLives().size - 1));
             chunk.getLives().removeIndex(chunk.getLives().size - 1);

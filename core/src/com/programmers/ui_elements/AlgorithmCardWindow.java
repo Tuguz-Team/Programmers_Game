@@ -57,12 +57,12 @@ public final class AlgorithmCardWindow extends Table {
                 if (areContainersEmpty()) {
                     gameController.getPlayerCardWindow().enableButton();
                     if (cyclesCardContainer != null)
-                        ((CycleCardContainer)cyclesCardContainer).zeroingPoints();
+                        cyclesCardContainer.zeroingPoints();
                 } else {
                     gameController.getPlayerCardWindow().disableButton();
                     if (cyclesCardContainer != null && actionsCardContainer.getChildren().size == 1
                             && cyclesCardContainer.getCells().get(8).getActor() == null)
-                        ((CycleCardContainer) cyclesCardContainer).drawLast();
+                        cyclesCardContainer.drawLast();
                 }
             }
         };
@@ -123,8 +123,11 @@ public final class AlgorithmCardWindow extends Table {
                     }
                     // set position if car is on the Lift
                     Car car = gameController.getThisPlayer().getCar();
-                    if (car.getChunk().getLift() != null)
+                    if (car.getChunk().getLift() != null) {
+                        car.setCompensated(false);
                         car.setPosition(car.getChunk().getLift());
+                        car.addLivesFrom(car.getChunk());
+                    }
                     gameController.toNextPlayer();
                     for (Actor actor : actions) {
                         if (((Card) actor).getGameCard() != null)

@@ -31,7 +31,7 @@ public final class Wall extends GameObject {
             default:
                 offset = new Vector3(0.001f, 0.001f, -Chunk.width / 2 + 0.001f);
         }
-        setModelFileName("Models/Terrain/Walls/Wall1/Wall1.obj");
+        setModelFileName("Models/Terrain/Wall/Wall.g3db");
     }
 
     @Override

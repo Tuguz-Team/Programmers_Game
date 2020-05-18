@@ -60,7 +60,7 @@ public final class GameAssets extends AssetManager {
     }
 
     private void loadWalls() {
-        load("Models/Terrain/Walls/Wall1/Wall1.obj", Model.class);
+        load("Models/Terrain/Wall/Wall.g3db", Model.class);
     }
 
     private void loadCars() {
