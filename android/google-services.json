@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "971766960378",
+    "firebase_url": "https://programmers-game.firebaseio.com",
+    "project_id": "programmers-game",
+    "storage_bucket": "programmers-game.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971766960378:android:fdf342b7bd137e48513943",
+        "android_client_info": {
+          "package_name": "com.mygdx.game"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971766960378-5f7lsss42eubl1u5daftf7uqft894keo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAV_ApTerk8I1aDaHTJRWDSomfFx5lNGLg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971766960378-5f7lsss42eubl1u5daftf7uqft894keo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

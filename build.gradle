@@ -11,7 +11,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.3'
-        
+        classpath 'com.google.gms:google-services:4.3.3'
+
 
     }
 }
@@ -68,15 +69,10 @@ project(":core") {
 
 
     dependencies {
-        implementation "com.esotericsoftware:kryo:4.0.2"
-        implementation ("com.esotericsoftware:kryonet:2.22.0-RC1") {
-            exclude module : 'kryo'
-        }
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-        
     }
 }
 

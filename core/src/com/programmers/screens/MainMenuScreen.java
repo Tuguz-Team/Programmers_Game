@@ -43,7 +43,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         addActor(mainButtons);
 
         ImageTextButton startButton =
-                new MyButton("START", screenLoader.getButtonStyle()) {
+                new MyButton("START", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new ChooseGameScreen(
@@ -52,7 +52,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
             }
         };
         ImageTextButton exitButton =
-                new MyButton("END", screenLoader.getButtonStyle()) {
+                new MyButton("END", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 if (isYesNoDialogHidden) {
@@ -66,6 +66,8 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         mainButtons.space(0.2f * Gdx.graphics.getHeight());
         mainButtons.addActor(exitButton);
         mainButtons.center();
+
+        screenLoader.specificCode.registerAnon();
     }
 
     @Override

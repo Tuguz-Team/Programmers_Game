@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.programmers.interfaces.SpecificCode;
 import com.programmers.game.GameAssets;
 import com.programmers.game.SkyBox;
 
@@ -25,10 +26,15 @@ public final class ScreenLoader extends Game {
 
     private static Skin defaultGdxSkin;
     public static long seed = new Random().nextLong();
+    public final SpecificCode specificCode;
 
     private Skin buttonSkin;
     private BitmapFont font;
     private static ImageTextButton.ImageTextButtonStyle buttonStyle;
+
+    public ScreenLoader(final SpecificCode specificCode) {
+        this.specificCode = specificCode;
+    }
 
     @Override
     public void create() {

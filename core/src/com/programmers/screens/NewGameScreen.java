@@ -10,26 +10,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
-import com.esotericsoftware.kryonet.Connection;
-import com.esotericsoftware.kryonet.Listener;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.hotseat.HotseatGame;
-import com.programmers.game.online.OnlineGameServer;
-import com.programmers.network.GameNetwork;
-import com.programmers.network.GameNetwork.PlayersCount;
-import com.programmers.network.GameServer;
+import com.programmers.interfaces.Procedure;
+import com.programmers.interfaces.SpecificCode;
 import com.programmers.ui_elements.MyButton;
-
-import java.io.IOException;
+import com.programmers.ui_elements.OKDialog;
 
 public final class NewGameScreen extends ReturnableScreen {
 
-    private GameServer gameServer;
-    private Difficulty difficulty;
-    private int playersCount;
+    private SpecificCode.Room room;
 
-    private boolean launchOnlineGame;
+    private static final Skin skin = ScreenLoader.getDefaultGdxSkin();
+    private final Dialog waitDialog;
 
     public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
         super(screenLoader, previousScreen);
@@ -38,7 +33,8 @@ public final class NewGameScreen extends ReturnableScreen {
         ui.setFillParent(true);
         addActor(ui);
 
-        final Skin skin = ScreenLoader.getDefaultGdxSkin();
+        waitDialog = new Dialog("Waiting...", skin);
+        waitDialog.setMovable(false);
 
         final Slider playerCountSlider = new Slider(2, 4, 1,
                 false, skin) {
@@ -50,11 +46,9 @@ public final class NewGameScreen extends ReturnableScreen {
         playerCountSlider.setValue(playerCountSlider.getMaxValue());
 
         ui.add(new Label("Choose number of players in new room :", skin))
-                .space(0.025f * Gdx.graphics.getHeight());
-        ui.row();
+                .space(0.025f * Gdx.graphics.getHeight()).row();
 
-        ui.add(playerCountSlider);
-        ui.row();
+        ui.add(playerCountSlider).row();
 
         HorizontalGroup sliderDisplay = new HorizontalGroup();
         sliderDisplay.addActor(new Label("2", skin));
@@ -63,12 +57,10 @@ public final class NewGameScreen extends ReturnableScreen {
         sliderDisplay.space(0.47f * playerCountSlider.getPrefWidth());
 
         ui.add(sliderDisplay).
-                spaceBottom(0.05f * Gdx.graphics.getHeight());
-        ui.row();
+                spaceBottom(0.05f * Gdx.graphics.getHeight()).row();
 
         ui.add(new Label("Choose game difficulty in new room :", skin))
-                .spaceBottom(0.025f * Gdx.graphics.getHeight());
-        ui.row();
+                .spaceBottom(0.025f * Gdx.graphics.getHeight()).row();
 
         CheckBox EasyButton = new CheckBox("EASY", skin);
         CheckBox HardButton = new CheckBox("HARD", skin);
@@ -81,28 +73,46 @@ public final class NewGameScreen extends ReturnableScreen {
         final ButtonGroup<CheckBox> radioButtonController = new ButtonGroup<>(EasyButton, HardButton);
         radioButtonController.setChecked("EASY");
 
-        ui.add(difficultyRadioButton)
-                .spaceBottom(0.025f * Gdx.graphics.getHeight());
-        ui.row();
+        ui.add(difficultyRadioButton).spaceBottom(0.025f * Gdx.graphics.getHeight()).row();
 
-        final WaitDialog waitDialog = new WaitDialog("Waiting for players...", ScreenLoader.getDefaultGdxSkin());
+        final TextField textField = new TextField("", ScreenLoader.getDefaultGdxSkin());
+        if (!isHotseat) {
+            ui.add(new Label("Choose name of the room :", skin)).row();
+            ui.add(textField).row();
+        }
+
+        final NewRoomDialog newRoomDialog = new NewRoomDialog("Waiting for players...", skin);
         ui.add(new MyButton("START PLAYING !", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
-                final Difficulty difficulty = radioButtonController.
-                        getChecked().getText().toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard;
+                final Difficulty difficulty = radioButtonController.getChecked().getText()
+                        .toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard;
+                final int playersCount = (int)playerCountSlider.getValue();
                 if (isHotseat) {
                     dispose();
-                    screenLoader.setScreen(new HotseatGame(
-                            screenLoader, difficulty,
-                            (int)playerCountSlider.getValue()
-                    ));
+                    screenLoader.setScreen(new HotseatGame(screenLoader, difficulty, playersCount));
                 } else {
-                    waitDialog.show(
-                            (int)playerCountSlider.getValue(),
-                            NewGameScreen.this,
-                            difficulty
-                    );
+                    final String name = textField.getText(), trimmed = name.trim();
+                    if (trimmed.isEmpty()) {
+                        OKDialog dialog = new OKDialog("Name cannot be empty!", skin);
+                        dialog.show(NewGameScreen.this);
+                        return;
+                    }
+                    waitDialog.show(NewGameScreen.this);
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            if (screenLoader.specificCode.createNewRoom(name, playersCount, difficulty)) {
+                                newRoomDialog.show(name, playersCount, difficulty);
+                            } else {
+                                OKDialog dialog = new OKDialog(
+                                        "Room with this name is already exists!", skin);
+                                dialog.show(NewGameScreen.this);
+                            }
+                            waitDialog.hide();
+                            interrupt();
+                        }
+                    }.start();
                 }
             }
         }).space(0.1f * Gdx.graphics.getHeight());
@@ -111,79 +121,42 @@ public final class NewGameScreen extends ReturnableScreen {
     }
 
     @Override
-    public void render(float delta) {
-        super.render(delta);
-        if (launchOnlineGame) {
-            dispose();
-            screenLoader.setScreen(new OnlineGameServer(
-                    screenLoader, difficulty, playersCount, gameServer
-            ));
-            GameNetwork.LoadGame loadGame = new GameNetwork.LoadGame();
-            loadGame.difficulty = difficulty;
-            loadGame.playersCount = playersCount;
-            gameServer.sendToAllTCP(loadGame);
-        }
-    }
-
-    @Override
     public void dispose() {
-        if (gameServer != null && !launchOnlineGame)
-            gameServer.stop();
+        screenLoader.specificCode.deleteRoom(room.getName());
         super.dispose();
     }
 
-    private class WaitDialog extends Dialog {
+    private class NewRoomDialog extends Dialog {
 
-        private final Listener listener;
+        final Label label;
 
-        private WaitDialog(final String title, final Skin skin) {
+        private NewRoomDialog(final String title, final Skin skin) {
             super(title, skin);
             setMovable(false);
-            button("Close server");
+            button("Close room");
 
-            final Label label = new Label("Connected players: 0", ScreenLoader.getDefaultGdxSkin());
+            label = new Label("Players in \nthe room : 1", skin);
             label.setWrap(true);
             label.setAlignment(Align.center);
             getContentTable().add(label);
-
-            listener = new Listener() {
-                @Override
-                public void received(Connection connection, Object object) {
-                    if (object instanceof GameNetwork.Disconnect
-                            || object instanceof GameNetwork.Connect) {
-                        try {
-                            gameServer.update(0);
-                            label.setText("Connected players: " + gameServer.getConnections().length);
-                            if (gameServer.getConnections().length == playersCount - 1) {
-                                gameServer.removeListener(this);
-                                launchOnlineGame = true;
-                            }
-                            PlayersCount playersCount = new PlayersCount();
-                            playersCount.playersCount = gameServer.getConnections().length;
-                            gameServer.sendToAllTCP(playersCount);
-                        } catch (IOException ignored) { }
-                    } else if (object instanceof GameNetwork.InfoRequest) {
-                        GameNetwork.InfoResponse response = new GameNetwork.InfoResponse();
-                        response.difficulty = difficulty;
-                        response.playersCount = playersCount;
-                        gameServer.sendToTCP(connection.getID(), response);
-                    }
-                }
-            };
         }
 
-        private void show(final int playersCount, final NewGameScreen newGameScreen, final Difficulty difficulty) {
-            NewGameScreen.this.playersCount = playersCount;
-            NewGameScreen.this.difficulty = difficulty;
-            gameServer = new GameServer();
-            gameServer.addListener(listener);
-            gameServer.start();
-            show(newGameScreen);
+        private void show(final String name, final int playersCount, final Difficulty difficulty) {
+            room = new SpecificCode.Room(name, playersCount, difficulty);
+            show(NewGameScreen.this);
+            screenLoader.specificCode.getListener(
+                    room, new Procedure() {
+                        @Override
+                        public void call() {
+                            label.setText("Players in \nthe room : " + room.getNowPlayers());
+                        }
+                    }
+            );
         }
 
         @Override
         protected void result(Object object) {
-            gameServer.stop();
+            screenLoader.specificCode.deleteRoom(room.getName());
         }
     }
 }
