@@ -67,6 +67,10 @@ public final class Car extends GameObject implements ICard {
         return lives;
     }
 
+    public Chunk getChunk() {
+        return base.getField().getChunks()[getX()][getZ()];
+    }
+
     @Override
     public void setX(final int x) {
         super.setX(x);

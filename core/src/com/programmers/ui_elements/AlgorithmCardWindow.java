@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -12,6 +13,8 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
+import com.programmers.game_objects.Car;
+import com.programmers.game_objects.Lift;
 import com.programmers.screens.ScreenLoader;
 
 public final class AlgorithmCardWindow extends Table {
@@ -20,7 +23,7 @@ public final class AlgorithmCardWindow extends Table {
 
     private final Button button;
     private CardContainer actionsCardContainer;
-    private CardContainer cyclesCardContainer;
+    private CycleCardContainer cyclesCardContainer;
 
     public AlgorithmCardWindow(final String name, final GameController gameController) {
         this.gameController = gameController;
@@ -87,8 +90,47 @@ public final class AlgorithmCardWindow extends Table {
                         actionsCardContainer.childrenChanged();
                     }
                     actionsCardContainer.controlEmpty();
+                    gameController.toNextPlayer();
+                } else {
+                    // algorithm
+                    Array<Actor> actions = actionsCardContainer.getChildren();
+                    Card[] cycles = cyclesCardContainer.getCycleCards();
+                    switch (actions.size) {
+                        case 1:
+                            if (((Card) actions.get(0)).getGameCard() != null) {
+                                if (cycles[0].getGameCard() != null) {
+                                    cycles[0].getGameCard().getCards().add(((Card) actions.get(0)).getGameCard());
+                                    cycles[0].getGameCard().apply();
+                                } else {
+                                    ((Card) actions.get(0)).getGameCard().apply();
+                                }
+                            }
+                            break;
+                        default:
+                            //
+                            if (actions.size == 5) {
+                                for (Actor actor : actions) {
+                                    gameController.getDiscardPile().add(((Card) actor).getGameCard());
+                                }
+                                actionsCardContainer.clearChildren();
+                                for (Card card : cycles) {
+                                    if (card.getGameCard() != null) {
+                                        gameController.getDiscardPile().add(card.getGameCard());
+                                    }
+                                }
+                                cyclesCardContainer.clearChildren();
+                            }
+                    }
+                    // set position if car is on the Lift
+                    Car car = gameController.getThisPlayer().getCar();
+                    if (car.getChunk().getLift() != null)
+                        car.setPosition(car.getChunk().getLift());
+                    gameController.toNextPlayer();
+                    for (Actor actor : actions) {
+                        if (((Card) actor).getGameCard() != null)
+                            ((Card) actor).getGameCard().setPlayer(gameController.getThisPlayer());
+                    }
                 }
-                gameController.toNextPlayer();
             }
         });
     }
