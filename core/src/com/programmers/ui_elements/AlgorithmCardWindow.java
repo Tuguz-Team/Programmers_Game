@@ -14,7 +14,6 @@ import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
 import com.programmers.game_objects.Car;
-import com.programmers.game_objects.Lift;
 import com.programmers.screens.ScreenLoader;
 
 public final class AlgorithmCardWindow extends Table {
@@ -94,32 +93,39 @@ public final class AlgorithmCardWindow extends Table {
                 } else {
                     // algorithm
                     Array<Actor> actions = actionsCardContainer.getChildren();
-                    Card[] cycles = cyclesCardContainer.getCycleCards();
-                    switch (actions.size) {
-                        case 1:
-                            if (((Card) actions.get(0)).getGameCard() != null) {
-                                if (cycles[0].getGameCard() != null) {
-                                    cycles[0].getGameCard().getCards().add(((Card) actions.get(0)).getGameCard());
-                                    cycles[0].getGameCard().apply();
+                    int n = cyclesCardContainer.getCells().size;
+
+                    for (int i = 0; i < n; i++) {
+                        Card thisCycleCard = (Card) cyclesCardContainer.getCells().get(i).getActor();
+                        if (thisCycleCard != null) {
+                            if (thisCycleCard.getGameCard() != null) {
+                                if (i % 2 == 0) {
+                                    thisCycleCard.getGameCard().getCards().add(
+                                            ((Card) actions.get(mathCycleFull(i, actions.size))).getGameCard()
+                                    );
+                                    thisCycleCard.getGameCard().apply();
                                 } else {
-                                    ((Card) actions.get(0)).getGameCard().apply();
+                                    thisCycleCard.getGameCard().getCards().add(
+                                            ((Card) actions.get(mathCycleFull(i - 1, actions.size))).getGameCard(),
+                                            ((Card) actions.get(mathCycleFull(i - 1, actions.size) + 1)).getGameCard()
+                                    );
+                                    thisCycleCard.getGameCard().apply();
                                 }
-                            }
-                            break;
-                        default:
-                            //
-                            if (actions.size == 5) {
-                                for (Actor actor : actions) {
-                                    gameController.getDiscardPile().add(((Card) actor).getGameCard());
-                                }
-                                actionsCardContainer.clearChildren();
-                                for (Card card : cycles) {
-                                    if (card.getGameCard() != null) {
-                                        gameController.getDiscardPile().add(card.getGameCard());
+                            } else {
+                                Card actionCard = (Card) actions.get(mathCycleEmpty(i, actions.size));
+                                if (actionCard.getGameCard() != null) {
+                                    if (i == n - 1 || i == 1)
+                                        actionCard.getGameCard().apply();
+                                    else if (i % 2 != 0) {
+                                        Card prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 1).getActor(),
+                                            _prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 2).getActor();
+                                        if ((prevCycleCard != null && prevCycleCard.getGameCard() == null)
+                                            || (_prevCycleCard != null && _prevCycleCard.getGameCard() == null))
+                                            actionCard.getGameCard().apply();
                                     }
                                 }
-                                cyclesCardContainer.clearChildren();
                             }
+                        }
                     }
                     // set position if car is on the Lift
                     Car car = gameController.getThisPlayer().getCar();
@@ -127,6 +133,25 @@ public final class AlgorithmCardWindow extends Table {
                         car.setCompensated(false);
                         car.setPosition(car.getChunk().getLift());
                         car.addLivesFrom(car.getChunk());
+                    }
+                    for (Cell cell: cyclesCardContainer.getCells()) {
+                        Card card = (Card)cell.getActor();
+                        if (card != null && card.getGameCard() != null) {
+                            card.getGameCard().getCards().clear();
+                        }
+                    }
+                    if (actions.size == 5) {
+                        for (Actor actor : actions) {
+                            gameController.getDiscardPile().add(((Card) actor).getGameCard());
+                        }
+                        actionsCardContainer.clearChildren();
+                        for (Cell cell: cyclesCardContainer.getCells()) {
+                            Card card = (Card)cell.getActor();
+                            if (card != null && card.getGameCard() != null) {
+                                gameController.getDiscardPile().add(((Card)cell.getActor()).getGameCard());
+                            }
+                        }
+                        cyclesCardContainer.clearChildren();
                     }
                     gameController.toNextPlayer();
                     for (Actor actor : actions) {
@@ -167,6 +192,28 @@ public final class AlgorithmCardWindow extends Table {
             return flag;
         }
         return true;
+    }
+
+    public int mathCycleFull(int i, int size) {
+        int a = cyclesCardContainer.actionSizeToUse(),
+                b = size + a;
+        b = (b % 2 == 0) ? (b / 2) : (b / 2 + 1);
+        b = (size > a) ? (i / b) : (i / b - 1);
+        if (i == cyclesCardContainer.getCells().size - 1 && a > 0)
+            b++;
+        if (b >= size) b = size - 1;
+        return b;
+    }
+
+    public int mathCycleEmpty(int i, int size) {
+        int k = i - (size + cyclesCardContainer.actionSizeToUse());
+
+        if (i == size) k = 2;
+        else if (k < 0) k = 0;
+        else if (k == cyclesCardContainer.actionSizeToUse()) k = 1;
+        else if (i - size == 1) k = 1;
+
+        return k;
     }
 
     public CardContainer getCyclesCardContainer () {
