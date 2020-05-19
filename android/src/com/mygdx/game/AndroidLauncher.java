@@ -5,8 +5,6 @@ import android.view.View;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.programmers.screens.ScreenLoader;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -16,7 +14,7 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new ScreenLoader(new AndroidSpecificCode(this)), config);
+		initialize(new ScreenLoader(new AndroidNetworkManager(this)), config);
 
 		setImmersiveSticky();
 		getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(

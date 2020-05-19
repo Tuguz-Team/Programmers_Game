@@ -10,7 +10,7 @@ import com.programmers.game_objects.Chunk;
 import com.programmers.game_objects.Life;
 import com.programmers.game_objects.Lift;
 import com.programmers.game_objects.Wall;
-import com.programmers.interfaces.SpecificCode;
+import com.programmers.interfaces.NetworkManager;
 import com.programmers.screens.GameScreen;
 
 import static com.badlogic.gdx.math.MathUtils.random;
@@ -22,23 +22,29 @@ public final class Field {
     private final Chunk[][] chunks;
     private final Vector3 offset;
 
-    public Field(final GameScreen gameScreen, final SpecificCode.Field field) {
+    public Field(final GameScreen gameScreen, final NetworkManager.FieldData fieldData) {
         this(gameScreen, (Void)null);
-        for (SpecificCode.Field.Chunk chunk : field.getChunks()) {
+        for (NetworkManager.FieldData.Chunk chunk : fieldData.getChunks()) {
             chunks[chunk.getX()][chunk.getZ()] = new Chunk(chunk.getX(), chunk.getY(),
                     chunk.getZ(), chunk.getColor(), this);
         }
-        for (SpecificCode.Field.Life life : field.getLives()) {
+        for (NetworkManager.FieldData.Life life : fieldData.getLives()) {
             new Life(chunks[life.getX()][life.getZ()], life.getType());
         }
-        for (SpecificCode.Field.Wall wall : field.getWalls()) {
+        for (NetworkManager.FieldData.Wall wall : fieldData.getWalls()) {
             new Wall(chunks[wall.getX()][wall.getZ()], wall.getDirection());
         }
-        chunks[0][0] = new Base(chunks[0][0], field.getBases().get(0).getBaseColor());
-        chunks[0][size - 1] = new Base(chunks[0][size - 1], field.getBases().get(1).getBaseColor());
-        chunks[size - 1][0] = new Base(chunks[size - 1][0], field.getBases().get(2).getBaseColor());
+        chunks[0][0] = new Base(chunks[0][0], fieldData.getBases().get(0).getBaseColor());
+        chunks[0][size - 1] = new Base(chunks[0][size - 1], fieldData.getBases().get(1).getBaseColor());
+        chunks[size - 1][0] = new Base(chunks[size - 1][0], fieldData.getBases().get(2).getBaseColor());
         chunks[size - 1][size - 1] = new Base(chunks[size - 1][size - 1],
-                field.getBases().get(3).getBaseColor());
+                fieldData.getBases().get(3).getBaseColor());
+        for (NetworkManager.FieldData.Lift lift : fieldData.getLifts()) {
+            chunks[lift.getX()][lift.getZ()] = new Lift(
+                    chunks[lift.getX()][lift.getZ()],
+                    chunks[lift.getTo().getX()][lift.getTo().getZ()]
+            );
+        }
     }
 
     public Field(final GameScreen gameScreen) {

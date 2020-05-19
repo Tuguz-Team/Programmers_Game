@@ -13,16 +13,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
-import com.programmers.game.HotseatGame;
-import com.programmers.game.OnlineGame;
+import com.programmers.game.hotseat.HotseatGame;
+import com.programmers.game.online.OnlineGame;
 import com.programmers.interfaces.Procedure;
-import com.programmers.interfaces.SpecificCode;
+import com.programmers.interfaces.NetworkManager;
 import com.programmers.ui_elements.MyButton;
 import com.programmers.ui_elements.OKDialog;
 
 public final class NewGameScreen extends ReturnableScreen {
 
-    private SpecificCode.Room room;
+    private NetworkManager.Room room;
     private boolean launchOnline;
 
     private static final Skin skin = ScreenLoader.getDefaultGdxSkin();
@@ -104,7 +104,7 @@ public final class NewGameScreen extends ReturnableScreen {
                     new Thread() {
                         @Override
                         public void run() {
-                            if (screenLoader.specificCode.createNewRoom(name, playersCount, difficulty)) {
+                            if (screenLoader.networkManager.createNewRoom(name, playersCount, difficulty)) {
                                 newRoomDialog.show(name, playersCount, difficulty);
                             } else {
                                 OKDialog dialog = new OKDialog(
@@ -134,7 +134,7 @@ public final class NewGameScreen extends ReturnableScreen {
     @Override
     public void dispose() {
         if (room != null && !launchOnline) {
-            screenLoader.specificCode.deleteRoom(room.getName());
+            screenLoader.networkManager.deleteRoom(room.getName());
         }
         super.dispose();
     }
@@ -155,16 +155,16 @@ public final class NewGameScreen extends ReturnableScreen {
         }
 
         private void show(final String name, final int playersCount, final Difficulty difficulty) {
-            room = new SpecificCode.Room(name, playersCount, difficulty);
+            room = new NetworkManager.Room(name, playersCount, difficulty);
             show(NewGameScreen.this);
-            screenLoader.specificCode.addRoomChangedListener(
+            screenLoader.networkManager.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
                             label.setText("Players : " + room.getNowPlayers() + "/" + room.getPlayersCount());
                             if (room.getNowPlayers() == room.getPlayersCount()) {
                                 launchOnline = true;
-                                screenLoader.specificCode.removeListener(room);
+                                screenLoader.networkManager.removeListener(room);
                             }
                         }
                     }
@@ -173,7 +173,7 @@ public final class NewGameScreen extends ReturnableScreen {
 
         @Override
         protected void result(Object object) {
-            screenLoader.specificCode.deleteRoom(room.getName());
+            screenLoader.networkManager.deleteRoom(room.getName());
         }
     }
 }

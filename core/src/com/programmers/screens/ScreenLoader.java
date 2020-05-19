@@ -11,11 +11,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.programmers.interfaces.SpecificCode;
+import com.programmers.interfaces.NetworkManager;
 import com.programmers.game.GameAssets;
 import com.programmers.game.SkyBox;
-
-import java.util.Random;
 
 public final class ScreenLoader extends Game {
 
@@ -24,14 +22,14 @@ public final class ScreenLoader extends Game {
     private SkyBox skyBox;
 
     private static Skin defaultGdxSkin;
-    public final SpecificCode specificCode;
+    public final NetworkManager networkManager;
 
     private Skin buttonSkin;
     private BitmapFont font;
     private static ImageTextButton.ImageTextButtonStyle buttonStyle;
 
-    public ScreenLoader(final SpecificCode specificCode) {
-        this.specificCode = specificCode;
+    public ScreenLoader(final NetworkManager networkManager) {
+        this.networkManager = networkManager;
     }
 
     @Override

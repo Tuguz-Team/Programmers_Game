@@ -67,7 +67,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         mainButtons.addActor(exitButton);
         mainButtons.center();
 
-        screenLoader.specificCode.registerAnon();
+        screenLoader.networkManager.registerAnon();
     }
 
     @Override

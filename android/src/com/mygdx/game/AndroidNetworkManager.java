@@ -17,26 +17,26 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.programmers.enums.Difficulty;
-import com.programmers.game.Field;
+import com.programmers.game.online.OnlineGameController;
 import com.programmers.interfaces.Procedure;
-import com.programmers.interfaces.SpecificCode;
-import com.programmers.screens.GameScreen;
+import com.programmers.interfaces.NetworkManager;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
-public final class AndroidSpecificCode implements SpecificCode {
+public final class AndroidNetworkManager implements NetworkManager {
 
-    private final static String roomCollection = "rooms";
-    private final static String dataRoomCollection = "data";
+    private final static String rooms = "rooms";
+    private final static String fieldData = "fieldData";
+    private final static String gameData = "gameData";
+    private final static String playersData = "playersData";
+    private final static String cardsData = "cardsData";
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private final Activity activity;
 
-    AndroidSpecificCode(Activity activity) {
+    AndroidNetworkManager(Activity activity) {
         this.activity = activity;
     }
 
@@ -52,7 +52,7 @@ public final class AndroidSpecificCode implements SpecificCode {
     @Override
     public boolean createNewRoom(final String name, final int playersCount, final Difficulty difficulty) {
         final Boolean[] temp = { null };
-        firebaseFirestore.collection(roomCollection).document(name).get()
+        firebaseFirestore.collection(rooms).document(name).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -61,7 +61,7 @@ public final class AndroidSpecificCode implements SpecificCode {
                         } else {
                             temp[0] = true;
                             Room room = new Room(name, playersCount, difficulty);
-                            firebaseFirestore.collection(roomCollection).document(name).set(room);
+                            firebaseFirestore.collection(rooms).document(name).set(room);
                         }
                     }
                 });
@@ -72,7 +72,7 @@ public final class AndroidSpecificCode implements SpecificCode {
     @Override
     public boolean roomExists(String name) {
         final Boolean[] temp = { null };
-        firebaseFirestore.collection(roomCollection).document(name).get()
+        firebaseFirestore.collection(rooms).document(name).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -85,22 +85,26 @@ public final class AndroidSpecificCode implements SpecificCode {
 
     @Override
     public void deleteRoom(String name) {
-        firebaseFirestore.collection(roomCollection).document(name).delete();
-        firebaseFirestore.collection(roomCollection).document(name)
-                .collection(dataRoomCollection).document(dataRoomCollection).delete();
+        firebaseFirestore.collection(rooms).document(name).delete();
+    }
+
+    @Override
+    public void launchRoom(Room room) {
+        room.setLaunched(true);
+        firebaseFirestore.collection(rooms).document(room.getName()).set(room);
     }
 
     @Override
     public boolean addPlayerToRoom(final Room room) {
         final Boolean[] temp = { null };
-        firebaseFirestore.collection(roomCollection).document(room.getName())
+        firebaseFirestore.collection(rooms).document(room.getName())
                 .get().addOnSuccessListener(
                 new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
                             room.setNowPlayers(room.getNowPlayers() + 1);
-                            firebaseFirestore.collection(roomCollection)
+                            firebaseFirestore.collection(rooms)
                                     .document(room.getName()).set(room);
                             temp[0] = true;
                         } else {
@@ -115,14 +119,14 @@ public final class AndroidSpecificCode implements SpecificCode {
     @Override
     public boolean removePlayerFromRoom(final Room room) {
         final Boolean[] temp = { null };
-        firebaseFirestore.collection(roomCollection).document(room.getName())
+        firebaseFirestore.collection(rooms).document(room.getName())
                 .get().addOnSuccessListener(
                 new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
                             room.setNowPlayers(room.getNowPlayers() - 1);
-                            firebaseFirestore.collection(roomCollection)
+                            firebaseFirestore.collection(rooms)
                                     .document(room.getName()).set(room);
                             temp[0] = true;
                         } else {
@@ -138,7 +142,7 @@ public final class AndroidSpecificCode implements SpecificCode {
     public LinkedList<Room> findRooms() {
         final boolean[] temp = { false };
         final LinkedList<Room> linkedList = new LinkedList<>();
-        firebaseFirestore.collection(roomCollection).get().addOnCompleteListener(
+        firebaseFirestore.collection(rooms).get().addOnCompleteListener(
                 new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -159,18 +163,16 @@ public final class AndroidSpecificCode implements SpecificCode {
 
     @Override
     public void addRoomChangedListener(final Room room, final Procedure procedure) {
-        listenerRegistration = firebaseFirestore.collection(roomCollection)
-                .document(room.getName()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        listenerRegistration = firebaseFirestore.collection(rooms)
+                .document(room.getName())
+                .addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
                                 @Nullable FirebaseFirestoreException e) {
                 if (e == null && documentSnapshot != null && documentSnapshot.exists()) {
                     Room newRoom = documentSnapshot.toObject(Room.class);
                     if (newRoom != null) {
-                        room.setName(newRoom.getName());
-                        room.setPlayersCount(newRoom.getPlayersCount());
-                        room.setDifficulty(newRoom.getDifficulty());
-                        room.setNowPlayers(newRoom.getNowPlayers());
+                        room.set(newRoom);
                         procedure.call();
                     }
                 }
@@ -187,25 +189,73 @@ public final class AndroidSpecificCode implements SpecificCode {
 
     @Override
     public void sendFieldData(Room room, com.programmers.game.Field field) {
-        Field fieldData = new Field(field);
-        firebaseFirestore.collection(roomCollection).document(room.getName())
-                .collection(dataRoomCollection).document(dataRoomCollection).set(fieldData);
+        FieldData fieldData = new FieldData(field);
+        firebaseFirestore.collection(rooms).document(room.getName())
+                .collection(AndroidNetworkManager.fieldData)
+                .document(AndroidNetworkManager.fieldData)
+                .set(fieldData);
     }
 
     @Override
-    public Field getFieldData(Room room) {
-        final Field[] field = { null };
-        firebaseFirestore.collection(roomCollection).document(room.getName())
-                .collection(dataRoomCollection).document(dataRoomCollection)
+    public FieldData getFieldData(Room room) {
+        final FieldData[] fieldData = { null };
+        firebaseFirestore.collection(rooms).document(room.getName())
+                .collection(AndroidNetworkManager.fieldData)
+                .document(AndroidNetworkManager.fieldData)
                 .get().addOnSuccessListener(
                 new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        field[0] = documentSnapshot.toObject(Field.class);
+                        fieldData[0] = documentSnapshot.toObject(FieldData.class);
                     }
                 }
         );
-        while (field[0] == null);
-        return field[0];
+        while (fieldData[0] == null);
+        return fieldData[0];
+    }
+
+    @Override
+    public void sendGameData(Room room, OnlineGameController onlineGameController) {
+        GameData gameData = new GameData(onlineGameController);
+        firebaseFirestore.collection(rooms).document(room.getName())
+                .collection(AndroidNetworkManager.gameData)
+                .document(playersData).set(gameData.getPlayersData());
+        firebaseFirestore.collection(rooms).document(room.getName())
+                .collection(AndroidNetworkManager.gameData)
+                .document(cardsData).set(gameData.getCardsData());
+    }
+
+    @Override
+    public GameData getGameData(Room room) {
+        final GameData[] gameData = { null };
+        final GameData.PlayersData[] playersData = { null };
+        firebaseFirestore.collection(rooms).document(room.getName())
+                .collection(AndroidNetworkManager.gameData)
+                .document(AndroidNetworkManager.playersData)
+                .get().addOnSuccessListener(
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        playersData[0] = documentSnapshot.toObject(GameData.PlayersData.class);
+                    }
+                }
+        );
+        while (playersData[0] == null);
+        firebaseFirestore.collection(rooms).document(room.getName())
+                .collection(AndroidNetworkManager.gameData)
+                .document(cardsData)
+                .get().addOnSuccessListener(
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        gameData[0] = new GameData(
+                                playersData[0],
+                                documentSnapshot.toObject(GameData.CardsData.class)
+                        );
+                    }
+                }
+        );
+        while (gameData[0] == null);
+        return gameData[0];
     }
 }

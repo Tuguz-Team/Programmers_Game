@@ -1,10 +1,13 @@
-package com.programmers.game;
+package com.programmers.game.hotseat;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
+import com.programmers.game.Field;
+import com.programmers.game.GameCard;
+import com.programmers.game.Player;
 import com.programmers.game_objects.Chunk;
 import com.programmers.screens.GameScreen;
 import com.programmers.ui_elements.AlgorithmCardWindow;
@@ -16,31 +19,35 @@ import java.util.Stack;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public final class GameController {
+public class GameController {
 
-    private Player thisPlayer;
-    private final Player[] players;
+    protected Player thisPlayer;
+    protected final Player[] players;
     private final Field field;
-    private final Difficulty difficulty;
-    private GameScreen gameScreen;
+    protected final Difficulty difficulty;
+    private final GameScreen gameScreen;
 
-    private final PlayerCardWindow playerCardWindow;
-    private final AlgorithmCardWindow algorithmCardWindow;
+    protected PlayerCardWindow playerCardWindow;
+    protected AlgorithmCardWindow algorithmCardWindow;
 
-    private final Array<GameCard> algorithmCards;
-    private final Array<GameCard> discardPile;
-    private final Stack<GameCard> talon = new Stack<>();
+    protected final Array<GameCard> algorithmCards;
+    protected final Array<GameCard> discardPile;
+    protected Stack<GameCard> talon = new Stack<>();
 
-    public GameController(final Player[] players, final Field field, GameScreen gameScreen) {
+    protected GameController(final Player[] players, final Field field,
+                             final GameScreen gameScreen, final Void v) {
+        this.gameScreen = gameScreen;
+        algorithmCards = new Array<>();
+        discardPile = new Array<>(52);
         this.players = players;
         this.field = field;
-        this.gameScreen = gameScreen;
-        thisPlayer = players[0];
-        algorithmCards = new Array<>();
-        // Use discardPile as place where cards are initializing
         difficulty = field.getGameScreen().getDifficulty();
-        int cardsCount = difficulty == Difficulty.Easy ? 36 : 52;
-        discardPile = new Array<>(cardsCount);
+    }
+
+    public GameController(final Player[] players, final Field field, final GameScreen gameScreen) {
+        this(players, field, gameScreen, null);
+        thisPlayer = players[0];
+        // Use discardPile as place where cards are initializing
         for (int i = 0; i < 6; i++) {
             discardPile.add(new GameCard(CardType.StepForward, null));
             discardPile.add(new GameCard(CardType.StepForwardToFloor, null));

@@ -11,7 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
-import com.programmers.game.GameController;
+import com.programmers.game.hotseat.GameController;
 import com.programmers.game_objects.Car;
 import com.programmers.screens.ScreenLoader;
 

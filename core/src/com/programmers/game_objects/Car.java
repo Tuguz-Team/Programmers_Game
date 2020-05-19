@@ -55,6 +55,11 @@ public final class Car extends GameObject implements ICard {
         setModelFileName(stringBuilder.toString());
     }
 
+    public Car(final Base base, final Direction direction) {
+        this(base);
+        this.direction = direction;
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -67,8 +72,20 @@ public final class Car extends GameObject implements ICard {
         return lives;
     }
 
+    public Base getBase() {
+        return base;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
     public Chunk getChunk() {
         return base.getField().getChunks()[getX()][getZ()];
+    }
+
+    public boolean isCompensated() {
+        return compensated;
     }
 
     public void setCompensated(boolean compensated) {
@@ -136,39 +153,41 @@ public final class Car extends GameObject implements ICard {
                 getY() * Chunk.height + 0.001f,
                 getZ() * Chunk.width + 0.001f
         ).add(base.getField().getOffset()));
-        if (getX() == 0 && getZ() == 0) {
-            if (base.getField().getChunks()[0][0].getY() != base.getField().getChunks()[0][1].getY()) {
-                direction = Direction.Left;
-            } else if (base.getField().getChunks()[0][0].getY() != base.getField().getChunks()[1][0].getY()) {
-                direction = Direction.Forward;
+        if (direction == null) {
+            if (getX() == 0 && getZ() == 0) {
+                if (base.getField().getChunks()[0][0].getY() != base.getField().getChunks()[0][1].getY()) {
+                    direction = Direction.Left;
+                } else if (base.getField().getChunks()[0][0].getY() != base.getField().getChunks()[1][0].getY()) {
+                    direction = Direction.Forward;
+                } else {
+                    direction = random.nextBoolean() ? Direction.Forward : Direction.Left;
+                }
+            } else if (getX() == 0 && getZ() == size - 1) {
+                if (base.getField().getChunks()[0][size - 1].getY() != base.getField().getChunks()[0][size - 2].getY()) {
+                    direction = Direction.Left;
+                } else if (base.getField().getChunks()[0][size - 1].getY() != base.getField().getChunks()[1][size - 1].getY()) {
+                    direction = Direction.Back;
+                } else {
+                    direction = random.nextBoolean() ? Direction.Back : Direction.Left;
+                }
+            } else if (getX() == size - 1 && getZ() == 0) {
+                if (base.getField().getChunks()[size - 1][0].getY() != base.getField().getChunks()[size - 2][0].getY()) {
+                    direction = Direction.Forward;
+                } else if (base.getField().getChunks()[size - 1][0].getY() != base.getField().getChunks()[size - 1][1].getY()) {
+                    direction = Direction.Right;
+                } else {
+                    direction = random.nextBoolean() ? Direction.Forward : Direction.Right;
+                }
             } else {
-                direction = random.nextBoolean() ? Direction.Forward : Direction.Left;
-            }
-        } else if (getX() == 0 && getZ() == size - 1) {
-            if (base.getField().getChunks()[0][size - 1].getY() != base.getField().getChunks()[0][size - 2].getY()) {
-                direction = Direction.Left;
-            } else if (base.getField().getChunks()[0][size - 1].getY() != base.getField().getChunks()[1][size - 1].getY()) {
-                direction = Direction.Back;
-            } else {
-                direction = random.nextBoolean() ? Direction.Back : Direction.Left;
-            }
-        } else if (getX() == size - 1 && getZ() == 0) {
-            if (base.getField().getChunks()[size - 1][0].getY() != base.getField().getChunks()[size - 2][0].getY()) {
-                direction = Direction.Forward;
-            } else if (base.getField().getChunks()[size - 1][0].getY() != base.getField().getChunks()[size - 1][1].getY()) {
-                direction = Direction.Right;
-            } else {
-                direction = random.nextBoolean() ? Direction.Forward : Direction.Right;
-            }
-        } else {
-            if (base.getField().getChunks()[size - 1][size - 1].getY()
-                    != base.getField().getChunks()[size - 2][size - 1].getY()) {
-                direction = Direction.Back;
-            } else if (base.getField().getChunks()[size - 1][size - 1].getY()
-                    != base.getField().getChunks()[size - 1][size - 2].getY()) {
-                direction = Direction.Right;
-            } else {
-                direction = random.nextBoolean() ? Direction.Back : Direction.Right;
+                if (base.getField().getChunks()[size - 1][size - 1].getY()
+                        != base.getField().getChunks()[size - 2][size - 1].getY()) {
+                    direction = Direction.Back;
+                } else if (base.getField().getChunks()[size - 1][size - 1].getY()
+                        != base.getField().getChunks()[size - 1][size - 2].getY()) {
+                    direction = Direction.Right;
+                } else {
+                    direction = random.nextBoolean() ? Direction.Back : Direction.Right;
+                }
             }
         }
         switch (direction) {

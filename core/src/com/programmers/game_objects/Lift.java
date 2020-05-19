@@ -7,10 +7,10 @@ import com.badlogic.gdx.math.Vector3;
 
 public final class Lift extends Chunk {
 
-    public Lift(Chunk from, Chunk lift) {
+    public Lift(Chunk from, Chunk to) {
         super(from.getX(), from.getY(), from.getZ(), from.getColor(), from.getField());
-        this.setLift(lift);
-        lift.setLift(this);
+        this.setLift(to);
+        to.setLift(this);
         getLives().addAll(from.getLives());
     }
 

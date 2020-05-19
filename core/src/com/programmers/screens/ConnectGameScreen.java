@@ -9,9 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
-import com.programmers.game.OnlineGame;
+import com.programmers.game.online.OnlineGame;
 import com.programmers.interfaces.Procedure;
-import com.programmers.interfaces.SpecificCode;
+import com.programmers.interfaces.NetworkManager;
 import com.programmers.ui_elements.MyButton;
 import com.programmers.ui_elements.OKDialog;
 
@@ -20,7 +20,7 @@ import java.util.LinkedList;
 public final class ConnectGameScreen extends ReturnableScreen {
 
     private boolean launchOnline;
-    private SpecificCode.Room room;
+    private NetworkManager.Room room;
 
     private final Dialog foundDialog, waitingDialog;
     private final OKDialog notFoundDialog, roomNoExistDialog;
@@ -45,7 +45,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
         foundDialog = new Dialog("Connected! Waiting for other players...", skin) {
             @Override
             protected void result(Object object) {
-                if (!screenLoader.specificCode.removePlayerFromRoom(room)) {
+                if (!screenLoader.networkManager.removePlayerFromRoom(room)) {
                     roomNoExistDialog.show(ConnectGameScreen.this);
                 }
             }
@@ -70,9 +70,9 @@ public final class ConnectGameScreen extends ReturnableScreen {
                 new Thread() {
                     @Override
                     public void run() {
-                        LinkedList<SpecificCode.Room> rooms = screenLoader.specificCode.findRooms();
+                        LinkedList<NetworkManager.Room> rooms = screenLoader.networkManager.findRooms();
                         if (!rooms.isEmpty()) {
-                            for (SpecificCode.Room room : rooms)
+                            for (NetworkManager.Room room : rooms)
                                 existingGames.addActor(new GameRoom(room, ScreenLoader.getButtonStyle()));
                         } else
                             notFoundDialog.show(ConnectGameScreen.this);
@@ -102,12 +102,12 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
     private final class GameRoom extends MyButton {
 
-        private GameRoom(final SpecificCode.Room room, final ImageTextButtonStyle style) {
+        private GameRoom(final NetworkManager.Room room, final ImageTextButtonStyle style) {
             super("ROOM NAME: " + room.getName().toUpperCase()
                     + "\nPLAYERS: " + room.getNowPlayers() + "/" + room.getPlayersCount()
                     + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase(), style);
             ConnectGameScreen.this.room = room;
-            screenLoader.specificCode.addRoomChangedListener(
+            screenLoader.networkManager.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
@@ -122,22 +122,22 @@ public final class ConnectGameScreen extends ReturnableScreen {
         @Override
         public void call() {
             if (room.getNowPlayers() <= room.getPlayersCount()) {
-                if (screenLoader.specificCode.addPlayerToRoom(room)) {
+                if (screenLoader.networkManager.addPlayerToRoom(room)) {
                     foundDialog.show(ConnectGameScreen.this);
-                    screenLoader.specificCode.addRoomChangedListener(
+                    screenLoader.networkManager.addRoomChangedListener(
                             room, new Procedure() {
                                 @Override
                                 public void call() {
                                     label.setText("Players : " + room.getNowPlayers() + "/" + room.getPlayersCount());
                                     if (room.getPlayersCount() == room.getNowPlayers()) {
                                         launchOnline = true;
-                                        screenLoader.specificCode.removeListener(room);
+                                        screenLoader.networkManager.removeListener(room);
                                     }
                                 }
                             }
                     );
                 } else {
-                    screenLoader.specificCode.removeListener(room);
+                    screenLoader.networkManager.removeListener(room);
                     roomNoExistDialog.show(ConnectGameScreen.this);
                 }
             }

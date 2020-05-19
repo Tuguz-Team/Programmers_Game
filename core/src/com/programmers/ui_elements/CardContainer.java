@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
-import com.programmers.game.GameController;
+import com.programmers.game.hotseat.GameController;
 
 public class CardContainer extends Table {
 
