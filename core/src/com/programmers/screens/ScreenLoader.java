@@ -4,10 +4,12 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.programmers.interfaces.SpecificCode;
@@ -55,12 +57,17 @@ public final class ScreenLoader extends Game {
         defaultGdxSkin = assetManager.get("uiskin.json");
         buttonSkin = new Skin();
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("GameFont.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter
+                = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 48;
+        parameter.color = new Color(50 / 255f, 195 / 255f, 195 / 255f, 1f);
+        parameter.borderColor = new Color(40 / 255f, 140 / 255f, 140 / 255f, 1f);
+        parameter.borderWidth = parameter.shadowOffsetX = parameter.shadowOffsetY = 5;
+        font = generator.generateFont(parameter);
+
         final TextureAtlas textureAtlas = assetManager.get("buttons.pack");
         buttonSkin.addRegions(textureAtlas);
-
-        final Texture fontTexture = assetManager.get("CustomFont.png");
-        font = new BitmapFont(Gdx.files.internal("CustomFont.fnt"),
-                new TextureRegion(fontTexture), false);
 
         buttonStyle = new ImageTextButton.ImageTextButtonStyle();
         buttonStyle.up = buttonSkin.getDrawable("start_button");

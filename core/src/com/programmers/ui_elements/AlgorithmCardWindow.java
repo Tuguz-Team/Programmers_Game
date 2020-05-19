@@ -1,6 +1,5 @@
 package com.programmers.ui_elements;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -112,15 +111,26 @@ public final class AlgorithmCardWindow extends Table {
                                     thisCycleCard.getGameCard().apply();
                                 }
                             } else {
-                                Card actionCard = (Card) actions.get(mathCycleEmpty(i, actions.size));
-                                if (actionCard.getGameCard() != null) {
-                                    if (i == n - 1 || i == 1)
-                                        actionCard.getGameCard().apply();
-                                    else if (i % 2 != 0) {
-                                        Card prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 1).getActor(),
-                                            _prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 2).getActor();
-                                        if ((prevCycleCard != null && prevCycleCard.getGameCard() == null)
-                                            || (_prevCycleCard != null && _prevCycleCard.getGameCard() == null))
+                                if (i % 2 != 0 || i == n - 1) {
+                                    Card actionCard = (Card) actions.get(mathCycleEmptyOdd(i, actions.size));
+                                    if (actionCard.getGameCard() != null) {
+                                        if (i == n - 1 || i == 1)
+                                            actionCard.getGameCard().apply();
+                                        else if (i % 2 != 0) {
+                                            Card prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 1).getActor(),
+                                                    _prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 2).getActor();
+                                            if ((prevCycleCard != null && prevCycleCard.getGameCard() == null)
+                                                    || (_prevCycleCard != null && _prevCycleCard.getGameCard() == null))
+                                                actionCard.getGameCard().apply();
+                                        }
+                                    }
+                                } else if (i < n - 1) {
+                                    Card actionCard = (Card) actions.get(mathCycleEmptyEven(i, actions.size));
+                                    if (actionCard.getGameCard() != null) {
+                                        Card nextCycleCard = (Card) cyclesCardContainer.getCells().get(i + 1).getActor();
+                                        if (i == 0 && nextCycleCard == null)
+                                            actionCard.getGameCard().apply();
+                                        else if (nextCycleCard == null)
                                             actionCard.getGameCard().apply();
                                     }
                                 }
@@ -205,13 +215,25 @@ public final class AlgorithmCardWindow extends Table {
         return b;
     }
 
-    public int mathCycleEmpty(int i, int size) {
+    public int mathCycleEmptyOdd(int i, int size) {
         int k = i - (size + cyclesCardContainer.actionSizeToUse());
 
         if (i == size) k = 2;
         else if (k < 0) k = 0;
         else if (k == cyclesCardContainer.actionSizeToUse()) k = 1;
         else if (i - size == 1) k = 1;
+
+        return k;
+    }
+
+    public int mathCycleEmptyEven(int i, int size) {
+        int k = i - (size + cyclesCardContainer.actionSizeToUse());
+        k = k + (cyclesCardContainer.actionSizeToUse() < 0 ? 2 : 1);
+
+        if (k < 0) k = 0;
+        else if (size >= cyclesCardContainer.actionSizeToUse()
+                && k == 0) k = 1;
+        else if (k > size - 2) k = size - 2;
 
         return k;
     }
