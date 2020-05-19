@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
-import com.programmers.enums.Difficulty;
+import com.programmers.game.OnlineGame;
 import com.programmers.interfaces.Procedure;
 import com.programmers.interfaces.SpecificCode;
 import com.programmers.ui_elements.MyButton;
@@ -19,11 +19,11 @@ import java.util.LinkedList;
 
 public final class ConnectGameScreen extends ReturnableScreen {
 
-    private boolean launchOnlineGame, connected;
+    private boolean launchOnline;
     private SpecificCode.Room room;
 
     private final Dialog foundDialog, waitingDialog;
-    private final OKDialog notFoundDialog;
+    private final OKDialog notFoundDialog, roomNoExistDialog;
     private final Label label;
     private final VerticalGroup existingGames;
 
@@ -34,16 +34,20 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
         notFoundDialog = new OKDialog("No games were found!", skin);
 
+        roomNoExistDialog = new OKDialog("This room doesn't exist now!", skin);
+
         waitingDialog = new Dialog("Searching for games...", skin);
         waitingDialog.setMovable(false);
 
-        label = new Label("Connected players : 2", skin);
+        label = new Label("", skin);
         label.setWrap(true);
         label.setAlignment(Align.center);
         foundDialog = new Dialog("Connected! Waiting for other players...", skin) {
             @Override
             protected void result(Object object) {
-                screenLoader.specificCode.removePlayerFromRoom(room);
+                if (!screenLoader.specificCode.removePlayerFromRoom(room)) {
+                    roomNoExistDialog.show(ConnectGameScreen.this);
+                }
             }
         };
         foundDialog.setMovable(false);
@@ -88,27 +92,55 @@ public final class ConnectGameScreen extends ReturnableScreen {
         table.add(existingGames);
     }
 
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        if (launchOnline) {
+            screenLoader.setScreen(new OnlineGame(screenLoader, room, false));
+        }
+    }
+
     private final class GameRoom extends MyButton {
 
-        private GameRoom(SpecificCode.Room room, ImageTextButtonStyle style) {
+        private GameRoom(final SpecificCode.Room room, final ImageTextButtonStyle style) {
             super("ROOM NAME: " + room.getName().toUpperCase()
-                    + "\nCOUNT OF PLAYERS: " + room.getPlayersCount()
+                    + "\nPLAYERS: " + room.getNowPlayers() + "/" + room.getPlayersCount()
                     + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase(), style);
             ConnectGameScreen.this.room = room;
+            screenLoader.specificCode.addListener(
+                    room, new Procedure() {
+                        @Override
+                        public void call() {
+                            setText("ROOM NAME: " + room.getName().toUpperCase()
+                                    + "\nPLAYERS: " + room.getNowPlayers() + "/" + room.getPlayersCount()
+                                    + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase());
+                        }
+                    }
+            );
         }
 
         @Override
         public void call() {
-            foundDialog.show(ConnectGameScreen.this);
-            screenLoader.specificCode.addPlayerToRoom(room);
-            screenLoader.specificCode.setListener(
-                    room, new Procedure() {
-                        @Override
-                        public void call() {
-                            label.setText("Connected players : " + room.getNowPlayers());
-                        }
-                    }
-            );
+            if (room.getNowPlayers() <= room.getPlayersCount()) {
+                if (screenLoader.specificCode.addPlayerToRoom(room)) {
+                    foundDialog.show(ConnectGameScreen.this);
+                    screenLoader.specificCode.addListener(
+                            room, new Procedure() {
+                                @Override
+                                public void call() {
+                                    label.setText("Players : " + room.getNowPlayers() + "/" + room.getPlayersCount());
+                                    if (room.getPlayersCount() == room.getNowPlayers()) {
+                                        launchOnline = true;
+                                        screenLoader.specificCode.removeListener(room);
+                                    }
+                                }
+                            }
+                    );
+                } else {
+                    screenLoader.specificCode.removeListener(room);
+                    roomNoExistDialog.show(ConnectGameScreen.this);
+                }
+            }
         }
     }
 }

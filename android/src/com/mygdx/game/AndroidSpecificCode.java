@@ -28,6 +28,7 @@ import java.util.Objects;
 public final class AndroidSpecificCode implements SpecificCode {
 
     private final static String roomCollection = "rooms";
+    private final static String dataRoomCollection = "data";
 
     private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
@@ -67,20 +68,66 @@ public final class AndroidSpecificCode implements SpecificCode {
     }
 
     @Override
+    public boolean roomExists(String name) {
+        final Boolean[] temp = { null };
+        firebaseFirestore.collection(roomCollection).document(name).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        temp[0] = documentSnapshot.exists();
+                    }
+                });
+        while (temp[0] == null);
+        return temp[0];
+    }
+
+    @Override
     public void deleteRoom(String name) {
         firebaseFirestore.collection(roomCollection).document(name).delete();
     }
 
     @Override
-    public void addPlayerToRoom(Room room) {
-        room.setNowPlayers(room.getNowPlayers() + 1);
-        firebaseFirestore.collection(roomCollection).document(room.getName()).set(room);
+    public boolean addPlayerToRoom(final Room room) {
+        final Boolean[] temp = { null };
+        firebaseFirestore.collection(roomCollection).document(room.getName())
+                .get().addOnSuccessListener(
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            room.setNowPlayers(room.getNowPlayers() + 1);
+                            firebaseFirestore.collection(roomCollection)
+                                    .document(room.getName()).set(room);
+                            temp[0] = true;
+                        } else {
+                            temp[0] = false;
+                        }
+                    }
+                });
+        while (temp[0] == null);
+        return temp[0];
     }
 
     @Override
-    public void removePlayerFromRoom(Room room) {
-        room.setNowPlayers(room.getNowPlayers() - 1);
-        firebaseFirestore.collection(roomCollection).document(room.getName()).set(room);
+    public boolean removePlayerFromRoom(final Room room) {
+        final Boolean[] temp = { null };
+        firebaseFirestore.collection(roomCollection).document(room.getName())
+                .get().addOnSuccessListener(
+                new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            room.setNowPlayers(room.getNowPlayers() - 1);
+                            firebaseFirestore.collection(roomCollection)
+                                    .document(room.getName()).set(room);
+                            temp[0] = true;
+                        } else {
+                            temp[0] = false;
+                        }
+                    }
+                });
+        while (temp[0] == null);
+        return temp[0];
     }
 
     @Override
@@ -108,7 +155,7 @@ public final class AndroidSpecificCode implements SpecificCode {
     private HashMap<Room, Procedure> proceduresMap = new HashMap<>();
 
     @Override
-    public void setListener(final Room room, @NonNull final Procedure procedure) {
+    public void addListener(final Room room, final Procedure procedure) {
         if (!listenersMap.containsKey(room) && !proceduresMap.containsKey(room)) {
             proceduresMap.put(room, procedure);
             listenersMap.put(room, firebaseFirestore.collection(roomCollection)
@@ -132,6 +179,11 @@ public final class AndroidSpecificCode implements SpecificCode {
         } else {
             proceduresMap.put(room, procedure);
         }
+    }
+
+    @Override
+    public Procedure getProcedure(Room room) {
+        return proceduresMap.get(room);
     }
 
     @Override

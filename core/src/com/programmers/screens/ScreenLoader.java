@@ -8,15 +8,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.programmers.interfaces.SpecificCode;
 import com.programmers.game.GameAssets;
 import com.programmers.game.SkyBox;
-
-import static com.badlogic.gdx.math.MathUtils.random;
 
 import java.util.Random;
 
@@ -27,7 +24,6 @@ public final class ScreenLoader extends Game {
     private SkyBox skyBox;
 
     private static Skin defaultGdxSkin;
-    public static long seed = new Random().nextLong();
     public final SpecificCode specificCode;
 
     private Skin buttonSkin;
@@ -41,7 +37,6 @@ public final class ScreenLoader extends Game {
     @Override
     public void create() {
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
-        random.setSeed(seed);
 
         assetManager = new GameAssets();
         while (!assetManager.update());

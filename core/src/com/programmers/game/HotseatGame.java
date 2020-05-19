@@ -1,10 +1,7 @@
-package com.programmers.game.hotseat;
+package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
-import com.programmers.game.Field;
-import com.programmers.game.GameController;
-import com.programmers.game.Player;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 import com.programmers.screens.GameScreen;

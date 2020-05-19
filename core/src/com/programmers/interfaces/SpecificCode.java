@@ -10,15 +10,19 @@ public interface SpecificCode {
 
     boolean createNewRoom(String name, int playersCount, Difficulty difficulty);
 
+    boolean roomExists(String name);
+
     void deleteRoom(String name);
 
-    void addPlayerToRoom(Room room);
+    boolean addPlayerToRoom(Room room);
 
-    void removePlayerFromRoom(Room room);
+    boolean removePlayerFromRoom(Room room);
 
     LinkedList<Room> findRooms();
 
-    void setListener(Room room, Procedure procedure);
+    void addListener(Room room, Procedure procedure);
+
+    Procedure getProcedure(Room room);
 
     void removeListener(Room room);
 

@@ -13,8 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
-import com.programmers.game.hotseat.HotseatGame;
-import com.programmers.game.online.OnlineGame;
+import com.programmers.game.HotseatGame;
+import com.programmers.game.OnlineGame;
 import com.programmers.interfaces.Procedure;
 import com.programmers.interfaces.SpecificCode;
 import com.programmers.ui_elements.MyButton;
@@ -127,7 +127,7 @@ public final class NewGameScreen extends ReturnableScreen {
         super.render(delta);
         if (launchOnline) {
             dispose();
-            screenLoader.setScreen(new OnlineGame(screenLoader, room));
+            screenLoader.setScreen(new OnlineGame(screenLoader, room, true));
         }
     }
 
@@ -148,7 +148,7 @@ public final class NewGameScreen extends ReturnableScreen {
             setMovable(false);
             button("Close room");
 
-            label = new Label("Players in \nthe room : 1", skin);
+            label = new Label("", skin);
             label.setWrap(true);
             label.setAlignment(Align.center);
             getContentTable().add(label);
@@ -157,14 +157,14 @@ public final class NewGameScreen extends ReturnableScreen {
         private void show(final String name, final int playersCount, final Difficulty difficulty) {
             room = new SpecificCode.Room(name, playersCount, difficulty);
             show(NewGameScreen.this);
-            screenLoader.specificCode.setListener(
+            screenLoader.specificCode.addListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
-                            label.setText("Players in \nthe room : " + room.getNowPlayers());
+                            label.setText("Players : " + room.getNowPlayers() + "/" + room.getPlayersCount());
                             if (room.getNowPlayers() == room.getPlayersCount()) {
-                                screenLoader.specificCode.removeListener(room);
                                 launchOnline = true;
+                                screenLoader.specificCode.removeListener(room);
                             }
                         }
                     }
