@@ -25,7 +25,6 @@ public final class GameAssets extends AssetManager {
     private void loadUI() {
         load("uiskin.json", Skin.class);
         load("buttons.pack", TextureAtlas.class);
-        load("CustomFont.png", Texture.class);
     }
 
     private void loadModels() {
