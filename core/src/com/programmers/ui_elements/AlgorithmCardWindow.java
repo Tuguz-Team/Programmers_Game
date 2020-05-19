@@ -163,7 +163,11 @@ public final class AlgorithmCardWindow extends Table {
                         }
                         cyclesCardContainer.clearChildren();
                     }
+
                     gameController.toNextPlayer();
+                    actionsCardContainer.setActionToPrevious();
+                    cyclesCardContainer.setCycleToPrevious();
+
                     for (Actor actor : actions) {
                         if (((Card) actor).getGameCard() != null)
                             ((Card) actor).getGameCard().setPlayer(gameController.getThisPlayer());

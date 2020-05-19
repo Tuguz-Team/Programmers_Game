@@ -7,9 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game.GameCard;
+
+import static com.programmers.screens.ScreenLoader.getDefaultGdxSkin;
 
 public final class Card extends Image implements Comparable<Card> {
 
@@ -17,7 +20,8 @@ public final class Card extends Image implements Comparable<Card> {
     private CardContainer prevParent;
 
     private Cell<Card> cell;
-    private boolean cellEnabled = true;
+    private boolean cellEnabled = true,
+            enabled = true, replaced = false;
     private int indexForCycles;
 
     public Card(final String name) {
@@ -27,7 +31,7 @@ public final class Card extends Image implements Comparable<Card> {
     }
 
     public Card(final GameCard gameCard) {
-        super(new Texture("Sprites/Cards/".concat(gameCard.getType().toString()).concat(".png")));
+        super(new Texture("Sprites/EnabledCards/".concat(gameCard.getType().toString()).concat(".png")));
         this.gameCard = gameCard;
         setDebug(true);
         addListener(new InputListener() {
@@ -86,6 +90,31 @@ public final class Card extends Image implements Comparable<Card> {
                         return;
                     }
                 }
+
+                for (int i = 0; i < cardContainer.getChildren().size; i++) {
+                    final Card card = (Card) cardContainer.getChild(i);
+                    stagePos = card.localToStageCoordinates(new Vector2());
+                    if (x >= stagePos.x && x < stagePos.x + card.getWidth() && y >= stagePos.y
+                            && y < stagePos.y + card.getHeight() && !card.isEnabled() && !Card.this.isReplaced()
+                            && card.getParent() == Card.this.getPrevParent()) {
+                        YesNoDialog dialog = new YesNoDialog("Do you really want to replace card from " +
+                                "previous move with your's new card? This change is irreversible.", getDefaultGdxSkin()) {
+                            @Override
+                            public void call() {
+                                Cell cell = getCell(card);
+                                card.remove();
+                                ((CardContainer) Card.this.getParent()).getGameController().getAlgorithmCardWindow().
+                                        getActionsCardContainer().getCells().removeValue(cell, true);
+                                invalidate();
+
+                                Card.this.setReplaced(true);
+                                ((CardContainer) Card.this.getParent()).getGameController().getDiscardPile().add(card.getGameCard());
+                            }
+                        };
+                        dialog.show(card.getParent().getStage());
+                    }
+                }
+
                 cardContainer.addCard(thisCard, x, y);
                 if (thisCard.getPrevParent() instanceof CycleCardContainer)
                     ((CycleCardContainer) thisCard.getPrevParent()).removeSpace(thisCard, thisCard.getPrevParent().getCells());
@@ -133,5 +162,101 @@ public final class Card extends Image implements Comparable<Card> {
 
     public void setCellEnabled(boolean cellEnabled) {
         this.cellEnabled = cellEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public boolean isReplaced() {
+        return replaced;
+    }
+
+    public void setReplaced(boolean replaced) {
+        this.replaced = replaced;
+    }
+
+    public void setActionToPrevious(final CardContainer container) {
+        if (this.getGameCard() != null) {
+            this.setEnabled(false);
+            this.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/".
+                    concat(this.getGameCard().getType().toString()).concat(".png")))
+            );
+            this.removeListener(this.getListeners().get(0));
+            this.addListener(new InputListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    CardContainer prevParent = (CardContainer) Card.this.getParent();
+                    if (prevParent instanceof CycleCardContainer) {
+                        ((CycleCardContainer) prevParent).restoreSpace(Card.this);
+                    }
+                    Group group = prevParent.getParent();
+                    while (group != null) {
+                        group.addActor(Card.this);
+                        group = group.getParent();
+                    }
+                    if (prevParent instanceof CycleCardContainer) {
+                        ((CycleCardContainer) prevParent).restoreSpace(Card.this);
+                    }
+                    Card.this.setZIndex(Card.this.getParent().getChildren().size + 1);
+                    touchDragged(event, x, y, pointer);
+                    return true;
+                }
+
+                @Override
+                public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                    Card.this.setPosition(event.getStageX(), event.getStageY(), Align.center);
+                }
+
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    x = event.getStageX();
+                    y = event.getStageY();
+
+                    container.addCard(Card.this, x, y);
+                }
+            });
+        }
+    }
+
+    public void setCycleToPrevious(final CycleCardContainer container) {
+        if (this.getGameCard() != null) {
+            this.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/".
+                    concat(this.getGameCard().getType().toString()).concat(".png")))
+            );
+            this.removeListener(this.getListeners().get(0));
+            this.addListener(new InputListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    YesNoDialog dialog = new YesNoDialog("Do you really want to delete " +
+                            "this cycle card? This change is irreversible.", getDefaultGdxSkin()) {
+                        @Override
+                        public void call() {
+                            //Cell cell = container.getCell(Card.this);
+                            //cell.setActor(new Card("Sprites/EnabledCards/CyclePointOn.png"));
+                            //container.updatePoints(container.getCells(), false);
+
+                            //container.getGameController().getDiscardPile().add(Card.this.getGameCard());
+                        }
+                    };
+                    dialog.show(Card.this.getParent().getStage());
+                    return true;
+                }
+
+                @Override
+                public void touchDragged(InputEvent event, float x, float y, int pointer) {
+
+                }
+
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+
+                }
+            });
+        }
     }
 }

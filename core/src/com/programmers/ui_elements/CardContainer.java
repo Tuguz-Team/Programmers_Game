@@ -25,7 +25,7 @@ public class CardContainer extends Table {
         this.content = content;
         this.difficulty = difficulty;
         this.gameController = gameController;
-        emptyCard = new Card("Sprites/Cards/empty.png");
+        emptyCard = new Card("Sprites/EnabledCards/empty.png");
         if (content != null)
             addEmpty();
         if (gameCards != null) {
@@ -60,6 +60,14 @@ public class CardContainer extends Table {
 
         prevChildrenCount = getChildren().size;
         setTouchable();
+    }
+
+    public void setActionToPrevious() {
+        for (int i = 0; i < getChildren().size; i++) {
+            Card card = (Card) getChild(i);
+            if (card != null)
+                card.setActionToPrevious(this);
+        }
     }
 
     public void controlEmpty() {
@@ -121,6 +129,10 @@ public class CardContainer extends Table {
     public void clearChildren() {
         super.clearChildren();
         controlEmpty();
+    }
+
+    public GameController getGameController() {
+        return gameController;
     }
 
     public enum Content {

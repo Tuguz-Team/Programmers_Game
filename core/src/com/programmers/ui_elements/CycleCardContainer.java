@@ -2,6 +2,7 @@ package com.programmers.ui_elements;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -20,7 +21,7 @@ public final class CycleCardContainer extends CardContainer {
         this.gameController = gameController;
         pad(PAD, 0, PAD, 0);
         for (int i = 0; i < cycleCards.length; i++) {
-            cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
+            cycleCards[i] = new Card("Sprites/EnabledCards/CyclePointOn.png");
             Card card = cycleCards[i];
             add(card).row();
         }
@@ -305,9 +306,9 @@ public final class CycleCardContainer extends CardContainer {
     public void settingCellEnabled (Card card, boolean cellEnabled) {
         if (card.getGameCard() == null) {
             if (cellEnabled && !card.isCellEnabled())
-                card.setDrawable(new TextureRegionDrawable(new Texture("Sprites/Cards/CyclePointOn.png")));
+                card.setDrawable(new TextureRegionDrawable(new Texture("Sprites/EnabledCards/CyclePointOn.png")));
             else if (!cellEnabled && card.isCellEnabled())
-                card.setDrawable(new TextureRegionDrawable(new Texture("Sprites/Cards/CyclePointOff.png")));
+                card.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/CyclePointOff.png")));
         }
         card.setCellEnabled(cellEnabled);
     }
@@ -350,7 +351,7 @@ public final class CycleCardContainer extends CardContainer {
             padBottom(PAD);
         int i = cycleCards.length - 1;
 
-        cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
+        cycleCards[i] = new Card("Sprites/EnabledCards/CyclePointOn.png");
         getCells().get(i).setActor(cycleCards[i]);
     }
 
@@ -363,7 +364,7 @@ public final class CycleCardContainer extends CardContainer {
             n = cycleCards.length - prevSize * 2 + 1;
 
             for (; i < n; i++) {
-                cycleCards[i] = new Card("Sprites/Cards/CyclePointOn.png");
+                cycleCards[i] = new Card("Sprites/EnabledCards/CyclePointOn.png");
                 cells.get(i).setActor(cycleCards[i]);
             }
         } else if (currSize < prevSize) {
@@ -381,5 +382,13 @@ public final class CycleCardContainer extends CardContainer {
     public int actionSizeToUse() {
         return cycleCards.length - 2 * gameController.getAlgorithmCardWindow().
                 getActionsCardContainer().getChildren().size;
+    }
+
+    public void setCycleToPrevious() {
+        for (int i = 0; i < cycleCards.length; i++) {
+            Actor card = getCells().get(i).getActor();
+            if (card != null)
+                ((Card)card).setCycleToPrevious(this);
+        }
     }
 }
