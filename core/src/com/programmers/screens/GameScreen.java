@@ -93,7 +93,18 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
             }
         };
 
-        pauseMenu = new Dialog("PAUSE MENU", skin);
+        pauseMenu = new Dialog("PAUSE MENU", skin) {
+            @Override
+            public Dialog show(Stage stage) {
+                gameInputProcessor.lockCamera();
+                return super.show(stage);
+            }
+
+            @Override
+            protected void result(Object object) {
+                gameInputProcessor.unlockCamera();
+            }
+        };
         pauseMenu.getContentTable().setFillParent(true);
         pauseMenu.setMovable(false);
 
@@ -265,16 +276,9 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
 
     @Override
     public boolean keyDown(int keyCode) {
-        if (keyCode == Input.Keys.BACK && isPauseMenuHidden) {
-            if (pauseMenu != null) {
-                pauseMenu.show(this);
-                isPauseMenuHidden = false;
-            } else {
-                modelBatch.dispose();
-                instances.clear();
-                CardContainer.cardContainers.clear();
-                screenLoader.setScreen(screenLoader.getMainMenu());
-            }
+        if (pauseMenu != null && keyCode == Input.Keys.BACK && isPauseMenuHidden) {
+            pauseMenu.show(this);
+            isPauseMenuHidden = false;
             return true;
         }
         return false;

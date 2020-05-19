@@ -107,7 +107,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
                     + "\nPLAYERS: " + room.getNowPlayers() + "/" + room.getPlayersCount()
                     + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase(), style);
             ConnectGameScreen.this.room = room;
-            screenLoader.specificCode.addListener(
+            screenLoader.specificCode.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
@@ -124,7 +124,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
             if (room.getNowPlayers() <= room.getPlayersCount()) {
                 if (screenLoader.specificCode.addPlayerToRoom(room)) {
                     foundDialog.show(ConnectGameScreen.this);
-                    screenLoader.specificCode.addListener(
+                    screenLoader.specificCode.addRoomChangedListener(
                             room, new Procedure() {
                                 @Override
                                 public void call() {

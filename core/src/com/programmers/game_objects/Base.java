@@ -12,8 +12,8 @@ public final class Base extends Chunk {
     private final Array<Car.Color> labColors;
     private final Car.Color baseColor;
 
-    public Base(final int x, final int y, final int z, final Field field, final Car.Color baseColor) {
-        super(x, y, z, null, field);
+    public Base(final Chunk chunk, final Car.Color baseColor) {
+        super(chunk.getX(), chunk.getY(), chunk.getZ(), null, chunk.getField());
         this.baseColor = baseColor;
         StringBuilder stringBuilder = new StringBuilder("Models/");
         switch (getGameScreen().getDifficulty()) {

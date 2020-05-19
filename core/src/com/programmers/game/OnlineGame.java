@@ -9,25 +9,26 @@ import com.programmers.screens.ScreenLoader;
 public class OnlineGame extends GameScreen {
 
     private final SpecificCode.Room room;
-    private final boolean sendSeed;
+    private SpecificCode.Field fieldData;
+    private final boolean sendData;
     private boolean loadGame;
 
     private final Dialog waitDialog;
 
-    public OnlineGame(final ScreenLoader screenLoader, final SpecificCode.Room room, boolean sendSeed) {
+    public OnlineGame(final ScreenLoader screenLoader, final SpecificCode.Room room, boolean sendData) {
         super(screenLoader, room.getDifficulty(), room.getPlayersCount());
 
         waitDialog = new Dialog("Waiting...", ScreenLoader.getDefaultGdxSkin());
         waitDialog.setMovable(false);
 
-        this.sendSeed = sendSeed;
+        this.sendData = sendData;
         this.room = room;
-        if (sendSeed) {
+        if (sendData) {
             field = new Field(this);
             loadGame();
-            // send data
+            screenLoader.specificCode.sendFieldData(room, field);
         } else {
-            screenLoader.specificCode.addListener(
+            screenLoader.specificCode.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
@@ -35,8 +36,12 @@ public class OnlineGame extends GameScreen {
                             new Thread() {
                                 @Override
                                 public void run() {
-                                    // receive data
-                                    loadGame = true;
+                                    try {
+                                        sleep(2000);
+                                        fieldData = screenLoader.specificCode.getFieldData(room);
+                                        loadGame = true;
+                                        screenLoader.specificCode.removeListener(room);
+                                    } catch (InterruptedException ignored) { }
                                     interrupt();
                                 }
                             }.start();
@@ -50,7 +55,7 @@ public class OnlineGame extends GameScreen {
         super.render(delta);
         if (loadGame) {
             loadGame = false;
-            field = new Field(OnlineGame.this);
+            field = new Field(this, fieldData);
             loadGame();
             waitDialog.hide();
         }
@@ -74,11 +79,12 @@ public class OnlineGame extends GameScreen {
 
     @Override
     public void dispose() {
-        if (sendSeed) {
+        if (sendData) {
             screenLoader.specificCode.deleteRoom(room.getName());
         } else {
             screenLoader.specificCode.removePlayerFromRoom(room);
         }
+        screenLoader.specificCode.removeListener(room);
         super.dispose();
     }
 }

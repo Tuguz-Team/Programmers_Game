@@ -157,7 +157,7 @@ public final class NewGameScreen extends ReturnableScreen {
         private void show(final String name, final int playersCount, final Difficulty difficulty) {
             room = new SpecificCode.Room(name, playersCount, difficulty);
             show(NewGameScreen.this);
-            screenLoader.specificCode.addListener(
+            screenLoader.specificCode.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {

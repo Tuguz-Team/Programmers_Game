@@ -10,6 +10,7 @@ import com.programmers.game_objects.Chunk;
 import com.programmers.game_objects.Life;
 import com.programmers.game_objects.Lift;
 import com.programmers.game_objects.Wall;
+import com.programmers.interfaces.SpecificCode;
 import com.programmers.screens.GameScreen;
 
 import static com.badlogic.gdx.math.MathUtils.random;
@@ -17,11 +18,35 @@ import static com.badlogic.gdx.math.MathUtils.random;
 public final class Field {
 
     private final int size;
-    private GameScreen gameScreen;
-    private Chunk[][] chunks;
+    private final GameScreen gameScreen;
+    private final Chunk[][] chunks;
     private final Vector3 offset;
 
+    public Field(final GameScreen gameScreen, final SpecificCode.Field field) {
+        this(gameScreen, (Void)null);
+        for (SpecificCode.Field.Chunk chunk : field.getChunks()) {
+            chunks[chunk.getX()][chunk.getZ()] = new Chunk(chunk.getX(), chunk.getY(),
+                    chunk.getZ(), chunk.getColor(), this);
+        }
+        for (SpecificCode.Field.Life life : field.getLives()) {
+            new Life(chunks[life.getX()][life.getZ()], life.getType());
+        }
+        for (SpecificCode.Field.Wall wall : field.getWalls()) {
+            new Wall(chunks[wall.getX()][wall.getZ()], wall.getDirection());
+        }
+        chunks[0][0] = new Base(chunks[0][0], field.getBases().get(0).getBaseColor());
+        chunks[0][size - 1] = new Base(chunks[0][size - 1], field.getBases().get(1).getBaseColor());
+        chunks[size - 1][0] = new Base(chunks[size - 1][0], field.getBases().get(2).getBaseColor());
+        chunks[size - 1][size - 1] = new Base(chunks[size - 1][size - 1],
+                field.getBases().get(3).getBaseColor());
+    }
+
     public Field(final GameScreen gameScreen) {
+        this(gameScreen, (Void)null);
+        generateField();
+    }
+
+    private Field(GameScreen gameScreen, Void v) {
         this.gameScreen = gameScreen;
         size = gameScreen.getSize();
         offset = new Vector3(
@@ -29,7 +54,6 @@ public final class Field {
                 0f,
                 (1 - size) * Chunk.width / 2f);
         chunks = new Chunk[size][size];
-        generateField();
     }
 
     public Vector3 getOffset() {
@@ -240,11 +264,10 @@ public final class Field {
                 b[temp] = true;
             }
         }
-        chunks[0][0] = new Base(0, chunks[0][0].getY(), 0, this, colors[0]);
-        chunks[0][size - 1] = new Base(0, chunks[0][size - 1].getY(), size - 1, this, colors[1]);
-        chunks[size - 1][0] = new Base(size - 1, chunks[size - 1][0].getY(), 0, this, colors[2]);
-        chunks[size - 1][size - 1] = new Base(size - 1, chunks[size - 1][size - 1].getY(), size - 1,
-                this, colors[3]);
+        chunks[0][0] = new Base(chunks[0][0], colors[0]);
+        chunks[0][size - 1] = new Base(chunks[0][size - 1], colors[1]);
+        chunks[size - 1][0] = new Base(chunks[size - 1][0], colors[2]);
+        chunks[size - 1][size - 1] = new Base(chunks[size - 1][size - 1], colors[3]);
     }
 
     private void generateLifts(final int i, final int j, final int length, final int width) {
@@ -441,32 +464,13 @@ public final class Field {
         }
         int x, z;
         com.programmers.enums.Direction direction;
-        Wall wall;
         while (count-- > 0) {
             do {
                 x = random.nextInt(size);
                 z = random.nextInt(size);
                 direction = Direction.getRandom();
             } while (!chunks[x][z].canPlaceWall(direction));
-            wall = new Wall(chunks[x][z], direction);
-            switch (direction) {
-                case Forward:
-                    chunks[x][z].setWallForward(wall);
-                    if (z + 1 < size) chunks[x][z + 1].setWallBack(wall);
-                    break;
-                case Back:
-                    chunks[x][z].setWallBack(wall);
-                    if (z - 1 > 0) chunks[x][z - 1].setWallForward(wall);
-                    break;
-                case Left:
-                    chunks[x][z].setWallLeft(wall);
-                    if (x + 1 < size) chunks[x + 1][z].setWallRight(wall);
-                    break;
-                case Right:
-                default:
-                    chunks[x][z].setWallRight(wall);
-                    if (x - 1 > 0) chunks[x - 1][z].setWallLeft(wall);
-            }
+            new Wall(chunks[x][z], direction);
         }
     }
 
