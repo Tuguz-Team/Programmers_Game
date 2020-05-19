@@ -18,9 +18,9 @@ public interface SpecificCode {
 
     LinkedList<Room> findRooms();
 
-    ChangesListener getListener(Room room, Procedure procedure);
+    void setListener(Room room, Procedure procedure);
 
-    abstract class ChangesListener implements Procedure { }
+    void removeListener(Room room);
 
     final class Room {
         private String name;
@@ -54,6 +54,18 @@ public interface SpecificCode {
 
         public int getNowPlayers() {
             return nowPlayers;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setPlayersCount(int playersCount) {
+            this.playersCount = playersCount;
+        }
+
+        public void setDifficulty(Difficulty difficulty) {
+            this.difficulty = difficulty;
         }
     }
 }

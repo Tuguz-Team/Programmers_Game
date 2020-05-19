@@ -101,7 +101,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
         public void call() {
             foundDialog.show(ConnectGameScreen.this);
             screenLoader.specificCode.addPlayerToRoom(room);
-            screenLoader.specificCode.getListener(
+            screenLoader.specificCode.setListener(
                     room, new Procedure() {
                         @Override
                         public void call() {

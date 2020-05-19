@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.hotseat.HotseatGame;
+import com.programmers.game.online.OnlineGame;
 import com.programmers.interfaces.Procedure;
 import com.programmers.interfaces.SpecificCode;
 import com.programmers.ui_elements.MyButton;
@@ -22,6 +23,7 @@ import com.programmers.ui_elements.OKDialog;
 public final class NewGameScreen extends ReturnableScreen {
 
     private SpecificCode.Room room;
+    private boolean launchOnline;
 
     private static final Skin skin = ScreenLoader.getDefaultGdxSkin();
     private final Dialog waitDialog;
@@ -121,8 +123,19 @@ public final class NewGameScreen extends ReturnableScreen {
     }
 
     @Override
+    public void render(float delta) {
+        super.render(delta);
+        if (launchOnline) {
+            dispose();
+            screenLoader.setScreen(new OnlineGame(screenLoader, room));
+        }
+    }
+
+    @Override
     public void dispose() {
-        screenLoader.specificCode.deleteRoom(room.getName());
+        if (room != null && !launchOnline) {
+            screenLoader.specificCode.deleteRoom(room.getName());
+        }
         super.dispose();
     }
 
@@ -144,11 +157,15 @@ public final class NewGameScreen extends ReturnableScreen {
         private void show(final String name, final int playersCount, final Difficulty difficulty) {
             room = new SpecificCode.Room(name, playersCount, difficulty);
             show(NewGameScreen.this);
-            screenLoader.specificCode.getListener(
+            screenLoader.specificCode.setListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
                             label.setText("Players in \nthe room : " + room.getNowPlayers());
+                            if (room.getNowPlayers() == room.getPlayersCount()) {
+                                screenLoader.specificCode.removeListener(room);
+                                launchOnline = true;
+                            }
                         }
                     }
             );

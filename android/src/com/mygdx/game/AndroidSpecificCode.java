@@ -14,13 +14,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.programmers.enums.Difficulty;
 import com.programmers.interfaces.Procedure;
 import com.programmers.interfaces.SpecificCode;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public final class AndroidSpecificCode implements SpecificCode {
 
@@ -101,25 +104,43 @@ public final class AndroidSpecificCode implements SpecificCode {
         return linkedList;
     }
 
+    private HashMap<Room, ListenerRegistration> listenersMap = new HashMap<>();
+    private HashMap<Room, Procedure> proceduresMap = new HashMap<>();
+
     @Override
-    public ChangesListener getListener(final Room room, final Procedure procedure) {
-        final ChangesListener changesListener = new ChangesListener() {
-            @Override
-            public void call() {
-                procedure.call();
-            }
-        };
-        firebaseFirestore.collection(roomCollection).document(room.getName()).addSnapshotListener(
-                new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e == null && documentSnapshot != null && documentSnapshot.exists()) {
-                            room.setNowPlayers(documentSnapshot.toObject(Room.class).getNowPlayers());
-                            changesListener.call();
+    public void setListener(final Room room, @NonNull final Procedure procedure) {
+        if (!listenersMap.containsKey(room) && !proceduresMap.containsKey(room)) {
+            proceduresMap.put(room, procedure);
+            listenersMap.put(room, firebaseFirestore.collection(roomCollection)
+                    .document(room.getName()).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
+                                            @Nullable FirebaseFirestoreException e) {
+                            if (e == null && documentSnapshot != null && documentSnapshot.exists()) {
+                                Room newRoom = documentSnapshot.toObject(Room.class);
+                                if (newRoom != null) {
+                                    room.setName(newRoom.getName());
+                                    room.setPlayersCount(newRoom.getPlayersCount());
+                                    room.setDifficulty(newRoom.getDifficulty());
+                                    room.setNowPlayers(newRoom.getNowPlayers());
+                                    Objects.requireNonNull(proceduresMap.get(room)).call();
+                                }
+                            }
                         }
-                    }
-                });
-        return changesListener;
+                    })
+            );
+        } else {
+            proceduresMap.put(room, procedure);
+        }
+    }
+
+    @Override
+    public void removeListener(Room room) {
+        ListenerRegistration listenerRegistration = listenersMap.get(room);
+        if (listenerRegistration != null) {
+            listenerRegistration.remove();
+            listenersMap.remove(room);
+            proceduresMap.remove(room);
+        }
     }
 }
