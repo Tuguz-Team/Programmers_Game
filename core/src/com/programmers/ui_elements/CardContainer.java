@@ -30,7 +30,7 @@ public class CardContainer extends Table {
             addEmpty();
         if (gameCards != null) {
             for (GameCard gameCard : gameCards) {
-                Card card = new Card(gameCard);
+                Card card = new Card(gameCard, gameController.getGameScreen().getGameInputProcessor());
                 addCard(card, 0, 0);
             }
         }

@@ -283,4 +283,8 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         }
         return false;
     }
+
+    public GameInputProcessor getGameInputProcessor() {
+        return gameInputProcessor;
+    }
 }

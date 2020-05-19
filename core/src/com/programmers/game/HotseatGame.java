@@ -27,7 +27,7 @@ public class HotseatGame extends GameScreen {
             players[i] = new Player(new Car(bases.get(index)));
             bases.removeIndex(index);
         }
-        gameController = new GameController(players, field);
+        gameController = new GameController(players, field, this);
 
         loadGame();
     }

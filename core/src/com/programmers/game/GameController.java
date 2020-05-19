@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.game_objects.Chunk;
+import com.programmers.screens.GameScreen;
 import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
@@ -21,6 +22,7 @@ public final class GameController {
     private final Player[] players;
     private final Field field;
     private final Difficulty difficulty;
+    private GameScreen gameScreen;
 
     private final PlayerCardWindow playerCardWindow;
     private final AlgorithmCardWindow algorithmCardWindow;
@@ -29,9 +31,10 @@ public final class GameController {
     private final Array<GameCard> discardPile;
     private final Stack<GameCard> talon = new Stack<>();
 
-    public GameController(final Player[] players, final Field field) {
+    public GameController(final Player[] players, final Field field, GameScreen gameScreen) {
         this.players = players;
         this.field = field;
+        this.gameScreen = gameScreen;
         thisPlayer = players[0];
         algorithmCards = new Array<>();
         // Use discardPile as place where cards are initializing
@@ -143,7 +146,7 @@ public final class GameController {
         thisPlayer = players[(i + 1) % players.length];
         // add this player cards to the playerCardWindow
         for (GameCard gameCard : thisPlayer.getGameCards()) {
-            Card card = new Card(gameCard);
+            Card card = new Card(gameCard, gameScreen.getGameInputProcessor());
             playerCardContainer.addCard(card, 0, 0);
             gameCard.setPlayer(thisPlayer);
         }
@@ -187,5 +190,9 @@ public final class GameController {
 
     public AlgorithmCardWindow getAlgorithmCardWindow() {
         return algorithmCardWindow;
+    }
+
+    public GameScreen getGameScreen () {
+        return gameScreen;
     }
 }

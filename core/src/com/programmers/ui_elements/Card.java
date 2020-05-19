@@ -6,11 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game.GameCard;
+import com.programmers.game.GameInputProcessor;
 
 import static com.programmers.screens.ScreenLoader.getDefaultGdxSkin;
 
@@ -18,6 +20,7 @@ public final class Card extends Image implements Comparable<Card> {
 
     private final GameCard gameCard;
     private CardContainer prevParent;
+    protected GameInputProcessor gameInputProcessor = null;
 
     private Cell<Card> cell;
     private boolean cellEnabled = true,
@@ -30,9 +33,10 @@ public final class Card extends Image implements Comparable<Card> {
         setDebug(true);
     }
 
-    public Card(final GameCard gameCard) {
+    public Card(final GameCard gameCard, GameInputProcessor gameInputProcessor) {
         super(new Texture("Sprites/EnabledCards/".concat(gameCard.getType().toString()).concat(".png")));
         this.gameCard = gameCard;
+        this.gameInputProcessor = gameInputProcessor;
         setDebug(true);
         addListener(new InputListener() {
             final Card thisCard = Card.this;
@@ -71,7 +75,7 @@ public final class Card extends Image implements Comparable<Card> {
                     if (x >= stagePos.x && x < stagePos.x + container.getWidth()
                             && y >= stagePos.y && y < stagePos.y + container.getHeight())
                     {
-                        if (container.getChildren().size < 5) {
+                        if (container.getChildren().size < 5 && !thisCard.isReplaced()) {
                             cardContainer = container;
                             break;
                         } else if (container instanceof CycleCardContainer) {
@@ -230,31 +234,47 @@ public final class Card extends Image implements Comparable<Card> {
             );
             this.removeListener(this.getListeners().get(0));
             this.addListener(new InputListener() {
+                Card thisCard = Card.this;
                 @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    YesNoDialog dialog = new YesNoDialog("Do you really want to delete " +
+                public boolean touchDown(final InputEvent event, float x, float y, int pointer, int button) {
+                    prevParent = (CardContainer) thisCard.getParent();
+                    if (prevParent instanceof CycleCardContainer) {
+                        ((CycleCardContainer) prevParent).restoreSpace(thisCard);
+                    }
+                    Group group = prevParent.getParent();
+                    while (group != null) {
+                        group.addActor(thisCard);
+                        group = group.getParent();
+                    }
+                    if (prevParent instanceof CycleCardContainer) {
+                        ((CycleCardContainer) prevParent).restoreSpace(thisCard);
+                    }
+                    thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
+
+                    final Dialog dialog = new Dialog("Do you really want to delete " +
                             "this cycle card? This change is irreversible.", getDefaultGdxSkin()) {
                         @Override
-                        public void call() {
-                            //Cell cell = container.getCell(Card.this);
-                            //cell.setActor(new Card("Sprites/EnabledCards/CyclePointOn.png"));
-                            //container.updatePoints(container.getCells(), false);
-
-                            //container.getGameController().getDiscardPile().add(Card.this.getGameCard());
+                        protected void result(Object object) {
+                            if (object.equals(true)) {
+                                thisCard.remove();
+                                container.getGameController().getDiscardPile().add(Card.this.getGameCard());
+                                gameInputProcessor.unlockCamera();
+                            } else {
+                                thisCard.setVisible(true);
+                                container.addCard(Card.this, event.getStageX(), event.getStageY());
+                                gameInputProcessor.unlockCamera();
+                            }
                         }
                     };
+
+                    dialog.button("YES", true).button("NO", false);
+                    dialog.setMovable(false);
+
+                    thisCard.setVisible(false);
                     dialog.show(Card.this.getParent().getStage());
+                    gameInputProcessor.lockCamera();
+
                     return true;
-                }
-
-                @Override
-                public void touchDragged(InputEvent event, float x, float y, int pointer) {
-
-                }
-
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-
                 }
             });
         }
