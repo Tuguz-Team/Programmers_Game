@@ -7,7 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.programmers.game.GameCard;
-import com.programmers.game.hotseat.GameController;
+import com.programmers.game.GameController;
+import com.programmers.game.hotseat.HotseatGameController;
 import com.programmers.screens.ScreenLoader;
 
 public final class PlayerCardWindow extends Table {

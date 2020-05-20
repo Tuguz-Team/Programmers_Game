@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.CardType;
-import com.programmers.game.hotseat.GameController;
+import com.programmers.game.GameController;
 
 public final class CycleCardContainer extends CardContainer {
 

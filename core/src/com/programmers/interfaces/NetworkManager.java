@@ -8,11 +8,11 @@ import com.programmers.enums.Difficulty;
 import com.programmers.enums.Direction;
 import com.programmers.game.Field;
 import com.programmers.game.Player;
+import com.programmers.game.hotseat.HotseatGameController;
 import com.programmers.game.online.OnlineGameController;
 import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 import com.programmers.game_objects.Life;
-import com.programmers.game_objects.Lift;
 import com.programmers.ui_elements.Card;
 
 import java.util.Arrays;
@@ -25,17 +25,23 @@ public interface NetworkManager {
 
     boolean createNewRoom(String name, int playersCount, Difficulty difficulty);
 
-    boolean roomExists(String name);
-
     void deleteRoom(String name);
 
     void launchRoom(Room room);
 
+    void setPlayersID(Room room);
+
     void sendFieldData(Room room, com.programmers.game.Field field);
+
+    void toNextPlayer(Room room);
+
+    GameData.Player getThisPlayerData(Room room);
 
     FieldData getFieldData(Room room);
 
-    void sendGameData(Room room, OnlineGameController onlineGameController);
+    void sendGameData(Room room, HotseatGameController hotseatGameController);
+
+    void updateGameData(Room room, OnlineGameController onlineGameController, Player player);
 
     GameData getGameData(Room room);
 
@@ -45,13 +51,13 @@ public interface NetworkManager {
 
     LinkedList<Room> findRooms();
 
-    void addRoomChangedListener(Room room, Procedure procedure);
+    void addRoomChangedListener(Room room, Procedure exists, Procedure doesNotExists);
 
     void removeListener(Room room);
 
     final class Room {
         private String name;
-        private int nowPlayers = 1;
+        private List<String> players = new LinkedList<>();
         private int playersCount;
         private Difficulty difficulty;
         private boolean launched;
@@ -68,8 +74,8 @@ public interface NetworkManager {
             name = room.getName();
             playersCount = room.getPlayersCount();
             difficulty = room.getDifficulty();
-            nowPlayers = room.getNowPlayers();
             launched = room.isLaunched();
+            players = room.getPlayers();
         }
 
         public String getName() {
@@ -80,16 +86,12 @@ public interface NetworkManager {
             return playersCount;
         }
 
-        public void setNowPlayers(int nowPlayers) {
-            this.nowPlayers = nowPlayers;
-        }
-
         public Difficulty getDifficulty() {
             return difficulty;
         }
 
-        public int getNowPlayers() {
-            return nowPlayers;
+        public List<String> getPlayers() {
+            return players;
         }
 
         public void setName(String name) {
@@ -322,9 +324,9 @@ public interface NetworkManager {
             this.cardsData = cardsData;
         }
 
-        public GameData(OnlineGameController onlineGameController) {
-            playersData = new PlayersData(onlineGameController);
-            cardsData = new CardsData(onlineGameController);
+        public GameData(HotseatGameController hotseatGameController) {
+            playersData = new PlayersData(hotseatGameController);
+            cardsData = new CardsData(hotseatGameController);
         }
 
         public PlayersData getPlayersData() {
@@ -350,19 +352,27 @@ public interface NetworkManager {
         }
 
         public static final class PlayersData {
-            private List<Player> players;
+            private List<Player> players = new LinkedList<>();
+            private int index;
 
             public PlayersData() { }
 
-            public PlayersData(OnlineGameController onlineGameController) {
-                players = new LinkedList<>();
-                for (com.programmers.game.Player player : onlineGameController.getPlayers()) {
+            public PlayersData(HotseatGameController hotseatGameController) {
+                for (com.programmers.game.Player player : hotseatGameController.getPlayers()) {
                     players.add(new Player(player));
                 }
             }
 
             public List<Player> getPlayers() {
                 return players;
+            }
+
+            public int getIndex() {
+                return index;
+            }
+
+            public void indexToNextPlayer() {
+                index = (index + 1) % players.size();
             }
         }
 
@@ -374,19 +384,19 @@ public interface NetworkManager {
 
             public CardsData() { }
 
-            public CardsData(OnlineGameController onlineGameController) {
+            public CardsData(HotseatGameController hotseatGameController) {
                 playerCardWindow = new LinkedList<>();
-                for (Actor actor : onlineGameController.getPlayerCardWindow().getCardContainer().getChildren()) {
+                for (Actor actor : hotseatGameController.getPlayerCardWindow().getCardContainer().getChildren()) {
                     GameCard gameCard = new GameCard(((Card) actor).getGameCard());
                     playerCardWindow.add(gameCard);
                 }
-                algorithmCardWindow = new AlgorithmCardWindow(onlineGameController.getAlgorithmCardWindow());
+                algorithmCardWindow = new AlgorithmCardWindow(hotseatGameController.getAlgorithmCardWindow());
                 discardPile = new LinkedList<>();
-                for (com.programmers.game.GameCard gameCard : onlineGameController.getDiscardPile()) {
+                for (com.programmers.game.GameCard gameCard : hotseatGameController.getDiscardPile()) {
                     discardPile.add(new GameCard(gameCard));
                 }
                 talon = new LinkedList<>();
-                for (com.programmers.game.GameCard gameCard : onlineGameController.getTalon()) {
+                for (com.programmers.game.GameCard gameCard : hotseatGameController.getTalon()) {
                     talon.add(new GameCard(gameCard));
                 }
             }
@@ -410,6 +420,7 @@ public interface NetworkManager {
 
         public static final class Player {
             private int score;
+            private String ID;
             private List<GameCard> cards;
             private List<FieldData.Life> lives;
             private FieldData.Car car;
@@ -443,6 +454,14 @@ public interface NetworkManager {
 
             public List<FieldData.Life> getLives() {
                 return lives;
+            }
+
+            public String getID() {
+                return ID;
+            }
+
+            public void setID(String ID) {
+                this.ID = ID;
             }
         }
 

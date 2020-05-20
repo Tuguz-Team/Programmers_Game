@@ -14,7 +14,7 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new ScreenLoader(new AndroidNetworkManager(this)), config);
+		initialize(new ScreenLoader(new AndroidNetworkManager()), config);
 
 		setImmersiveSticky();
 		getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(

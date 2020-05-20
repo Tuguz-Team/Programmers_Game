@@ -161,12 +161,15 @@ public final class NewGameScreen extends ReturnableScreen {
                     room, new Procedure() {
                         @Override
                         public void call() {
-                            label.setText("Players : " + room.getNowPlayers() + "/" + room.getPlayersCount());
-                            if (room.getNowPlayers() == room.getPlayersCount()) {
+                            label.setText("Players : " + room.getPlayers().size() + "/" + room.getPlayersCount());
+                            if (room.getPlayers().size() == room.getPlayersCount()) {
                                 launchOnline = true;
                                 screenLoader.networkManager.removeListener(room);
                             }
                         }
+                    }, new Procedure() {
+                        @Override
+                        public void call() { }
                     }
             );
         }

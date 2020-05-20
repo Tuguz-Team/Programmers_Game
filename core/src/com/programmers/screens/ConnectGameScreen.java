@@ -2,6 +2,7 @@ package com.programmers.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -23,7 +24,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
     private NetworkManager.Room room;
 
     private final Dialog foundDialog, waitingDialog;
-    private final OKDialog notFoundDialog, roomNoExistDialog;
+    private final OKDialog notFoundDialog, notExistDialog, unableToConnectDialog;
     private final Label label;
     private final VerticalGroup existingGames;
 
@@ -34,10 +35,20 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
         notFoundDialog = new OKDialog("No games were found!", skin);
 
-        roomNoExistDialog = new OKDialog("This room doesn't exist now!", skin);
+        notExistDialog = new OKDialog("This room doesn't exist now!", skin) {
+            @Override
+            public Dialog show(Stage stage) {
+                screenLoader.networkManager.removeListener(room);
+                foundDialog.hide();
+                room = null;
+                return super.show(stage);
+            }
+        };
 
         waitingDialog = new Dialog("Searching for games...", skin);
         waitingDialog.setMovable(false);
+
+        unableToConnectDialog = new OKDialog("You cannot connect to room: game was started!", skin);
 
         label = new Label("", skin);
         label.setWrap(true);
@@ -45,8 +56,8 @@ public final class ConnectGameScreen extends ReturnableScreen {
         foundDialog = new Dialog("Connected! Waiting for other players...", skin) {
             @Override
             protected void result(Object object) {
-                if (!screenLoader.networkManager.removePlayerFromRoom(room)) {
-                    roomNoExistDialog.show(ConnectGameScreen.this);
+                if (room != null && !screenLoader.networkManager.removePlayerFromRoom(room)) {
+                    notExistDialog.show(ConnectGameScreen.this);
                 }
             }
         };
@@ -67,6 +78,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
             public void call() {
                 waitingDialog.show(ConnectGameScreen.this);
                 existingGames.clearChildren();
+                room = null;
                 new Thread() {
                     @Override
                     public void run() {
@@ -104,7 +116,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
         private GameRoom(final NetworkManager.Room room, final ImageTextButtonStyle style) {
             super("ROOM NAME: " + room.getName().toUpperCase()
-                    + "\nPLAYERS: " + room.getNowPlayers() + "/" + room.getPlayersCount()
+                    + "\nPLAYERS: " + room.getPlayers().size() + "/" + room.getPlayersCount()
                     + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase(), style);
             ConnectGameScreen.this.room = room;
             screenLoader.networkManager.addRoomChangedListener(
@@ -112,34 +124,51 @@ public final class ConnectGameScreen extends ReturnableScreen {
                         @Override
                         public void call() {
                             setText("ROOM NAME: " + room.getName().toUpperCase()
-                                    + "\nPLAYERS: " + room.getNowPlayers() + "/" + room.getPlayersCount()
+                                    + "\nPLAYERS: " + room.getPlayers().size() + "/" + room.getPlayersCount()
                                     + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase());
                         }
+                    }, new Procedure() {
+                        @Override
+                        public void call() { }
                     }
             );
         }
 
         @Override
         public void call() {
-            if (room.getNowPlayers() <= room.getPlayersCount()) {
-                if (screenLoader.networkManager.addPlayerToRoom(room)) {
-                    foundDialog.show(ConnectGameScreen.this);
-                    screenLoader.networkManager.addRoomChangedListener(
-                            room, new Procedure() {
-                                @Override
-                                public void call() {
-                                    label.setText("Players : " + room.getNowPlayers() + "/" + room.getPlayersCount());
-                                    if (room.getPlayersCount() == room.getNowPlayers()) {
-                                        launchOnline = true;
-                                        screenLoader.networkManager.removeListener(room);
+            if (room != null && room.getPlayers().size() <= room.getPlayersCount()) {
+                if (!room.isLaunched()) {
+                    if (screenLoader.networkManager.addPlayerToRoom(room)) {
+                        foundDialog.show(ConnectGameScreen.this);
+                        screenLoader.networkManager.addRoomChangedListener(
+                                room, new Procedure() {
+                                    @Override
+                                    public void call() {
+                                        if (room != null) {
+                                            label.setText("Players : " + (room.getPlayers().size() + 1) + "/" + room.getPlayersCount());
+                                            if (room.getPlayersCount() == room.getPlayers().size()) {
+                                                launchOnline = true;
+                                                screenLoader.networkManager.removeListener(room);
+                                            }
+                                        }
+                                    }
+                                }, new Procedure() {
+                                    @Override
+                                    public void call() {
+                                        if (room != null) {
+                                            notExistDialog.show(ConnectGameScreen.this);
+                                        }
                                     }
                                 }
-                            }
-                    );
+                        );
+                    } else if (room != null) {
+                        notExistDialog.show(ConnectGameScreen.this);
+                    }
                 } else {
-                    screenLoader.networkManager.removeListener(room);
-                    roomNoExistDialog.show(ConnectGameScreen.this);
+                    unableToConnectDialog.show(ConnectGameScreen.this);
                 }
+            } else {
+                notExistDialog.show(ConnectGameScreen.this);
             }
         }
     }

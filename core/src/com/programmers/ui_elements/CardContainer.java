@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
-import com.programmers.game.hotseat.GameController;
+import com.programmers.game.GameController;
 
 public class CardContainer extends Table {
 
@@ -43,14 +43,6 @@ public class CardContainer extends Table {
     protected void childrenChanged() {
         super.childrenChanged();
         controlEmpty();
-        /*if (prevChildrenCount < getChildren().size && sorting) {
-            sort.sort(getChildren(), new Comparator<Actor>() {
-                @Override
-                public int compare(Actor lhs, Actor rhs) {
-                    return ((Card) lhs).compareTo((Card) rhs);
-                }
-            });
-        }*/
         AlgorithmCardWindow window = gameController.getAlgorithmCardWindow();
         if (window != null) {
             CycleCardContainer cycleCardContainer = (CycleCardContainer) window.getCyclesCardContainer();

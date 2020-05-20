@@ -7,44 +7,27 @@ import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameCard;
+import com.programmers.game.GameController;
 import com.programmers.game.Player;
-import com.programmers.game_objects.Chunk;
 import com.programmers.screens.GameScreen;
-import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
-import com.programmers.ui_elements.PlayerCardWindow;
-
-import java.util.Stack;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public class GameController {
+public final class HotseatGameController extends GameController {
 
-    protected Player thisPlayer;
-    protected final Player[] players;
-    private final Field field;
-    protected final Difficulty difficulty;
-    private final GameScreen gameScreen;
+    private final Player[] players;
+    private final Difficulty difficulty;
 
-    protected PlayerCardWindow playerCardWindow;
-    protected AlgorithmCardWindow algorithmCardWindow;
-
-    protected final Array<GameCard> algorithmCards;
-    protected final Array<GameCard> discardPile;
-    protected Stack<GameCard> talon = new Stack<>();
-
-    protected GameController(final Player[] players, final Field field,
-                             final GameScreen gameScreen, final Void v) {
-        this.gameScreen = gameScreen;
-        algorithmCards = new Array<>();
-        discardPile = new Array<>(52);
+    protected HotseatGameController(final Player[] players, final Field field,
+                                    final GameScreen gameScreen, final Void v) {
+        super(gameScreen, field);
         this.players = players;
-        this.field = field;
         difficulty = field.getGameScreen().getDifficulty();
     }
 
-    public GameController(final Player[] players, final Field field, final GameScreen gameScreen) {
+    public HotseatGameController(final Player[] players, final Field field, final GameScreen gameScreen) {
         this(players, field, gameScreen, null);
         thisPlayer = players[0];
         // Use discardPile as place where cards are initializing
@@ -75,42 +58,10 @@ public class GameController {
                 gameCard.setPlayer(player);
             }
         }
-        // add UI objects that are necessary for the game
-        CardContainer playerCardContainer = new CardContainer(thisPlayer.getGameCards(),
-                difficulty, CardContainer.Content.All, this
-        );
-        playerCardWindow = new PlayerCardWindow(
-                "Player cards", playerCardContainer, this
-        );
-        algorithmCardWindow = new AlgorithmCardWindow("Algorithm", this);
+        initContainers();
     }
 
-    public void makeTalon() {
-        while (!discardPile.isEmpty()) {
-            final int i = random.nextInt(discardPile.size);
-            final GameCard gameCard = discardPile.get(i);
-            talon.push(gameCard);
-            gameCard.setPlayer(null);
-            discardPile.removeIndex(i);
-        }
-    }
-
-    public Array<GameCard> getDiscardPile() {
-        return discardPile;
-    }
-
-    public Array<GameCard> getAlgorithmCards() {
-        return algorithmCards;
-    }
-
-    public Stack<GameCard> getTalon() {
-        return talon;
-    }
-
-    public Player getThisPlayer() {
-        return thisPlayer;
-    }
-
+    @Override
     public Difficulty getDifficulty() {
         return difficulty;
     }
@@ -161,45 +112,5 @@ public class GameController {
 
     public Player[] getPlayers() {
         return players;
-    }
-
-    public Player getWinner() {
-        for (Player player : players) {
-            if ((difficulty == Difficulty.Easy && player.getScore() >= 7)
-                    || (difficulty == Difficulty.Hard && player.getScore() >= 9)) {
-                return player;
-            }
-        }
-        for (Chunk[] chunks : field.getChunks()) {
-            for (Chunk chunk : chunks) {
-                if (!chunk.getLives().isEmpty()) {
-                    return null;
-                }
-            }
-        }
-        for (Player player : players) {
-            if (!player.getCar().getLives().isEmpty()) {
-                return null;
-            }
-        }
-        Player winner = players[0];
-        for (int i = 1; i < players.length; i++) {
-            if (players[i].getScore() > winner.getScore()) {
-                winner = players[i];
-            }
-        }
-        return winner;
-    }
-
-    public PlayerCardWindow getPlayerCardWindow() {
-        return playerCardWindow;
-    }
-
-    public AlgorithmCardWindow getAlgorithmCardWindow() {
-        return algorithmCardWindow;
-    }
-
-    public GameScreen getGameScreen () {
-        return gameScreen;
     }
 }
