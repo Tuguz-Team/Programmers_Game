@@ -9,7 +9,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
 
@@ -23,6 +25,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
     public MainMenuScreen(final ScreenLoader screenLoader) {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        setViewport(new FillViewport(1100, 1100, camera));
 
         final Skin skin = ScreenLoader.getDefaultGdxSkin();
         yesNoDialog = new YesNoDialog("Are you sure you want to exit the game?", skin) {
@@ -42,7 +45,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         mainButtons.setFillParent(true);
         addActor(mainButtons);
 
-        ImageTextButton startButton =
+        TextButton startButton =
                 new MyButton("START", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
@@ -51,7 +54,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
                 );
             }
         };
-        ImageTextButton exitButton =
+        TextButton exitButton =
                 new MyButton("END", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
@@ -63,7 +66,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         };
 
         mainButtons.addActor(startButton);
-        mainButtons.space(0.2f * Gdx.graphics.getHeight());
+        mainButtons.space(100);
         mainButtons.addActor(exitButton);
         mainButtons.center();
 

@@ -137,8 +137,8 @@ public class OnlineGame extends GameScreen {
 
     @Override
     protected void setCameraPosition() {
-        camera.position.set(-size, size, -size);
-        camera.update();
+        perspectiveCamera.position.set(-size, size, -size);
+        perspectiveCamera.update();
     }
 
     @Override

@@ -9,6 +9,7 @@ public abstract class YesNoDialog extends Dialog implements Procedure {
     public YesNoDialog(String title, Skin skin) {
         super(title, skin);
         button("YES", true);
+        getButtonTable().getCells().get(0).spaceRight(50);
         button("NO", false);
         setMovable(false);
     }

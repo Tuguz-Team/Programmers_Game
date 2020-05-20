@@ -14,7 +14,7 @@ public final class CycleCardContainer extends CardContainer {
 
     private final Card[] cycleCards = new Card[9];
     private final GameController gameController;
-    private static final int PAD = 29, WIDTH = 69;
+    private static final int PAD = 29, WIDTH = 90;
 
     CycleCardContainer(final GameController gameController) {
         super(gameController.getAlgorithmCards(), gameController.getDifficulty(), null, gameController);

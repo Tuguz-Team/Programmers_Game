@@ -49,8 +49,8 @@ public class HotseatGame extends GameScreen {
         } else {
             x = z = size;
         }
-        camera.position.set(x, size, z);
-        camera.update();
+        perspectiveCamera.position.set(x, size, z);
+        perspectiveCamera.update();
     }
 
     @Override

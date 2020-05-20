@@ -47,16 +47,16 @@ public final class ScreenLoader extends Game {
                 (Texture) assetManager.get("Sprites/SkyBox/Back.png")
         );
 
-        defaultGdxSkin = assetManager.get("uiskin.json");
+        defaultGdxSkin = assetManager.get("GameSkin/GameSkin.json");
         buttonSkin = new Skin();
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("GameFont.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter
                 = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 48;
+        parameter.size = 36;
         parameter.color = new Color(50 / 255f, 195 / 255f, 195 / 255f, 1f);
         parameter.borderColor = new Color(40 / 255f, 140 / 255f, 140 / 255f, 1f);
-        parameter.borderWidth = parameter.shadowOffsetX = parameter.shadowOffsetY = 5;
+        parameter.borderWidth = parameter.shadowOffsetX = parameter.shadowOffsetY = 3;
         font = generator.generateFont(parameter);
 
         final TextureAtlas textureAtlas = assetManager.get("buttons.pack");

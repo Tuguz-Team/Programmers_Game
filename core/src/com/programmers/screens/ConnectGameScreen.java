@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.game.online.OnlineGame;
@@ -73,7 +74,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
                 ScreenLoader.getDefaultGdxSkin()
         )).spaceBottom(0.01f * Gdx.graphics.getHeight()).row();
 
-        ImageTextButton updateGames = new MyButton("UPDATE", ScreenLoader.getButtonStyle()) {
+        TextButton updateGames = new MyButton("UPDATE", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 waitingDialog.show(ConnectGameScreen.this);
@@ -114,7 +115,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
     private final class GameRoom extends MyButton {
 
-        private GameRoom(final NetworkManager.Room room, final ImageTextButtonStyle style) {
+        private GameRoom(final NetworkManager.Room room, final TextButtonStyle style) {
             super("ROOM NAME: " + room.getName().toUpperCase()
                     + "\nPLAYERS: " + room.getPlayers().size() + "/" + room.getPlayersCount()
                     + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase(), style);

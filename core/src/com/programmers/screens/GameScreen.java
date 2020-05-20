@@ -7,6 +7,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -23,8 +24,10 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameInputProcessor;
@@ -42,7 +45,9 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
     protected final Array<ModelInstance> instances;
     protected final AssetManager assetManager;
 
-    protected final PerspectiveCamera camera;
+    protected final PerspectiveCamera perspectiveCamera;
+    protected final OrthographicCamera orthographicCamera;
+
     protected final Environment environment;
     protected final ModelBatch modelBatch;
     protected final GameInputProcessor gameInputProcessor;
@@ -68,13 +73,18 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
         environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 1f, 0.8f, 0.2f));
 
-        camera = new PerspectiveCamera(67f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.lookAt(0f,0f,0f);
-        camera.near = 0.1f;
-        camera.far = 100f;
-        camera.update();
+        perspectiveCamera = new PerspectiveCamera(67f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        perspectiveCamera.lookAt(0f,0f,0f);
+        perspectiveCamera.near = 0.1f;
+        perspectiveCamera.far = 100f;
+        perspectiveCamera.update();
 
-        gameInputProcessor = new GameInputProcessor(camera, this);
+        orthographicCamera = new OrthographicCamera();
+        orthographicCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        setViewport(new FillViewport(1600, 900, orthographicCamera));
+
+        gameInputProcessor = new GameInputProcessor(perspectiveCamera, this);
 
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(this);
@@ -108,7 +118,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         pauseMenu.getContentTable().setFillParent(true);
         pauseMenu.setMovable(false);
 
-        ImageTextButton returnButton =
+        TextButton returnButton =
                 new MyButton("CONTINUE", ScreenLoader.getButtonStyle()) {
                     @Override
                     public void call() {
@@ -117,14 +127,14 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                         gameInputProcessor.unlockCamera();
                     }
                 };
-        ImageTextButton settingsButton =
+        TextButton settingsButton =
                 new MyButton("SETTINGS", ScreenLoader.getButtonStyle()) {
                     @Override
                     public void call() {
                         screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
                     }
                 };
-        ImageTextButton mainMenuButton =
+        TextButton mainMenuButton =
                 new MyButton("QUIT ROOM", ScreenLoader.getButtonStyle()) {
                     @Override
                     public void call() {
@@ -140,7 +150,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight()).row();
         pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
 
-        ImageTextButton toDialogButton = new MyButton("PAUSE MENU", ScreenLoader.getButtonStyle()) {
+        TextButton toDialogButton = new MyButton("PAUSE MENU", ScreenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 if (isPauseMenuHidden) {
@@ -151,10 +161,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
             }
         };
         addActor(toDialogButton);
-        toDialogButton.setPosition(
-                Gdx.graphics.getWidth() - (Gdx.graphics.getHeight() * 0.02f),
-                Gdx.graphics.getHeight() * 0.98f,
-                Align.topRight);
+        toDialogButton.setPosition(1590, 890, Align.topRight);
 
         addCardWindows();
     }
@@ -234,15 +241,15 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         gameInputProcessor.cameraPosChange();
-        camera.update();
-        screenLoader.getSkyBox().render(camera);
+        perspectiveCamera.update();
+        screenLoader.getSkyBox().render(perspectiveCamera);
 
-        modelBatch.begin(camera);
+        modelBatch.begin(perspectiveCamera);
         modelBatch.render(instances, environment);
         modelBatch.end();
 
         act(Gdx.graphics.getDeltaTime());
-        getBatch().setProjectionMatrix(camera.combined);
+        getBatch().setProjectionMatrix(perspectiveCamera.combined);
         draw();
     }
 

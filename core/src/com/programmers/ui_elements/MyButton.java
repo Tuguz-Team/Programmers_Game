@@ -5,9 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.programmers.interfaces.Procedure;
 
-public abstract class MyButton extends ImageTextButton implements Procedure {
+public abstract class MyButton extends TextButton implements Procedure {
 
     public MyButton(String text, Skin skin) {
         super(text, skin);
@@ -19,7 +20,7 @@ public abstract class MyButton extends ImageTextButton implements Procedure {
         addMyListener();
     }
 
-    public MyButton(String text, ImageTextButtonStyle style) {
+    public MyButton(String text, TextButtonStyle style) {
         super(text, style);
         addMyListener();
     }

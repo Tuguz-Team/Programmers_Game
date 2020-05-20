@@ -3,6 +3,7 @@ package com.programmers.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.programmers.ui_elements.MyButton;
 
@@ -15,19 +16,19 @@ public final class ChooseGameScreen extends ReturnableScreen {
         buttons.setFillParent(true);
         addActor(buttons);
 
-        ImageTextButton hotseatGame = new MyButton("CREATE HOTSEAT GAME", screenLoader.getButtonStyle()) {
+        TextButton hotseatGame = new MyButton("CREATE HOTSEAT GAME", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, true));
             }
         };
-        ImageTextButton createNewGame = new MyButton("CREATE NEW SERVER GAME !", screenLoader.getButtonStyle()) {
+        TextButton createNewGame = new MyButton("CREATE NEW SERVER GAME !", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, false));
             }
         };
-        ImageTextButton connectToGame = new MyButton("CONNECT TO EXISTING GAME !", screenLoader.getButtonStyle()) {
+        TextButton connectToGame = new MyButton("CONNECT TO EXISTING GAME !", screenLoader.getButtonStyle()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new ConnectGameScreen(screenLoader, ChooseGameScreen.this));
