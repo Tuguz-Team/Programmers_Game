@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
@@ -19,18 +21,18 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
 
     private final YesNoDialog yesNoDialog;
     private boolean isYesNoDialogHidden = true;
-
-    //private Texture back = new Texture("");
-
     private OrthographicCamera camera;
 
     public MainMenuScreen(final ScreenLoader screenLoader) {
+        Image main = new Image(new Texture(Gdx.files.internal("Sprites/main.jpg")));
+        main.setFillParent(true);
+        addActor(main);
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         setViewport(new FillViewport(1100, 1100, camera));
 
-        final Skin skin = ScreenLoader.getGameSkin();
-        yesNoDialog = new YesNoDialog("   Are you sure you want to exit the game?   ", skin) {
+        yesNoDialog = new YesNoDialog("   Are you sure you want to exit the game?   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 Gdx.app.exit();
@@ -46,6 +48,8 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         VerticalGroup mainButtons = new VerticalGroup();
         mainButtons.setFillParent(true);
         addActor(mainButtons);
+
+        Image logo = new Image(new Texture(Gdx.files.internal("Sprites/logo.png")));
 
         TextButton startButton =
                 new MyButton("   START   ", ScreenLoader.getGameSkin()) {
@@ -70,10 +74,10 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         };
         exitButton.getLabel().setFontScale(2);
 
+        mainButtons.addActor(logo);
         mainButtons.addActor(startButton);
-        mainButtons.space(100);
         mainButtons.addActor(exitButton);
-        mainButtons.center();
+        mainButtons.center().space(50);
 
         screenLoader.networkManager.registerAnon();
     }
@@ -87,7 +91,6 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
     public void render(float delta) {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
 
         act(Gdx.graphics.getDeltaTime());
         getBatch().setProjectionMatrix(camera.combined);

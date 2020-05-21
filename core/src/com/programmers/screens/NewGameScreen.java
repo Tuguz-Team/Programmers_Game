@@ -79,16 +79,16 @@ public final class NewGameScreen extends ReturnableScreen {
         difficultyRadioButton.space(64);
 
         final ButtonGroup<CheckBox> radioButtonController = new ButtonGroup<>(EasyButton, HardButton);
-        radioButtonController.setChecked("EASY");
+        radioButtonController.setChecked("   EASY   ");
 
         ui.add(difficultyRadioButton).spaceBottom(18).row();
 
-        final NewRoomDialog newRoomDialog = new NewRoomDialog("Waiting for players...", skin);
+        final NewRoomDialog newRoomDialog = new NewRoomDialog("   Waiting for players...   ", skin);
         TextButton start = new MyButton("   START PLAYING !   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 final Difficulty difficulty = radioButtonController.getChecked().getText()
-                        .toString().equals("EASY") ? Difficulty.Easy : Difficulty.Hard;
+                        .toString().equals("   EASY   ") ? Difficulty.Easy : Difficulty.Hard;
                 final int playersCount = (int)playerCountSlider.getValue();
                 if (isHotseat) {
                     dispose();
@@ -96,7 +96,7 @@ public final class NewGameScreen extends ReturnableScreen {
                 } else {
                     final String name = textField.getText(), trimmed = name.trim();
                     if (trimmed.isEmpty()) {
-                        OKDialog dialog = new OKDialog("Name cannot be empty!", skin);
+                        OKDialog dialog = new OKDialog("   Name cannot be empty!   ", skin);
                         dialog.show(NewGameScreen.this);
                         return;
                     }
@@ -108,7 +108,7 @@ public final class NewGameScreen extends ReturnableScreen {
                                 newRoomDialog.show(name, playersCount, difficulty);
                             } else {
                                 OKDialog dialog = new OKDialog(
-                                        "Room with this name is already exists!", skin);
+                                        "   Room with this name is already exists!   ", skin);
                                 dialog.show(NewGameScreen.this);
                             }
                             waitDialog.hide();

@@ -177,6 +177,24 @@
 			"b": 0.9833331,
 			"a": 1
 		}
+	},
+	"round-white-game": {
+		"name": "round-white",
+		"color": {
+			"r": 0.80373335,
+			"g": 0.9098748,
+			"b": 0.9133331,
+			"a": 1
+		}
+	},
+	"round-white-gam": {
+		"name": "round-white",
+		"color": {
+			"r": 0.59915537,
+			"g": 0.73232734,
+			"b": 0.73666644,
+			"a": 1
+		}
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
@@ -300,8 +318,8 @@
 		"font": "GameFont",
 		"fontColor": "white",
 		"downFontColor": "game",
-		"up": "game-round-white",
-		"down": "game-round-light"
+		"up": "round-white-game",
+		"down": "round-white-gam"
 	},
 	"toggle": {
 		"font": "font",

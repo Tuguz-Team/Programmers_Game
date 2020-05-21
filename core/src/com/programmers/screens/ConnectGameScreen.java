@@ -92,7 +92,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
             }
         };
         updateGames.getLabel().setFontScale(2);
-        table.add(updateGames).spaceBottom(10).row();
+        table.add(updateGames).spaceBottom(10).pad(10).row();
 
         Label gameToConnect = new Label("GAMES TO CONNECT", ScreenLoader.getGameSkin());
         gameToConnect.setFontScale(2);

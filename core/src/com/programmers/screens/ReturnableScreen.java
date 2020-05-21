@@ -5,9 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.programmers.ui_elements.MyButton;
@@ -23,6 +27,16 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
         this.screenLoader = screenLoader;
         this.previousScreen = previousScreen;
 
+        Texture texture = new Texture(Gdx.files.internal("Sprites/back.jpg"));
+        texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+        TextureRegion textureRegion = new TextureRegion(texture);
+        textureRegion.setRegion(865, 250, texture.getWidth() * 2, texture.getHeight() * 2);
+
+        Image back = new Image();
+        back.setDrawable(new TextureRegionDrawable(textureRegion));
+        back.setSize(texture.getWidth() * 2, texture.getHeight() * 2);
+        addActor(back);
+
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         setViewport(new FillViewport(1280, 720, camera));
@@ -34,7 +48,6 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
                 returnToPreviousScreen();
             }
         };
-        //returnButton.getLabel().setFontScale(2);
 
         addActor(returnButton);
         returnButton.setPosition(1270, 710, Align.topRight);
