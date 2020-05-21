@@ -93,10 +93,6 @@ public final class ScreenLoader extends Game {
         return mainMenu;
     }
 
-    //public static ImageTextButton.ImageTextButtonStyle getButtonStyle() {
-    //    return buttonStyle;
-    //}
-
     public SkyBox getSkyBox() {
         return skyBox;
     }

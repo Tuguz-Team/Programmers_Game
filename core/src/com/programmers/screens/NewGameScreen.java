@@ -40,9 +40,12 @@ public final class NewGameScreen extends ReturnableScreen {
         waitDialog.setMovable(false);
 
         final TextField textField = new TextField("", ScreenLoader.getDefaultGdxSkin());
+        textField.setMaxLength(30);
+        textField.setAlignment(Align.center);
+
         if (!isHotseat) {
             ui.add(new Label("Choose name of the room :", skin)).space(20).row();
-            ui.add(textField).row();
+            ui.add(textField).width(1000).row();
         }
 
         final Slider playerCountSlider = new Slider(2, 4, 1,
@@ -71,8 +74,8 @@ public final class NewGameScreen extends ReturnableScreen {
         ui.add(new Label("Choose game difficulty in new room :", skin))
                 .spaceBottom(0.025f * Gdx.graphics.getHeight()).row();
 
-        CheckBox EasyButton = new CheckBox("EASY", skin);
-        CheckBox HardButton = new CheckBox("HARD", skin);
+        CheckBox EasyButton = new CheckBox("   EASY   ", skin);
+        CheckBox HardButton = new CheckBox("   HARD   ", skin);
 
         final HorizontalGroup difficultyRadioButton = new HorizontalGroup();
         difficultyRadioButton.addActor(EasyButton);

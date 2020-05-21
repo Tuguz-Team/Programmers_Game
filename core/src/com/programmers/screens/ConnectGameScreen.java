@@ -92,24 +92,23 @@ public final class ConnectGameScreen extends ReturnableScreen {
             }
         };
         updateGames.getLabel().setFontScale(2);
-
-        table.add(updateGames).spaceBottom(100).spaceRight(100);
+        table.add(updateGames).spaceBottom(10).row();
 
         Label gameToConnect = new Label("GAMES TO CONNECT", ScreenLoader.getDefaultGdxSkin());
         gameToConnect.setFontScale(2);
-        table.add(gameToConnect).spaceBottom(100).row();
+        table.add(gameToConnect).spaceBottom(10).row();
 
         existingGames = new VerticalGroup();
         existingGames.setFillParent(true);
-        //existingGames.space(50);
+        existingGames.space(50);
         existingGames.bottom();
 
         Table container = new Table();
         container.setFillParent(true);
-        //container.top();
+        container.bottom();
 
         ScrollPane scrollPane = new ScrollPane(existingGames);
-        container.add(scrollPane).height(570);
+        container.add(scrollPane).height(500).width(1280);
 
         table.add(container);
     }

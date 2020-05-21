@@ -150,6 +150,33 @@
 			"b": 0.91785276,
 			"a": 1
 		}
+	},
+	"game-list": {
+		"name": "list",
+		"color": {
+			"r": 0.7953,
+			"g": 0.9899998,
+			"b": 0.98449385,
+			"a": 1
+		}
+	},
+	"game-textfield-dark": {
+		"name": "textfield",
+		"color": {
+			"r": 0.13623345,
+			"g": 0.6699998,
+			"b": 0.6442598,
+			"a": 1
+		}
+	},
+	"game-round-white-": {
+		"name": "round-white",
+		"color": {
+			"r": 0.7079998,
+			"g": 0.94169694,
+			"b": 0.9833331,
+			"a": 1
+		}
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle": {
@@ -168,8 +195,8 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle": {
 	"default": {
-		"checkboxOn": "checkBoxOff",
-		"checkboxOff": "checkBoxOn",
+		"checkboxOn": "game-textfield-dark",
+		"checkboxOff": "game-knob",
 		"font": "GameFont",
 		"fontColor": "game"
 	}
@@ -208,7 +235,7 @@
 "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
 	"default": {
 		"font": "GameFont",
-		"fontColor": "white"
+		"fontColor": "game-light"
 	},
 	"title": {
 		"font": "title",
@@ -235,7 +262,7 @@
 },
 "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
 	"default": {
-		"background": "list",
+		"background": "game-list",
 		"hScroll": "round-black-small",
 		"hScrollKnob": "round-gray-small",
 		"vScroll": "round-black-small",
