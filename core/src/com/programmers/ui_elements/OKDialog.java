@@ -7,7 +7,7 @@ public class OKDialog extends Dialog {
 
     public OKDialog(String title, Skin skin) {
         super(title, skin);
-        button("OK");
+        button("   OK   ");
         setMovable(false);
     }
 }

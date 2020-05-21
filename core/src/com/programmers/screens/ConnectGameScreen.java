@@ -1,11 +1,10 @@
 package com.programmers.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -34,9 +33,9 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
         final Skin skin = ScreenLoader.getDefaultGdxSkin();
 
-        notFoundDialog = new OKDialog("No games were found!", skin);
+        notFoundDialog = new OKDialog("   No games were found!   ", skin);
 
-        notExistDialog = new OKDialog("This room doesn't exist now!", skin) {
+        notExistDialog = new OKDialog("   This room doesn't exist now!   ", skin) {
             @Override
             public Dialog show(Stage stage) {
                 screenLoader.networkManager.removeListener(room);
@@ -46,15 +45,15 @@ public final class ConnectGameScreen extends ReturnableScreen {
             }
         };
 
-        waitingDialog = new Dialog("Searching for games...", skin);
+        waitingDialog = new Dialog("   Searching for games...   ", skin);
         waitingDialog.setMovable(false);
 
-        unableToConnectDialog = new OKDialog("You cannot connect to room: game was started!", skin);
+        unableToConnectDialog = new OKDialog("   You cannot connect to room: game was started!   ", skin);
 
         label = new Label("", skin);
         label.setWrap(true);
         label.setAlignment(Align.center);
-        foundDialog = new Dialog("Connected! Waiting for other players...", skin) {
+        foundDialog = new Dialog("   Connected! Waiting for other players...   ", skin) {
             @Override
             protected void result(Object object) {
                 if (room != null && !screenLoader.networkManager.removePlayerFromRoom(room)) {
@@ -63,18 +62,15 @@ public final class ConnectGameScreen extends ReturnableScreen {
             }
         };
         foundDialog.setMovable(false);
-        foundDialog.button("Disconnect from the room");
+        foundDialog.button("   Disconnect from the room   ");
         foundDialog.getContentTable().add(label);
 
         Table table = new Table();
         table.setFillParent(true);
         addActor(table);
-        table.add(new Label(
-                "GAMES TO CONNECT",
-                ScreenLoader.getDefaultGdxSkin()
-        )).spaceBottom(0.01f * Gdx.graphics.getHeight()).row();
+        table.top().left();
 
-        TextButton updateGames = new MyButton("UPDATE", ScreenLoader.getButtonStyle()) {
+        TextButton updateGames = new MyButton("   UPDATE   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 waitingDialog.show(ConnectGameScreen.this);
@@ -86,7 +82,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
                         LinkedList<NetworkManager.Room> rooms = screenLoader.networkManager.findRooms();
                         if (!rooms.isEmpty()) {
                             for (NetworkManager.Room room : rooms)
-                                existingGames.addActor(new GameRoom(room, ScreenLoader.getButtonStyle()));
+                                existingGames.addActor(new GameRoom(room));
                         } else
                             notFoundDialog.show(ConnectGameScreen.this);
                         waitingDialog.hide();
@@ -95,14 +91,27 @@ public final class ConnectGameScreen extends ReturnableScreen {
                 }.start();
             }
         };
-        table.add(updateGames).spaceBottom(0.1f * Gdx.graphics.getHeight()).row();
+        updateGames.getLabel().setFontScale(2);
+
+        table.add(updateGames).spaceBottom(100).spaceRight(100);
+
+        Label gameToConnect = new Label("GAMES TO CONNECT", ScreenLoader.getDefaultGdxSkin());
+        gameToConnect.setFontScale(2);
+        table.add(gameToConnect).spaceBottom(100).row();
 
         existingGames = new VerticalGroup();
         existingGames.setFillParent(true);
-        existingGames.space(0.05f * Gdx.graphics.getHeight());
-        existingGames.center();
+        //existingGames.space(50);
+        existingGames.bottom();
 
-        table.add(existingGames);
+        Table container = new Table();
+        container.setFillParent(true);
+        //container.top();
+
+        ScrollPane scrollPane = new ScrollPane(existingGames);
+        container.add(scrollPane).height(570);
+
+        table.add(container);
     }
 
     @Override
@@ -115,18 +124,18 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
     private final class GameRoom extends MyButton {
 
-        private GameRoom(final NetworkManager.Room room, final TextButtonStyle style) {
-            super("ROOM NAME: " + room.getName().toUpperCase()
-                    + "\nPLAYERS: " + room.getPlayers().size() + "/" + room.getPlayersCount()
-                    + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase(), style);
+        private GameRoom(final NetworkManager.Room room) {
+            super("   ROOM NAME:  " + room.getName().toUpperCase() + "   "
+                    + "\n\n   PLAYERS:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
+                    + "\n\n   DIFFICULTY:  " + room.getDifficulty().toString().toUpperCase() + "   ", ScreenLoader.getDefaultGdxSkin());
             ConnectGameScreen.this.room = room;
             screenLoader.networkManager.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
-                            setText("ROOM NAME: " + room.getName().toUpperCase()
-                                    + "\nPLAYERS: " + room.getPlayers().size() + "/" + room.getPlayersCount()
-                                    + "\nDIFFICULTY: " + room.getDifficulty().toString().toUpperCase());
+                            setText("   ROOM NAME:  " + room.getName().toUpperCase() + "   "
+                                    + "\n\n   PLAYERS:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
+                                    + "\n\n   DIFFICULTY:  " + room.getDifficulty().toString().toUpperCase() + "   ");
                         }
                     }, new Procedure() {
                         @Override

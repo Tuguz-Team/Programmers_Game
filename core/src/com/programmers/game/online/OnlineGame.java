@@ -36,10 +36,10 @@ public class OnlineGame extends GameScreen {
         super(screenLoader, room.getDifficulty(), room.getPlayersCount());
         cars = new Car[room.getPlayersCount()];
 
-        waitDialog = new Dialog("Waiting...", ScreenLoader.getDefaultGdxSkin());
+        waitDialog = new Dialog("   Waiting...   ", ScreenLoader.getDefaultGdxSkin());
         waitDialog.setMovable(false);
 
-        notExistDialog = new OKDialog("Error! Room doesn't exist!", ScreenLoader.getDefaultGdxSkin()) {
+        notExistDialog = new OKDialog("   Error! Room doesn't exist!   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             protected void result(Object object) {
                 dispose();

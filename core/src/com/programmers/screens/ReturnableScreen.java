@@ -29,12 +29,13 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
         setViewport(new FillViewport(1280, 720, camera));
 
         TextButton returnButton =
-                new MyButton("RETURN", screenLoader.getButtonStyle()) {
+                new MyButton("   BACK   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 returnToPreviousScreen();
             }
         };
+        //returnButton.getLabel().setFontScale(2);
 
         addActor(returnButton);
         returnButton.setPosition(1270, 710, Align.topRight);

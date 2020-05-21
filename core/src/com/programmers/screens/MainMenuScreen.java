@@ -28,7 +28,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         setViewport(new FillViewport(1100, 1100, camera));
 
         final Skin skin = ScreenLoader.getDefaultGdxSkin();
-        yesNoDialog = new YesNoDialog("Are you sure you want to exit the game?", skin) {
+        yesNoDialog = new YesNoDialog("   Are you sure you want to exit the game?   ", skin) {
             @Override
             public void call() {
                 Gdx.app.exit();
@@ -46,7 +46,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         addActor(mainButtons);
 
         TextButton startButton =
-                new MyButton("START", ScreenLoader.getButtonStyle()) {
+                new MyButton("   START   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new ChooseGameScreen(
@@ -54,8 +54,10 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
                 );
             }
         };
+        startButton.getLabel().setFontScale(2);
+
         TextButton exitButton =
-                new MyButton("END", ScreenLoader.getButtonStyle()) {
+                new MyButton("   EXIT   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 if (isYesNoDialogHidden) {
@@ -64,6 +66,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
                 }
             }
         };
+        exitButton.getLabel().setFontScale(2);
 
         mainButtons.addActor(startButton);
         mainButtons.space(100);

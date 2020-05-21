@@ -96,14 +96,14 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         final Skin skin = ScreenLoader.getDefaultGdxSkin();
 
         final YesNoDialog yesNoDialog = new YesNoDialog
-                ("Are you sure you want to return to main menu?", skin) {
+                ("   Are you sure you want to return to main menu?   ", skin) {
             @Override
             public void call() {
                 exit();
             }
         };
 
-        pauseMenu = new Dialog("PAUSE MENU", skin) {
+        pauseMenu = new Dialog("  PAUSE  ", skin) {
             @Override
             public Dialog show(Stage stage) {
                 gameInputProcessor.lockCamera();
@@ -115,11 +115,13 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                 gameInputProcessor.unlockCamera();
             }
         };
+        pauseMenu.getTitleLabel().setAlignment(Align.center);
+
         pauseMenu.getContentTable().setFillParent(true);
         pauseMenu.setMovable(false);
 
         TextButton returnButton =
-                new MyButton("CONTINUE", ScreenLoader.getButtonStyle()) {
+                new MyButton("   CONTINUE   ", ScreenLoader.getDefaultGdxSkin()) {
                     @Override
                     public void call() {
                         pauseMenu.hide();
@@ -127,30 +129,35 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                         gameInputProcessor.unlockCamera();
                     }
                 };
+        returnButton.getLabel().setFontScale(2);
+
         TextButton settingsButton =
-                new MyButton("SETTINGS", ScreenLoader.getButtonStyle()) {
+                new MyButton("   SETTINGS   ", ScreenLoader.getDefaultGdxSkin()) {
                     @Override
                     public void call() {
                         screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
                     }
                 };
+        settingsButton.getLabel().setFontScale(2);
+
         TextButton mainMenuButton =
-                new MyButton("QUIT ROOM", ScreenLoader.getButtonStyle()) {
+                new MyButton("   QUIT ROOM   ", ScreenLoader.getDefaultGdxSkin()) {
                     @Override
                     public void call() {
                         yesNoDialog.show(GameScreen.this);
                     }
                 };
+        mainMenuButton.getLabel().setFontScale(2);
 
         pauseMenu.getContentTable().pad(
-                0.05f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight(),
+                0.075f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight(),
                 0.025f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight());
 
         pauseMenu.getContentTable().add(returnButton).space(0.05f * Gdx.graphics.getHeight()).row();
         pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight()).row();
         pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
 
-        TextButton toDialogButton = new MyButton("PAUSE MENU", ScreenLoader.getButtonStyle()) {
+        TextButton toDialogButton = new MyButton("  PAUSE  ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 if (isPauseMenuHidden) {
@@ -160,6 +167,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                 }
             }
         };
+
         addActor(toDialogButton);
         toDialogButton.setPosition(1590, 890, Align.topRight);
 

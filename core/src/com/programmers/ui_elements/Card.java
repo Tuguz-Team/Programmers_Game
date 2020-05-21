@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -101,8 +102,8 @@ public final class Card extends Image implements Comparable<Card> {
                     if (x >= stagePos.x && x < stagePos.x + card.getWidth() && y >= stagePos.y
                             && y < stagePos.y + card.getHeight() && !card.isEnabled() && !Card.this.isReplaced()
                             && card.getParent() == Card.this.getPrevParent()) {
-                        YesNoDialog dialog = new YesNoDialog("Do you really want to replace card from " +
-                                "previous move with your's new card? This change is irreversible.", getDefaultGdxSkin()) {
+                        YesNoDialog dialog = new YesNoDialog("   Do you really want to replace card from " +
+                                "previous move with your's new card? This change is irreversible.   ", getDefaultGdxSkin()) {
                             @Override
                             public void call() {
                                 Cell cell = getCell(card);
@@ -251,8 +252,8 @@ public final class Card extends Image implements Comparable<Card> {
                     }
                     thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
 
-                    final Dialog dialog = new Dialog("Do you really want to delete " +
-                            "this cycle card? This change is irreversible.", getDefaultGdxSkin()) {
+                    final Dialog dialog = new Dialog("   Do you really want to delete " +
+                            "this cycle card? This change is irreversible.   ", getDefaultGdxSkin()) {
                         @Override
                         protected void result(Object object) {
                             if (object.equals(true)) {
@@ -267,7 +268,12 @@ public final class Card extends Image implements Comparable<Card> {
                         }
                     };
 
-                    dialog.button("YES", true).button("NO", false);
+                    dialog.button("   YES   ", true).button("   NO   ", false);
+
+                    dialog.getButtonTable().getCells().get(0).spaceRight(50);
+                    ((TextButton) dialog.getButtonTable().getCells().get(0).getActor()).getLabel().setAlignment(2);
+                    ((TextButton) dialog.getButtonTable().getCells().get(1).getActor()).getLabel().setAlignment(2);
+
                     dialog.setMovable(false);
 
                     thisCard.setVisible(false);

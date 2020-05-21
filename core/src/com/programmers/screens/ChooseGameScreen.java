@@ -16,24 +16,30 @@ public final class ChooseGameScreen extends ReturnableScreen {
         buttons.setFillParent(true);
         addActor(buttons);
 
-        TextButton hotseatGame = new MyButton("CREATE HOTSEAT GAME", screenLoader.getButtonStyle()) {
+        TextButton hotseatGame = new MyButton("   HOTSEAT GAME   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, true));
             }
         };
-        TextButton createNewGame = new MyButton("CREATE NEW SERVER GAME !", screenLoader.getButtonStyle()) {
+        hotseatGame.getLabel().setFontScale(2);
+
+        TextButton createNewGame = new MyButton("   NEW ROOM   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, false));
             }
         };
-        TextButton connectToGame = new MyButton("CONNECT TO EXISTING GAME !", screenLoader.getButtonStyle()) {
+        createNewGame.getLabel().setFontScale(2);
+
+        TextButton connectToGame = new MyButton("   CONNECT TO ROOM   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new ConnectGameScreen(screenLoader, ChooseGameScreen.this));
             }
         };
+        connectToGame.getLabel().setFontScale(2);
+
         buttons.addActor(hotseatGame);
         buttons.addActor(createNewGame);
         buttons.addActor(connectToGame);

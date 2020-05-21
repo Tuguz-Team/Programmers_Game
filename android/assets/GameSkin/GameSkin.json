@@ -171,7 +171,7 @@
 		"checkboxOn": "checkBoxOff",
 		"checkboxOff": "checkBoxOn",
 		"font": "GameFont",
-		"fontColor": "white"
+		"fontColor": "game"
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
@@ -208,7 +208,7 @@
 "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
 	"default": {
 		"font": "GameFont",
-		"fontColor": "game-dark"
+		"fontColor": "white"
 	},
 	"title": {
 		"font": "title",
@@ -271,7 +271,8 @@
 "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
 	"default": {
 		"font": "GameFont",
-		"fontColor": "game",
+		"fontColor": "white",
+		"downFontColor": "game",
 		"up": "game-round-white",
 		"down": "game-round-light"
 	},
@@ -295,7 +296,7 @@
 "com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle": {
 	"default": {
 		"font": "GameFont",
-		"fontColor": "white",
+		"fontColor": "game",
 		"background": "game-textfield",
 		"cursor": "cursor",
 		"selection": "gray"

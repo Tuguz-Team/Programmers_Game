@@ -52,8 +52,10 @@ public final class PlayerCardWindow extends Table {
         table.setFillParent(true);
         CardContainer.cardContainers.removeValue(discardContainer, false);
         discardContainer.setVisible(false);
-        table.add(discardButton).left();
-        table.add(discardContainer).left().row();
+
+        table.add(discardButton).center();
+        table.add(discardContainer).center().row();
+
         discardButton.addListener(new MyButton.Listener() {
             @Override
             public void call() {
@@ -73,7 +75,11 @@ public final class PlayerCardWindow extends Table {
                 cardContainer.setTouchable();
             }
         });
-        table.add(new Label(name, ScreenLoader.getDefaultGdxSkin())).bottom();
+
+        Label label = new Label(name, ScreenLoader.getDefaultGdxSkin());
+        label.setFontScale(2);
+
+        table.add(label).colspan(2).bottom();
         left().bottom();
     }
 

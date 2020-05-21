@@ -32,7 +32,11 @@ public final class AlgorithmCardWindow extends Table {
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOn.png")),
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
         );
-        add(new Label(name, ScreenLoader.getDefaultGdxSkin())).bottom();
+
+        Label label = new Label(name, ScreenLoader.getDefaultGdxSkin());
+        label.setFontScale(2);
+
+        add(label).bottom();
         add(table).right().bottom();
         table.setDebug(true);
         // if difficulty is hard

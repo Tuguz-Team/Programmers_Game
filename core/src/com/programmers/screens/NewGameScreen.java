@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.enums.Difficulty;
@@ -35,8 +36,14 @@ public final class NewGameScreen extends ReturnableScreen {
         ui.setFillParent(true);
         addActor(ui);
 
-        waitDialog = new Dialog("Waiting...", skin);
+        waitDialog = new Dialog("   Waiting...   ", skin);
         waitDialog.setMovable(false);
+
+        final TextField textField = new TextField("", ScreenLoader.getDefaultGdxSkin());
+        if (!isHotseat) {
+            ui.add(new Label("Choose name of the room :", skin)).space(20).row();
+            ui.add(textField).row();
+        }
 
         final Slider playerCountSlider = new Slider(2, 4, 1,
                 false, skin) {
@@ -56,7 +63,7 @@ public final class NewGameScreen extends ReturnableScreen {
         sliderDisplay.addActor(new Label("2", skin));
         sliderDisplay.addActor(new Label("3", skin));
         sliderDisplay.addActor(new Label("4", skin));
-        sliderDisplay.space(0.47f * playerCountSlider.getPrefWidth());
+        sliderDisplay.space(0.4525f * playerCountSlider.getPrefWidth());
 
         ui.add(sliderDisplay).
                 spaceBottom(0.05f * Gdx.graphics.getHeight()).row();
@@ -77,14 +84,8 @@ public final class NewGameScreen extends ReturnableScreen {
 
         ui.add(difficultyRadioButton).spaceBottom(0.025f * Gdx.graphics.getHeight()).row();
 
-        final TextField textField = new TextField("", ScreenLoader.getDefaultGdxSkin());
-        if (!isHotseat) {
-            ui.add(new Label("Choose name of the room :", skin)).row();
-            ui.add(textField).row();
-        }
-
         final NewRoomDialog newRoomDialog = new NewRoomDialog("Waiting for players...", skin);
-        ui.add(new MyButton("START PLAYING !", ScreenLoader.getButtonStyle()) {
+        TextButton start = new MyButton("   START PLAYING !   ", ScreenLoader.getDefaultGdxSkin()) {
             @Override
             public void call() {
                 final Difficulty difficulty = radioButtonController.getChecked().getText()
@@ -117,7 +118,9 @@ public final class NewGameScreen extends ReturnableScreen {
                     }.start();
                 }
             }
-        }).space(0.1f * Gdx.graphics.getHeight());
+        };
+        start.getLabel().setFontScale(2);
+        ui.add(start).space(0.1f * Gdx.graphics.getHeight());
 
         ui.center();
     }
@@ -146,7 +149,7 @@ public final class NewGameScreen extends ReturnableScreen {
         private NewRoomDialog(final String title, final Skin skin) {
             super(title, skin);
             setMovable(false);
-            button("Close room");
+            button("   Close room   ");
 
             label = new Label("", skin);
             label.setWrap(true);
@@ -161,7 +164,7 @@ public final class NewGameScreen extends ReturnableScreen {
                     room, new Procedure() {
                         @Override
                         public void call() {
-                            label.setText("Players : " + room.getPlayers().size() + "/" + room.getPlayersCount());
+                            label.setText("   Players : " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   ");
                             if (room.getPlayers().size() == room.getPlayersCount()) {
                                 launchOnline = true;
                                 screenLoader.networkManager.removeListener(room);
