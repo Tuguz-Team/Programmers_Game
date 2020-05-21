@@ -69,10 +69,6 @@ public class OnlineGame extends GameScreen {
                     room, this, field, cars
             );
             loadGame();
-            screenLoader.networkManager.sendFieldData(room, field);
-            screenLoader.networkManager.sendGameData(room, hotseatGameController);
-            screenLoader.networkManager.setPlayersID(room);
-            screenLoader.networkManager.launchRoom(room);
             initDataListener();
         } else {
             waitDialog.show(OnlineGame.this);
@@ -136,7 +132,20 @@ public class OnlineGame extends GameScreen {
 
     @Override
     protected void setCameraPosition() {
-        perspectiveCamera.position.set(-size, size, -size);
+        int x, z;
+        Car car = onlineGameController.getThisPlayer().getCar();
+        if (car.getX() == 0 && car.getZ() == 0) {
+            x = z = -size;
+        } else if (car.getX() == 0 && car.getZ() == size - 1) {
+            x = -size;
+            z = size;
+        } else if (car.getX() == size - 1 && car.getZ() == 0) {
+            x = size;
+            z = -size;
+        } else {
+            x = z = size;
+        }
+        perspectiveCamera.position.set(x, size, z);
         perspectiveCamera.update();
     }
 
@@ -172,17 +181,6 @@ public class OnlineGame extends GameScreen {
                     public void call() { }
                 }
         );
-        /*
-        waitDialog.show(OnlineGame.this);
-        new Thread() {
-            @Override
-            public void run() {
-                onlineGameController.getFromServer(gameData);
-                waitDialog.hide();
-                interrupt();
-            }
-        }.start();
-        */
     }
 
     public Dialog getWaitDialog() {

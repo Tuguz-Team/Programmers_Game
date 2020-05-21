@@ -195,7 +195,7 @@ public final class AlgorithmCardWindow extends Table {
         button.setTouchable(Touchable.disabled);
         actionsCardContainer.setTouchable(Touchable.disabled);
         CardContainer.cardContainers.removeValue(actionsCardContainer, false);
-        if (gameController.getDifficulty() == Difficulty.Hard) {
+        if (gameController.getDifficulty() == Difficulty.Hard && cyclesCardContainer != null) {
             cyclesCardContainer.setTouchable(Touchable.disabled);
             CardContainer.cardContainers.removeValue(cyclesCardContainer, false);
         }
@@ -204,7 +204,9 @@ public final class AlgorithmCardWindow extends Table {
     public boolean areContainersEmpty() {
         if (actionsCardContainer != null) {
             boolean flag = ((Card)actionsCardContainer.getChild(0)).getGameCard() == null;
-            if (gameController.getDifficulty() == Difficulty.Hard && cyclesCardContainer.getChildren().size != 0) {
+            if (gameController.getDifficulty() == Difficulty.Hard
+                    && cyclesCardContainer != null
+                    && !cyclesCardContainer.getChildren().isEmpty()) {
                 return flag && (((Card)cyclesCardContainer.getChild(0)).getGameCard() == null);
             }
             return flag;

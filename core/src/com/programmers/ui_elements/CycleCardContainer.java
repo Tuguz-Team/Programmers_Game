@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -73,14 +74,20 @@ public final class CycleCardContainer extends CardContainer {
                     break;
                 }
             }
-            if (cycleCard != null && getCell(cycleCard).getActor().isCellEnabled()) {
+            if (cycleCard != null && getCell(cycleCard) != null
+                    && getCell(cycleCard).getActor() != null
+                    && getCell(cycleCard).getActor().isCellEnabled()) {
                 Cell<Card> cell = getCell(cycleCard).setActor(card);
                 card.setIndexForCycles(i);
                 card.setCell(cell);
                 removeSpace(card, getCells());
             } else if (card.getCell() == null) {
-                card.getPrevParent().add(card).row();
-                removeSpace(card, getCells());
+                if (card.getPrevParent() != null) {
+                    card.getPrevParent().add(card).row();
+                    removeSpace(card, getCells());
+                } else {
+                    Gdx.app.error("CCC", "ERROR");
+                }
             } else {
                 card.getCell().setActor(card);
                 removeSpace(card, getCells());
@@ -91,7 +98,7 @@ public final class CycleCardContainer extends CardContainer {
         }
     }
 
-    void removeSpace(final Card card, final Array<Cell> cells) {
+    public void removeSpace(final Card card, final Array<Cell> cells) {
         if (card.getCell() != null && card.getCell().getActor() != null) {
             settingCellEnabled(card.getCell().getActor(), false);
             int i = card.getIndexForCycles();
@@ -309,9 +316,13 @@ public final class CycleCardContainer extends CardContainer {
     public void settingCellEnabled (Card card, boolean cellEnabled) {
         if (card.getGameCard() == null) {
             if (cellEnabled && !card.isCellEnabled())
-                card.setDrawable(new TextureRegionDrawable(new Texture("Sprites/EnabledCards/CyclePointOn.png")));
+                card.setDrawable(new TextureRegionDrawable(
+                        (Texture) gameController.getGameScreen().getAssetManager()
+                                .get("Sprites/EnabledCards/CyclePointOn.png")));
             else if (!cellEnabled && card.isCellEnabled())
-                card.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/CyclePointOff.png")));
+                card.setDrawable(new TextureRegionDrawable(
+                        (Texture) gameController.getGameScreen().getAssetManager()
+                                .get("Sprites/DisabledCards/CyclePointOff.png")));
         }
         card.setCellEnabled(cellEnabled);
     }
@@ -400,4 +411,24 @@ public final class CycleCardContainer extends CardContainer {
                 ((Card)card).setCycleToPrevious(this);
         }
     }
+
+    /*public void restorePointsFromZero(int size) {
+        if (size == 1 && getCells().get(8).getActor() == null) {
+            //
+        } else {
+            size = cycleCards.length - (size * 2) + 1;
+            for (int i = size; i < cycleCards.length; i++) {
+                Card card = new Card(
+                        "Sprites/EnabledCards/CyclePointOn.png",
+                        gameController.getGameScreen().getAssetManager());
+                card.setCellEnabled(true);
+                getCells().get(i).setActor(card);
+            }
+            padLeft(0);
+            if (getPadTop() != PAD)
+                padTop(PAD);
+            if (getPadBottom() != PAD)
+                padBottom(PAD);
+        }
+    }*/
 }

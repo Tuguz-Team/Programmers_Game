@@ -24,6 +24,7 @@ public final class Card extends Image implements Comparable<Card> {
     private final GameCard gameCard;
     private CardContainer prevParent;
     private GameInputProcessor gameInputProcessor = null;
+    private AssetManager assetManager;
 
     private Cell<Card> cell;
     private boolean cellEnabled = true,
@@ -32,6 +33,7 @@ public final class Card extends Image implements Comparable<Card> {
 
     public Card(final String name, AssetManager assetManager) {
         super((Texture) assetManager.get(name));
+        this.assetManager = assetManager;
         this.gameCard = null;
         setDebug(true);
     }
@@ -40,6 +42,7 @@ public final class Card extends Image implements Comparable<Card> {
         super((Texture) assetManager.get("Sprites/EnabledCards/" + gameCard.getCardType().toString() + ".png"));
         this.gameCard = gameCard;
         this.gameInputProcessor = gameInputProcessor;
+        this.assetManager = assetManager;
         setDebug(true);
         addListener(new InputListener() {
             final Card thisCard = Card.this;
@@ -190,9 +193,8 @@ public final class Card extends Image implements Comparable<Card> {
     public void setActionToPrevious(final CardContainer container) {
         if (this.getGameCard() != null) {
             this.setEnabled(false);
-            this.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/".
-                    concat(this.getGameCard().getCardType().toString()).concat(".png")))
-            );
+            this.setDrawable(new TextureRegionDrawable((Texture) assetManager.get("Sprites/DisabledCards/"
+                    + this.getGameCard().getCardType().toString() + ".png")));
             this.removeListener(this.getListeners().get(0));
             this.addListener(new InputListener() {
                 @Override
@@ -232,9 +234,8 @@ public final class Card extends Image implements Comparable<Card> {
 
     public void setCycleToPrevious(final CycleCardContainer container) {
         if (this.getGameCard() != null) {
-            this.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/".
-                    concat(this.getGameCard().getCardType().toString()).concat(".png")))
-            );
+            this.setDrawable(new TextureRegionDrawable((Texture) assetManager.get("Sprites/DisabledCards/"
+                    + this.getGameCard().getCardType().toString() + ".png")));
             this.removeListener(this.getListeners().get(0));
             this.addListener(new InputListener() {
                 Card thisCard = Card.this;

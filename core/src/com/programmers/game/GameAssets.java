@@ -55,6 +55,10 @@ public final class GameAssets extends AssetManager {
 
         load("Sprites/AlgorithmButton/StartButtonOff.png", Texture.class);
         load("Sprites/AlgorithmButton/StartButtonOn.png", Texture.class);
+
+        load("Sprites/back.jpg", Texture.class);
+        load("Sprites/main.jpg", Texture.class);
+        load("Sprites/logo.png", Texture.class);
     }
 
     private void loadModels() {

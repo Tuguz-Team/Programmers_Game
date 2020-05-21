@@ -30,7 +30,6 @@ public class HotseatGame extends GameScreen {
             bases.removeIndex(index);
         }
         hotseatGameController = new HotseatGameController(players, field, this);
-
         loadGame();
     }
 

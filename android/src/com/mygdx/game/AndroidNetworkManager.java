@@ -92,7 +92,7 @@ public final class AndroidNetworkManager implements NetworkManager {
     }
 
     @Override
-    public void setPlayersID(Room room) {
+    public void setPlayersOrder(Room room) {
         final GameData.PlayersData[] playersData = { null };
         DocumentReference documentReference =
                 firebaseFirestore.collection(rooms)
@@ -319,7 +319,7 @@ public final class AndroidNetworkManager implements NetworkManager {
     }
 
     @Override
-    public void sendFieldData(Room room, com.programmers.game.Field field) {
+    public void setFieldData(Room room, com.programmers.game.Field field) {
         FieldData fieldData = new FieldData(field);
         firebaseFirestore.collection(rooms).document(room.getName())
                 .collection(AndroidNetworkManager.fieldData)

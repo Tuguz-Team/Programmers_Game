@@ -27,9 +27,9 @@ public interface NetworkManager {
 
     void launchRoom(Room room);
 
-    void setPlayersID(Room room);
+    void setPlayersOrder(Room room);
 
-    void sendFieldData(Room room, com.programmers.game.Field field);
+    void setFieldData(Room room, com.programmers.game.Field field);
 
     void toNextPlayer(Room room);
 
@@ -132,6 +132,15 @@ public interface NetworkManager {
         private List<Wall> walls;
         private List<Base> bases;
         private List<Lift> lifts;
+
+        public void set(FieldData fieldData) {
+            size = fieldData.size;
+            chunks = fieldData.chunks;
+            lives = fieldData.lives;
+            walls = fieldData.walls;
+            bases = fieldData.bases;
+            lifts = fieldData.getLifts();
+        }
 
         public FieldData() { }
 
@@ -473,16 +482,26 @@ public interface NetworkManager {
 
         public static final class GameCard {
             private CardType cardType;
+            private boolean enabled;
 
             public GameCard() { }
 
             public GameCard(com.programmers.game.GameCard gameCard) {
-                if (gameCard != null)
+                if (gameCard != null) {
                     cardType = gameCard.getCardType();
+                }
             }
 
             public CardType getCardType() {
                 return cardType;
+            }
+
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
             }
         }
 

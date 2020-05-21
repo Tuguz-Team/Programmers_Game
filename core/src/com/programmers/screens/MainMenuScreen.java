@@ -24,7 +24,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
     private OrthographicCamera camera;
 
     public MainMenuScreen(final ScreenLoader screenLoader) {
-        Image main = new Image(new Texture(Gdx.files.internal("Sprites/main.jpg")));
+        Image main = new Image((Texture) screenLoader.getAssetManager().get("Sprites/main.jpg"));
         main.setFillParent(true);
         addActor(main);
 
@@ -49,7 +49,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         mainButtons.setFillParent(true);
         addActor(mainButtons);
 
-        Image logo = new Image(new Texture(Gdx.files.internal("Sprites/logo.png")));
+        Image logo = new Image((Texture) screenLoader.getAssetManager().get("Sprites/logo.png"));
 
         TextButton startButton =
                 new MyButton("   START   ", ScreenLoader.getGameSkin()) {

@@ -440,8 +440,10 @@ public final class Car extends GameObject implements ICard {
         switch (direction) {
             case Forward:
                 impulse = getZ() + 1;
-                nextChunk = base.getField().getChunks()[getX()][impulse];
                 isInBounds = impulse < size;
+                if (isInBounds)
+                    return;
+                nextChunk = base.getField().getChunks()[getX()][impulse];
                 break;
             case Back:
                 impulse = getZ() - 1;
@@ -449,8 +451,10 @@ public final class Car extends GameObject implements ICard {
                 break;
             case Left:
                 impulse = getX() + 1;
-                nextChunk = base.getField().getChunks()[impulse][getZ()];
                 isInBounds = impulse < size;
+                if (isInBounds)
+                    return;
+                nextChunk = base.getField().getChunks()[impulse][getZ()];
                 break;
             case Right:
             default:

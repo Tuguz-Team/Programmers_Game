@@ -1,8 +1,10 @@
 package com.programmers.game.online;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameCard;
@@ -14,7 +16,12 @@ import com.programmers.interfaces.NetworkManager;
 import com.programmers.interfaces.Procedure;
 import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
+import com.programmers.ui_elements.CardContainer;
+import com.programmers.ui_elements.CycleCardContainer;
 import com.programmers.ui_elements.PlayerCardWindow;
+
+import java.util.Collections;
+import java.util.List;
 
 public final class OnlineGameController extends GameController {
 
@@ -22,6 +29,7 @@ public final class OnlineGameController extends GameController {
     private final NetworkManager.Room room;
     private NetworkManager.GameData.PlayersData playersData = new NetworkManager.GameData.PlayersData();
     private NetworkManager.GameData.CardsData cardsData = new NetworkManager.GameData.CardsData();
+    private NetworkManager.FieldData fieldData = new NetworkManager.FieldData();
 
     private final Car[] cars;
 
@@ -31,13 +39,27 @@ public final class OnlineGameController extends GameController {
         this.networkManager = networkManager;
         this.room = room;
         this.cars = cars;
-        thisPlayer = hotseatGameController
-                .getPlayers()[MathUtils.random.nextInt(room.getPlayersCount())];
+        //
+        networkManager.setFieldData(room, field);
+        networkManager.sendGameData(room, hotseatGameController);
+        networkManager.setPlayersOrder(room);
+        //
+        NetworkManager.GameData gameData = networkManager.getGameData(room);
+        NetworkManager.GameData.Player player = networkManager.getThisPlayerData(gameData.getPlayersData());
+        NetworkManager.FieldData.Base base = player.getCar().getBase();
+        for (Car car : cars) {
+            if (car.getBase().getBaseColor() == base.getBaseColor()) {
+                thisPlayer = new Player(car);
+                break;
+            }
+        }
         algorithmCards.addAll(hotseatGameController.getAlgorithmCards());
         discardPile.addAll(hotseatGameController.getDiscardPile());
         talon.addAll(hotseatGameController.getTalon());
         initContainers();
         initDataListeners();
+        //
+        networkManager.launchRoom(room);
     }
 
     public OnlineGameController(NetworkManager networkManager, NetworkManager.GameData gameData,
@@ -49,7 +71,7 @@ public final class OnlineGameController extends GameController {
         NetworkManager.GameData.Player player = networkManager.getThisPlayerData(gameData.getPlayersData());
         NetworkManager.FieldData.Base base = player.getCar().getBase();
         for (Car car : cars) {
-            if (car.getBase().equals(field.getChunks()[base.getX()][base.getZ()])) {
+            if (car.getBase().getBaseColor() == base.getBaseColor()) {
                 thisPlayer = new Player(car);
                 break;
             }
@@ -60,13 +82,51 @@ public final class OnlineGameController extends GameController {
 
     @Override
     public void toNextPlayer() {
-        // set data somewhere
+        // add new cards to the player and clear playerCardWindow
+        final Array<GameCard> gameCards = thisPlayer.getGameCards();
+        final CardContainer playerCardContainer = playerCardWindow.getCardContainer();
+        if (((Card) playerCardContainer.getChild(0)).getGameCard() != null) {
+            gameCards.clear();
+            for (Actor actor : playerCardContainer.getChildren()) {
+                gameCards.add(((Card) actor).getGameCard());
+            }
+            while (gameCards.size < 5) {
+                if (talon.empty()) {
+                    makeTalon();
+                }
+                GameCard gameCard = talon.pop();
+                gameCards.add(gameCard);
+                gameCard.setPlayer(thisPlayer);
+            }
+            playerCardContainer.clearChildren();
+        } else {
+            gameCards.clear();
+            while (gameCards.size < 5) {
+                if (talon.empty()) {
+                    makeTalon();
+                }
+                GameCard gameCard = talon.pop();
+                gameCards.add(gameCard);
+                gameCard.setPlayer(thisPlayer);
+            }
+        }
+        // add this player cards to the playerCardWindow
+        for (GameCard gameCard : thisPlayer.getGameCards()) {
+            Card card = new Card(
+                    gameCard, gameScreen.getGameInputProcessor(),
+                    gameScreen.getAssetManager()
+            );
+            playerCardContainer.addCard(card, 0, 0);
+            gameCard.setPlayer(thisPlayer);
+        }
+        // set data to server
         sendToServer();
         networkManager.toNextPlayer(room);
     }
 
     public void sendToServer() {
         networkManager.updateGameData(room, this, thisPlayer);
+        networkManager.setFieldData(room, field);
     }
 
     public PlayerCardWindow getPlayerCardWindow() {
@@ -87,7 +147,6 @@ public final class OnlineGameController extends GameController {
     }
 
     private void initDataListeners() {
-        Gdx.app.log("OGC", thisPlayer.getCar().getBase().getBaseColor().toString());
         networkManager.addPlayersDataChangedListener(
                 room, playersData, new Procedure() {
                     @Override
@@ -129,6 +188,48 @@ public final class OnlineGameController extends GameController {
                     @Override
                     public void call() {
                         updateNonPlayerCards(cardsData);
+                        // update algorithmCardWindow
+                        algorithmCardWindow.getActionsCardContainer().clearChildren();
+                        Collections.reverse(cardsData.getAlgorithmCardWindow().getActions());
+                        for (int i = cardsData.getAlgorithmCardWindow().getActions().size() - 1; i >= 0; i--) {
+                            NetworkManager.GameData.GameCard gameCard =
+                                    cardsData.getAlgorithmCardWindow().getActions().get(i);
+                            if (gameCard != null && gameCard.getCardType() != null) {
+                                Card card = new Card(new GameCard(
+                                        gameCard.getCardType(), thisPlayer),
+                                        gameScreen.getGameInputProcessor(),
+                                        gameScreen.getAssetManager()
+                                );
+                                algorithmCardWindow.getActionsCardContainer().addCard(
+                                        card, 0, 0
+                                );
+                                card.setActionToPrevious(algorithmCardWindow.getActionsCardContainer());
+                            }
+                        }
+                        /*
+                        if (algorithmCardWindow.getCyclesCardContainer() != null) {
+                            //algorithmCardWindow.getCyclesCardContainer().clearChildren();
+                            List<NetworkManager.GameData.GameCard> cards = cardsData.getAlgorithmCardWindow().getCycles();
+                            for (int i = 0; i < cards.size(); i++) {
+                                NetworkManager.GameData.GameCard gameCard = cards.get(i);
+                                if (gameCard != null && gameCard.getCardType() != null) {
+                                    Card card = new Card(new GameCard(
+                                            gameCard.getCardType(), thisPlayer),
+                                            gameScreen.getGameInputProcessor(),
+                                            gameScreen.getAssetManager()
+                                    );
+                                    Card temp = ((CycleCardContainer) algorithmCardWindow
+                                            .getCyclesCardContainer()).getCycleCards()[i];
+                                    Vector2 vector = temp.localToStageCoordinates(new Vector2());
+                                    algorithmCardWindow.getCyclesCardContainer().addCard(
+                                            card, vector.x + 1, vector.y + 1
+                                    );
+                                    card.setCycleToPrevious((CycleCardContainer)
+                                            algorithmCardWindow.getCyclesCardContainer());
+                                }
+                            }
+                        }
+                        */
                     }
                 }, new Procedure() {
                     @Override
