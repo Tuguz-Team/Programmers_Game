@@ -21,7 +21,10 @@ public final class CycleCardContainer extends CardContainer {
         this.gameController = gameController;
         pad(PAD, 0, PAD, 0);
         for (int i = 0; i < cycleCards.length; i++) {
-            cycleCards[i] = new Card("Sprites/EnabledCards/CyclePointOn.png");
+            cycleCards[i] = new Card(
+                    "Sprites/EnabledCards/CyclePointOn.png",
+                    gameController.getGameScreen().getAssetManager()
+            );
             Card card = cycleCards[i];
             add(card).row();
         }
@@ -56,8 +59,8 @@ public final class CycleCardContainer extends CardContainer {
 
     @Override
     public void addCard(Card card, float globalX, float globalY) {
-        if (card.getGameCard().getType() == CardType.Cycle2
-                || card.getGameCard().getType() == CardType.Cycle3) {
+        if (card.getGameCard().getCardType() == CardType.Cycle2
+                || card.getGameCard().getCardType() == CardType.Cycle3) {
             Card cycleCard = null;
             Vector2 stagePos;
             int i = 0;
@@ -351,7 +354,10 @@ public final class CycleCardContainer extends CardContainer {
             padBottom(PAD);
         int i = cycleCards.length - 1;
 
-        cycleCards[i] = new Card("Sprites/EnabledCards/CyclePointOn.png");
+        cycleCards[i] = new Card(
+                "Sprites/EnabledCards/CyclePointOn.png",
+                gameController.getGameScreen().getAssetManager()
+        );
         getCells().get(i).setActor(cycleCards[i]);
     }
 
@@ -364,7 +370,10 @@ public final class CycleCardContainer extends CardContainer {
             n = cycleCards.length - prevSize * 2 + 1;
 
             for (; i < n; i++) {
-                cycleCards[i] = new Card("Sprites/EnabledCards/CyclePointOn.png");
+                cycleCards[i] = new Card(
+                        "Sprites/EnabledCards/CyclePointOn.png",
+                        gameController.getGameScreen().getAssetManager()
+                );
                 cells.get(i).setActor(cycleCards[i]);
             }
         } else if (currSize < prevSize) {

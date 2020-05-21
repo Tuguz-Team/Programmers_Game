@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
-import com.programmers.game.hotseat.HotseatGameController;
 import com.programmers.screens.ScreenLoader;
 
 public final class PlayerCardWindow extends Table {
@@ -76,7 +75,7 @@ public final class PlayerCardWindow extends Table {
             }
         });
 
-        Label label = new Label(name, ScreenLoader.getDefaultGdxSkin());
+        Label label = new Label(name, ScreenLoader.getGameSkin());
         label.setFontScale(2);
 
         table.add(label).colspan(2).bottom();

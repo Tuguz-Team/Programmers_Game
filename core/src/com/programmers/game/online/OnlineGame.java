@@ -22,7 +22,7 @@ public class OnlineGame extends GameScreen {
     private OnlineGameController onlineGameController;
     private final NetworkManager.Room room;
     private NetworkManager.FieldData fieldData;
-    private NetworkManager.GameData gameData;
+    private NetworkManager.GameData gameData = new NetworkManager.GameData();
 
     private boolean loadGame;
     private boolean exit;
@@ -30,16 +30,13 @@ public class OnlineGame extends GameScreen {
     private final Dialog waitDialog;
     private final OKDialog notExistDialog;
 
-    private final Car[] cars;
-
     public OnlineGame(final ScreenLoader screenLoader, final NetworkManager.Room room, boolean sendData) {
         super(screenLoader, room.getDifficulty(), room.getPlayersCount());
-        cars = new Car[room.getPlayersCount()];
 
-        waitDialog = new Dialog("   Waiting...   ", ScreenLoader.getDefaultGdxSkin());
+        waitDialog = new Dialog("   Waiting...   ", ScreenLoader.getGameSkin());
         waitDialog.setMovable(false);
 
-        notExistDialog = new OKDialog("   Error! Room doesn't exist!   ", ScreenLoader.getDefaultGdxSkin()) {
+        notExistDialog = new OKDialog("   Error! Room doesn't exist!   ", ScreenLoader.getGameSkin()) {
             @Override
             protected void result(Object object) {
                 dispose();
@@ -62,6 +59,7 @@ public class OnlineGame extends GameScreen {
             }
             HotseatGameController hotseatGameController =
                     new HotseatGameController(players, field, this);
+            Car[] cars = new Car[room.getPlayersCount()];
             for (int i = 0; i < hotseatGameController.getPlayers().length; i++) {
                 cars[i] = hotseatGameController.getPlayers()[i].getCar();
                 cars[i].loadModel();
@@ -88,8 +86,8 @@ public class OnlineGame extends GameScreen {
                                     if (room.isLaunched()) {
                                         fieldData = screenLoader.networkManager.getFieldData(room);
                                         gameData = screenLoader.networkManager.getGameData(room);
+                                        screenLoader.networkManager.removeRoomChangedListener();
                                         loadGame = true;
-                                        screenLoader.networkManager.removeListener(room);
                                     }
                                     interrupt();
                                 }
@@ -111,6 +109,7 @@ public class OnlineGame extends GameScreen {
             loadGame = false;
             field = new Field(this, fieldData);
             List<NetworkManager.GameData.Player> players = gameData.getPlayersData().getPlayers();
+            Car[] cars = new Car[room.getPlayersCount()];
             for (int i = 0; i < players.size(); i++) {
                 NetworkManager.FieldData.Car car = players.get(i).getCar();
                 cars[i] = new Car(
@@ -130,7 +129,7 @@ public class OnlineGame extends GameScreen {
             dispose();
             screenLoader.setScreen(screenLoader.getMainMenu());
             if (room.getPlayers().size() == 0) {
-                screenLoader.networkManager.deleteRoom(room.getName());
+                screenLoader.networkManager.deleteRoom(room);
             }
         }
     }
@@ -155,7 +154,7 @@ public class OnlineGame extends GameScreen {
     @Override
     public void dispose() {
         screenLoader.networkManager.removePlayerFromRoom(room);
-        screenLoader.networkManager.removeListener(room);
+        screenLoader.networkManager.removeRoomChangedListener();
         super.dispose();
     }
 
@@ -166,24 +165,27 @@ public class OnlineGame extends GameScreen {
                     public void call() {
                         if (room.getPlayers().size() != room.getPlayersCount()) {
                             exit = true;
-                            return;
                         }
-                        waitDialog.show(OnlineGame.this);
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                onlineGameController.getFromServer(
-                                        screenLoader.networkManager.getGameData(room)
-                                );
-                                interrupt();
-                            }
-                        }.start();
-                        waitDialog.hide();
                     }
                 }, new Procedure() {
                     @Override
                     public void call() { }
                 }
         );
+        /*
+        waitDialog.show(OnlineGame.this);
+        new Thread() {
+            @Override
+            public void run() {
+                onlineGameController.getFromServer(gameData);
+                waitDialog.hide();
+                interrupt();
+            }
+        }.start();
+        */
+    }
+
+    public Dialog getWaitDialog() {
+        return waitDialog;
     }
 }

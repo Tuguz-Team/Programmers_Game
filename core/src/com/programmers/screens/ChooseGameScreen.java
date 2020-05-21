@@ -2,7 +2,6 @@ package com.programmers.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.programmers.ui_elements.MyButton;
@@ -16,7 +15,7 @@ public final class ChooseGameScreen extends ReturnableScreen {
         buttons.setFillParent(true);
         addActor(buttons);
 
-        TextButton hotseatGame = new MyButton("   HOTSEAT GAME   ", ScreenLoader.getDefaultGdxSkin()) {
+        TextButton hotseatGame = new MyButton("   HOTSEAT GAME   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, true));
@@ -24,7 +23,7 @@ public final class ChooseGameScreen extends ReturnableScreen {
         };
         hotseatGame.getLabel().setFontScale(2);
 
-        TextButton createNewGame = new MyButton("   NEW ROOM   ", ScreenLoader.getDefaultGdxSkin()) {
+        TextButton createNewGame = new MyButton("   NEW ROOM   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new NewGameScreen(screenLoader, ChooseGameScreen.this, false));
@@ -32,7 +31,7 @@ public final class ChooseGameScreen extends ReturnableScreen {
         };
         createNewGame.getLabel().setFontScale(2);
 
-        TextButton connectToGame = new MyButton("   CONNECT TO ROOM   ", ScreenLoader.getDefaultGdxSkin()) {
+        TextButton connectToGame = new MyButton("   CONNECT TO ROOM   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new ConnectGameScreen(screenLoader, ChooseGameScreen.this));

@@ -7,18 +7,18 @@ import com.programmers.interfaces.Procedure;
 
 public final class GameCard implements ICard {
 
-    private final CardType type;
+    private final CardType cardType;
     private final Array<GameCard> cards;
     private Player player;
 
-    public GameCard(final CardType type, final Player player) {
-        this.type = type;
+    public GameCard(final CardType cardType, final Player player) {
+        this.cardType = cardType;
         this.player = player;
         cards = new Array<>(2);
     }
 
-    public CardType getType() {
-        return type;
+    public CardType getCardType() {
+        return cardType;
     }
 
     public Array<GameCard> getCards() {
@@ -35,7 +35,7 @@ public final class GameCard implements ICard {
 
     public void apply() {
         Procedure[] procedures;
-        switch (type) {
+        switch (cardType) {
             case StepForward:
                 stepForward();
                 break;

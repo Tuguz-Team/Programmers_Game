@@ -31,14 +31,14 @@ public final class ConnectGameScreen extends ReturnableScreen {
     public ConnectGameScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
         super(screenLoader, previousScreen);
 
-        final Skin skin = ScreenLoader.getDefaultGdxSkin();
+        final Skin skin = ScreenLoader.getGameSkin();
 
         notFoundDialog = new OKDialog("   No games were found!   ", skin);
 
         notExistDialog = new OKDialog("   This room doesn't exist now!   ", skin) {
             @Override
             public Dialog show(Stage stage) {
-                screenLoader.networkManager.removeListener(room);
+                screenLoader.networkManager.removeRoomChangedListener();
                 foundDialog.hide();
                 room = null;
                 return super.show(stage);
@@ -70,7 +70,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
         addActor(table);
         table.top().left();
 
-        TextButton updateGames = new MyButton("   UPDATE   ", ScreenLoader.getDefaultGdxSkin()) {
+        TextButton updateGames = new MyButton("   UPDATE   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 waitingDialog.show(ConnectGameScreen.this);
@@ -94,7 +94,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
         updateGames.getLabel().setFontScale(2);
         table.add(updateGames).spaceBottom(10).row();
 
-        Label gameToConnect = new Label("GAMES TO CONNECT", ScreenLoader.getDefaultGdxSkin());
+        Label gameToConnect = new Label("GAMES TO CONNECT", ScreenLoader.getGameSkin());
         gameToConnect.setFontScale(2);
         table.add(gameToConnect).spaceBottom(10).row();
 
@@ -123,11 +123,13 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
     private final class GameRoom extends MyButton {
 
+        private NetworkManager.Room room;
+
         private GameRoom(final NetworkManager.Room room) {
             super("   ROOM NAME:  " + room.getName().toUpperCase() + "   "
                     + "\n\n   PLAYERS:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
-                    + "\n\n   DIFFICULTY:  " + room.getDifficulty().toString().toUpperCase() + "   ", ScreenLoader.getDefaultGdxSkin());
-            ConnectGameScreen.this.room = room;
+                    + "\n\n   DIFFICULTY:  " + room.getDifficulty().toString().toUpperCase() + "   ", ScreenLoader.getGameSkin());
+            this.room = room;
             screenLoader.networkManager.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
@@ -145,7 +147,8 @@ public final class ConnectGameScreen extends ReturnableScreen {
 
         @Override
         public void call() {
-            if (room != null && room.getPlayers().size() <= room.getPlayersCount()) {
+            ConnectGameScreen.this.room = room;
+            if (room.getPlayers().size() <= room.getPlayersCount()) {
                 if (!room.isLaunched()) {
                     if (screenLoader.networkManager.addPlayerToRoom(room)) {
                         foundDialog.show(ConnectGameScreen.this);
@@ -154,10 +157,10 @@ public final class ConnectGameScreen extends ReturnableScreen {
                                     @Override
                                     public void call() {
                                         if (room != null) {
-                                            label.setText("Players : " + (room.getPlayers().size() + 1) + "/" + room.getPlayersCount());
+                                            label.setText("Players : " + room.getPlayers().size() + "/" + room.getPlayersCount());
                                             if (room.getPlayersCount() == room.getPlayers().size()) {
                                                 launchOnline = true;
-                                                screenLoader.networkManager.removeListener(room);
+                                                screenLoader.networkManager.removeRoomChangedListener();
                                             }
                                         }
                                     }
@@ -176,8 +179,6 @@ public final class ConnectGameScreen extends ReturnableScreen {
                 } else {
                     unableToConnectDialog.show(ConnectGameScreen.this);
                 }
-            } else {
-                notExistDialog.show(ConnectGameScreen.this);
             }
         }
     }

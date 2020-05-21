@@ -26,7 +26,7 @@ public final class NewGameScreen extends ReturnableScreen {
     private NetworkManager.Room room;
     private boolean launchOnline;
 
-    private static final Skin skin = ScreenLoader.getDefaultGdxSkin();
+    private static final Skin skin = ScreenLoader.getGameSkin();
     private final Dialog waitDialog;
 
     public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
@@ -39,7 +39,7 @@ public final class NewGameScreen extends ReturnableScreen {
         waitDialog = new Dialog("   Waiting...   ", skin);
         waitDialog.setMovable(false);
 
-        final TextField textField = new TextField("", ScreenLoader.getDefaultGdxSkin());
+        final TextField textField = new TextField("", ScreenLoader.getGameSkin());
         textField.setMaxLength(30);
         textField.setAlignment(Align.center);
 
@@ -88,7 +88,7 @@ public final class NewGameScreen extends ReturnableScreen {
         ui.add(difficultyRadioButton).spaceBottom(0.025f * Gdx.graphics.getHeight()).row();
 
         final NewRoomDialog newRoomDialog = new NewRoomDialog("Waiting for players...", skin);
-        TextButton start = new MyButton("   START PLAYING !   ", ScreenLoader.getDefaultGdxSkin()) {
+        TextButton start = new MyButton("   START PLAYING !   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 final Difficulty difficulty = radioButtonController.getChecked().getText()
@@ -140,7 +140,7 @@ public final class NewGameScreen extends ReturnableScreen {
     @Override
     public void dispose() {
         if (room != null && !launchOnline) {
-            screenLoader.networkManager.deleteRoom(room.getName());
+            screenLoader.networkManager.deleteRoom(room);
         }
         super.dispose();
     }
@@ -170,7 +170,7 @@ public final class NewGameScreen extends ReturnableScreen {
                             label.setText("   Players : " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   ");
                             if (room.getPlayers().size() == room.getPlayersCount()) {
                                 launchOnline = true;
-                                screenLoader.networkManager.removeListener(room);
+                                screenLoader.networkManager.removeRoomChangedListener();
                             }
                         }
                     }, new Procedure() {
@@ -182,7 +182,7 @@ public final class NewGameScreen extends ReturnableScreen {
 
         @Override
         protected void result(Object object) {
-            screenLoader.networkManager.deleteRoom(room.getName());
+            screenLoader.networkManager.deleteRoom(room);
         }
     }
 }

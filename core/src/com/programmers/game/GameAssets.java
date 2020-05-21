@@ -12,6 +12,7 @@ public final class GameAssets extends AssetManager {
         loadUI();
         loadModels();
         loadSkyBox();
+        loadTextures();
     }
 
     private void loadSkyBox() {
@@ -25,6 +26,35 @@ public final class GameAssets extends AssetManager {
     private void loadUI() {
         load("GameSkin/GameSkin.json", Skin.class);
         load("buttons.pack", TextureAtlas.class);
+
+    }
+
+    private void loadTextures() {
+        load("Sprites/EnabledCards/Cycle2.png", Texture.class);
+        load("Sprites/EnabledCards/Cycle3.png", Texture.class);
+        load("Sprites/EnabledCards/CyclePointOn.png", Texture.class);
+        load("Sprites/EnabledCards/empty.png", Texture.class);
+        load("Sprites/EnabledCards/Jump.png", Texture.class);
+        load("Sprites/EnabledCards/StepForward.png", Texture.class);
+        load("Sprites/EnabledCards/StepForwardToFloor.png", Texture.class);
+        load("Sprites/EnabledCards/Teleport.png", Texture.class);
+        load("Sprites/EnabledCards/Turn90Left.png", Texture.class);
+        load("Sprites/EnabledCards/Turn90Right.png", Texture.class);
+        load("Sprites/EnabledCards/Turn180.png", Texture.class);
+
+        load("Sprites/DisabledCards/Cycle2.png", Texture.class);
+        load("Sprites/DisabledCards/Cycle3.png", Texture.class);
+        load("Sprites/DisabledCards/CyclePointOff.png", Texture.class);
+        load("Sprites/DisabledCards/Jump.png", Texture.class);
+        load("Sprites/DisabledCards/StepForward.png", Texture.class);
+        load("Sprites/DisabledCards/StepForwardToFloor.png", Texture.class);
+        load("Sprites/DisabledCards/Teleport.png", Texture.class);
+        load("Sprites/DisabledCards/Turn90Left.png", Texture.class);
+        load("Sprites/DisabledCards/Turn90Right.png", Texture.class);
+        load("Sprites/DisabledCards/Turn180.png", Texture.class);
+
+        load("Sprites/AlgorithmButton/StartButtonOff.png", Texture.class);
+        load("Sprites/AlgorithmButton/StartButtonOn.png", Texture.class);
     }
 
     private void loadModels() {

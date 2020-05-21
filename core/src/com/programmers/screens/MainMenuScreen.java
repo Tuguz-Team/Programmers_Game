@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
@@ -30,7 +29,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         setViewport(new FillViewport(1100, 1100, camera));
 
-        final Skin skin = ScreenLoader.getDefaultGdxSkin();
+        final Skin skin = ScreenLoader.getGameSkin();
         yesNoDialog = new YesNoDialog("   Are you sure you want to exit the game?   ", skin) {
             @Override
             public void call() {
@@ -49,7 +48,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         addActor(mainButtons);
 
         TextButton startButton =
-                new MyButton("   START   ", ScreenLoader.getDefaultGdxSkin()) {
+                new MyButton("   START   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new ChooseGameScreen(
@@ -60,7 +59,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         startButton.getLabel().setFontScale(2);
 
         TextButton exitButton =
-                new MyButton("   EXIT   ", ScreenLoader.getDefaultGdxSkin()) {
+                new MyButton("   EXIT   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 if (isYesNoDialogHidden) {

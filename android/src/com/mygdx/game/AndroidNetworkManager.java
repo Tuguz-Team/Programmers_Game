@@ -3,13 +3,13 @@ package com.mygdx.game;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.badlogic.gdx.Gdx;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -47,7 +47,6 @@ public final class AndroidNetworkManager implements NetworkManager {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         firebaseUser = authResult.getUser();
-                        Gdx.app.log("USER_ID", firebaseUser.getUid());
                     }
                 }
         );
@@ -76,14 +75,14 @@ public final class AndroidNetworkManager implements NetworkManager {
     }
 
     @Override
-    public void deleteRoom(String name) {
-        firebaseFirestore.collection(rooms).document(name)
+    public void deleteRoom(Room room) {
+        firebaseFirestore.collection(rooms).document(room.getName())
                 .collection(gameData).document(playersData).delete();
-        firebaseFirestore.collection(rooms).document(name)
+        firebaseFirestore.collection(rooms).document(room.getName())
                 .collection(gameData).document(cardsData).delete();
-        firebaseFirestore.collection(rooms).document(name)
+        firebaseFirestore.collection(rooms).document(room.getName())
                 .collection(fieldData).document(fieldData).delete();
-        firebaseFirestore.collection(rooms).document(name).delete();
+        firebaseFirestore.collection(rooms).document(room.getName()).delete();
     }
 
     @Override
@@ -203,12 +202,12 @@ public final class AndroidNetworkManager implements NetworkManager {
         return linkedList;
     }
 
-    private ListenerRegistration listenerRegistration;
+    private ListenerRegistration roomListener;
 
     @Override
     public void addRoomChangedListener(final Room room, final Procedure exists,
-                                       final Procedure doesNotExists) {
-        listenerRegistration = firebaseFirestore.collection(rooms)
+                                       final Procedure doesNotExist) {
+        roomListener = firebaseFirestore.collection(rooms)
                 .document(room.getName())
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -220,44 +219,103 @@ public final class AndroidNetworkManager implements NetworkManager {
                         room.set(newRoom);
                         exists.call();
                     } else {
-                        doesNotExists.call();
+                        doesNotExist.call();
                     }
                 } else {
-                    doesNotExists.call();
+                    doesNotExist.call();
                 }
             }
         });
     }
 
     @Override
-    public void removeListener(Room room) {
-        if (listenerRegistration != null) {
-            listenerRegistration.remove();
+    public void removeRoomChangedListener() {
+        if (roomListener != null) {
+            roomListener.remove();
+            roomListener = null;
+        }
+    }
+
+    private ListenerRegistration playersDataListener;
+
+    @Override
+    public void addPlayersDataChangedListener(Room room, final GameData.PlayersData playersData,
+                                              final Procedure exists, final Procedure doesNotExist) {
+        playersDataListener = firebaseFirestore.collection(rooms)
+                .document(room.getName()).collection(gameData)
+                .document(AndroidNetworkManager.playersData).addSnapshotListener(
+                        new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
+                                                @Nullable FirebaseFirestoreException e) {
+                                if (e == null && documentSnapshot != null && documentSnapshot.exists()) {
+                                    GameData.PlayersData newData = documentSnapshot.toObject(GameData.PlayersData.class);
+                                    if (newData != null) {
+                                        playersData.set(newData);
+                                        exists.call();
+                                    } else {
+                                        doesNotExist.call();
+                                    }
+                                } else {
+                                    doesNotExist.call();
+                                }
+                            }
+                        }
+                );
+    }
+
+    @Override
+    public void removePlayersDataChangedListener() {
+        if (playersDataListener != null) {
+            playersDataListener.remove();
+            playersDataListener = null;
+        }
+    }
+
+    private ListenerRegistration cardsDataListener;
+
+    @Override
+    public void addCardsDataChangedListener(Room room, final GameData.CardsData cardsData,
+                                            final Procedure exists, final Procedure doesNotExist) {
+        cardsDataListener = firebaseFirestore.collection(rooms)
+                .document(room.getName()).collection(gameData)
+                .document(AndroidNetworkManager.cardsData).addSnapshotListener(
+                        new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
+                                                @Nullable FirebaseFirestoreException e) {
+                                if (e == null && documentSnapshot != null && documentSnapshot.exists()) {
+                                    GameData.CardsData newData = documentSnapshot.toObject(GameData.CardsData.class);
+                                    if (newData != null) {
+                                        cardsData.set(newData);
+                                        exists.call();
+                                    } else {
+                                        doesNotExist.call();
+                                    }
+                                } else {
+                                    doesNotExist.call();
+                                }
+                            }
+                        }
+                );
+    }
+
+    @Override
+    public void removeCardsDataChangedListener() {
+        if (cardsDataListener != null) {
+            cardsDataListener.remove();
+            cardsDataListener = null;
         }
     }
 
     @Override
-    public GameData.Player getThisPlayerData(Room room) {
-        final GameData.Player[] player = { null };
-        firebaseFirestore.collection(rooms).document(room.getName())
-                .collection(gameData).document(playersData)
-                .get().addOnSuccessListener(
-                new OnSuccessListener<DocumentSnapshot>() {
-                    @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        GameData.PlayersData playersData =
-                                documentSnapshot.toObject(GameData.PlayersData.class);
-                        for (GameData.Player playerData : playersData.getPlayers()) {
-                            if (firebaseUser.getUid().equals(playerData.getID())) {
-                                player[0] = playerData;
-                                break;
-                            }
-                        }
-                    }
-                }
-        );
-        while (player[0] == null);
-        return player[0];
+    public GameData.Player getThisPlayerData(GameData.PlayersData playersData) {
+        for (GameData.Player playerData : playersData.getPlayers()) {
+            if (firebaseUser.getUid().equals(playerData.getID())) {
+                return playerData;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -302,7 +360,25 @@ public final class AndroidNetworkManager implements NetworkManager {
 
     @Override
     public void updateGameData(Room room, OnlineGameController onlineGameController, Player player) {
-        //
+        GameData gameData = getGameData(room);
+        for (GameData.Player playerData : gameData.getPlayersData().getPlayers()) {
+            if (firebaseUser.getUid().equals(playerData.getID())) {
+                playerData.set(new GameData.Player(player));
+                playerData.setID(firebaseUser.getUid());
+                break;
+            }
+        }
+        CollectionReference reference = firebaseFirestore.collection(rooms)
+                .document(room.getName())
+                .collection(AndroidNetworkManager.gameData);
+        reference.document(AndroidNetworkManager.playersData).set(gameData.getPlayersData());
+        reference.document(cardsData).set(new GameData.CardsData(onlineGameController));
+    }
+
+    @Override
+    public boolean isThisPlayerTurn(GameData.PlayersData playersData) {
+        int i = playersData.getIndex();
+        return firebaseUser.getUid().equals(playersData.getPlayers().get(i).getID());
     }
 
     @Override

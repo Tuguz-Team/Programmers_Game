@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -29,7 +28,7 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
         setViewport(new FillViewport(1280, 720, camera));
 
         TextButton returnButton =
-                new MyButton("   BACK   ", ScreenLoader.getDefaultGdxSkin()) {
+                new MyButton("   BACK   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 returnToPreviousScreen();

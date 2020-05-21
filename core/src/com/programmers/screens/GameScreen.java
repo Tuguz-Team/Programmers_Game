@@ -22,7 +22,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
@@ -93,7 +92,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
     }
 
     private void addUI() {
-        final Skin skin = ScreenLoader.getDefaultGdxSkin();
+        final Skin skin = ScreenLoader.getGameSkin();
 
         final YesNoDialog yesNoDialog = new YesNoDialog
                 ("   Are you sure you want to return to main menu?   ", skin) {
@@ -121,7 +120,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         pauseMenu.setMovable(false);
 
         TextButton returnButton =
-                new MyButton("   CONTINUE   ", ScreenLoader.getDefaultGdxSkin()) {
+                new MyButton("   CONTINUE   ", ScreenLoader.getGameSkin()) {
                     @Override
                     public void call() {
                         pauseMenu.hide();
@@ -132,7 +131,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         returnButton.getLabel().setFontScale(2);
 
         TextButton settingsButton =
-                new MyButton("   SETTINGS   ", ScreenLoader.getDefaultGdxSkin()) {
+                new MyButton("   SETTINGS   ", ScreenLoader.getGameSkin()) {
                     @Override
                     public void call() {
                         screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
@@ -141,7 +140,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         settingsButton.getLabel().setFontScale(2);
 
         TextButton mainMenuButton =
-                new MyButton("   QUIT ROOM   ", ScreenLoader.getDefaultGdxSkin()) {
+                new MyButton("   QUIT ROOM   ", ScreenLoader.getGameSkin()) {
                     @Override
                     public void call() {
                         yesNoDialog.show(GameScreen.this);
@@ -157,7 +156,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight()).row();
         pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
 
-        TextButton toDialogButton = new MyButton("  PAUSE  ", ScreenLoader.getDefaultGdxSkin()) {
+        TextButton toDialogButton = new MyButton("  PAUSE  ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 if (isPauseMenuHidden) {

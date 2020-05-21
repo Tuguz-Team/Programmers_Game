@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -14,28 +15,29 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameInputProcessor;
+import com.programmers.screens.ScreenLoader;
 
-import static com.programmers.screens.ScreenLoader.getDefaultGdxSkin;
+import static com.programmers.screens.ScreenLoader.getGameSkin;
 
 public final class Card extends Image implements Comparable<Card> {
 
     private final GameCard gameCard;
     private CardContainer prevParent;
-    protected GameInputProcessor gameInputProcessor = null;
+    private GameInputProcessor gameInputProcessor = null;
 
     private Cell<Card> cell;
     private boolean cellEnabled = true,
             enabled = true, replaced = false;
     private int indexForCycles;
 
-    public Card(final String name) {
-        super(new Texture(name));
+    public Card(final String name, AssetManager assetManager) {
+        super((Texture) assetManager.get(name));
         this.gameCard = null;
         setDebug(true);
     }
 
-    public Card(final GameCard gameCard, GameInputProcessor gameInputProcessor) {
-        super(new Texture("Sprites/EnabledCards/".concat(gameCard.getType().toString()).concat(".png")));
+    public Card(final GameCard gameCard, GameInputProcessor gameInputProcessor, AssetManager assetManager) {
+        super((Texture) assetManager.get("Sprites/EnabledCards/" + gameCard.getCardType().toString() + ".png"));
         this.gameCard = gameCard;
         this.gameInputProcessor = gameInputProcessor;
         setDebug(true);
@@ -103,7 +105,7 @@ public final class Card extends Image implements Comparable<Card> {
                             && y < stagePos.y + card.getHeight() && !card.isEnabled() && !Card.this.isReplaced()
                             && card.getParent() == Card.this.getPrevParent()) {
                         YesNoDialog dialog = new YesNoDialog("   Do you really want to replace card from " +
-                                "previous move with your's new card? This change is irreversible.   ", getDefaultGdxSkin()) {
+                                "previous move with your's new card? This change is irreversible.   ", getGameSkin()) {
                             @Override
                             public void call() {
                                 Cell cell = getCell(card);
@@ -134,7 +136,7 @@ public final class Card extends Image implements Comparable<Card> {
         } else if (other.getGameCard() == null) {
             return 1;
         }
-        return this.getGameCard().getType().compareTo(other.getGameCard().getType());
+        return this.getGameCard().getCardType().compareTo(other.getGameCard().getCardType());
     }
 
     public GameCard getGameCard() {
@@ -189,7 +191,7 @@ public final class Card extends Image implements Comparable<Card> {
         if (this.getGameCard() != null) {
             this.setEnabled(false);
             this.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/".
-                    concat(this.getGameCard().getType().toString()).concat(".png")))
+                    concat(this.getGameCard().getCardType().toString()).concat(".png")))
             );
             this.removeListener(this.getListeners().get(0));
             this.addListener(new InputListener() {
@@ -231,7 +233,7 @@ public final class Card extends Image implements Comparable<Card> {
     public void setCycleToPrevious(final CycleCardContainer container) {
         if (this.getGameCard() != null) {
             this.setDrawable(new TextureRegionDrawable(new Texture("Sprites/DisabledCards/".
-                    concat(this.getGameCard().getType().toString()).concat(".png")))
+                    concat(this.getGameCard().getCardType().toString()).concat(".png")))
             );
             this.removeListener(this.getListeners().get(0));
             this.addListener(new InputListener() {
@@ -253,7 +255,7 @@ public final class Card extends Image implements Comparable<Card> {
                     thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
 
                     final Dialog dialog = new Dialog("   Do you really want to delete " +
-                            "this cycle card? This change is irreversible.   ", getDefaultGdxSkin()) {
+                            "this cycle card? This change is irreversible.   ", getGameSkin()) {
                         @Override
                         protected void result(Object object) {
                             if (object.equals(true)) {

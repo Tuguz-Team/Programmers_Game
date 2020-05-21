@@ -33,7 +33,7 @@ public final class AlgorithmCardWindow extends Table {
                 new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
         );
 
-        Label label = new Label(name, ScreenLoader.getDefaultGdxSkin());
+        Label label = new Label(name, ScreenLoader.getGameSkin());
         label.setFontScale(2);
 
         add(label).bottom();

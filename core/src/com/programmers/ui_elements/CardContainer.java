@@ -25,12 +25,18 @@ public class CardContainer extends Table {
         this.content = content;
         this.difficulty = difficulty;
         this.gameController = gameController;
-        emptyCard = new Card("Sprites/EnabledCards/empty.png");
+        emptyCard = new Card(
+                "Sprites/EnabledCards/empty.png",
+                gameController.getGameScreen().getAssetManager()
+        );
         if (content != null)
             addEmpty();
         if (gameCards != null) {
             for (GameCard gameCard : gameCards) {
-                Card card = new Card(gameCard, gameController.getGameScreen().getGameInputProcessor());
+                Card card = new Card(
+                        gameCard, gameController.getGameScreen().getGameInputProcessor(),
+                        gameController.getGameScreen().getAssetManager()
+                );
                 addCard(card, 0, 0);
             }
         }
@@ -94,8 +100,8 @@ public class CardContainer extends Table {
     public void addCard(final Card card, final float globalX, final float globalY) {
         switch (content) {
             case Actions:
-                if (card.getGameCard().getType() != CardType.Cycle2
-                        && card.getGameCard().getType() != CardType.Cycle3) {
+                if (card.getGameCard().getCardType() != CardType.Cycle2
+                        && card.getGameCard().getCardType() != CardType.Cycle3) {
                     if (card.getCell() == null)
                         add(card).row();
                     else
