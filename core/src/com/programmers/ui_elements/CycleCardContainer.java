@@ -18,7 +18,7 @@ public final class CycleCardContainer extends CardContainer {
     private static final int PAD = 29, WIDTH = 90;
 
     CycleCardContainer(final GameController gameController) {
-        super(gameController.getAlgorithmCards(), gameController.getDifficulty(), null, gameController);
+        super(gameController.getAlgorithmToDo(), gameController.getDifficulty(), null, gameController);
         this.gameController = gameController;
         pad(PAD, 0, PAD, 0);
         for (int i = 0; i < cycleCards.length; i++) {

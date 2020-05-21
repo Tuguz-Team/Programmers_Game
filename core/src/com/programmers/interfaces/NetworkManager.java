@@ -6,6 +6,7 @@ import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.enums.Direction;
 import com.programmers.game.Field;
+import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
 import com.programmers.game.Player;
 import com.programmers.game.hotseat.HotseatGameController;
@@ -391,10 +392,19 @@ public interface NetworkManager {
             private AlgorithmCardWindow algorithmCardWindow;
             private List<GameCard> discardPile;
             private List<GameCard> talon;
+            private List<GameCard> algorithmToDo;
 
             public CardsData() { }
 
             public CardsData(GameController gameController) {
+                algorithmToDo = new LinkedList<>();
+                for (com.programmers.game.GameCard gameCard : gameController.getAlgorithmToDo()) {
+                    NetworkManager.GameData.GameCard temp = new NetworkManager.GameData.GameCard(gameCard);
+                    for (com.programmers.game.GameCard item : gameCard.getCards()) {
+                        temp.getCards().add(new NetworkManager.GameData.GameCard(item));
+                    }
+                    algorithmToDo.add(temp);
+                }
                 algorithmCardWindow = new AlgorithmCardWindow(gameController.getAlgorithmCardWindow());
                 discardPile = new LinkedList<>();
                 for (com.programmers.game.GameCard gameCard : gameController.getDiscardPile()) {
@@ -407,6 +417,7 @@ public interface NetworkManager {
             }
 
             public void set(CardsData cardsData) {
+                algorithmToDo = cardsData.algorithmToDo;
                 algorithmCardWindow = cardsData.algorithmCardWindow;
                 discardPile = cardsData.discardPile;
                 talon = cardsData.talon;
@@ -422,6 +433,10 @@ public interface NetworkManager {
 
             public List<GameCard> getTalon() {
                 return talon;
+            }
+
+            public List<GameCard> getAlgorithmToDo() {
+                return algorithmToDo;
             }
         }
 
@@ -482,11 +497,12 @@ public interface NetworkManager {
 
         public static final class GameCard {
             private CardType cardType;
-            private boolean enabled;
+            private List<GameCard> cards;
 
             public GameCard() { }
 
             public GameCard(com.programmers.game.GameCard gameCard) {
+                cards = new LinkedList<>();
                 if (gameCard != null) {
                     cardType = gameCard.getCardType();
                 }
@@ -496,12 +512,8 @@ public interface NetworkManager {
                 return cardType;
             }
 
-            public boolean isEnabled() {
-                return enabled;
-            }
-
-            public void setEnabled(boolean enabled) {
-                this.enabled = enabled;
+            public List<GameCard> getCards() {
+                return cards;
             }
         }
 

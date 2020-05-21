@@ -1,9 +1,9 @@
 package com.programmers.game.online;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
@@ -29,7 +29,6 @@ public final class OnlineGameController extends GameController {
     private final NetworkManager.Room room;
     private NetworkManager.GameData.PlayersData playersData = new NetworkManager.GameData.PlayersData();
     private NetworkManager.GameData.CardsData cardsData = new NetworkManager.GameData.CardsData();
-    private NetworkManager.FieldData fieldData = new NetworkManager.FieldData();
 
     private final Car[] cars;
 
@@ -53,7 +52,7 @@ public final class OnlineGameController extends GameController {
                 break;
             }
         }
-        algorithmCards.addAll(hotseatGameController.getAlgorithmCards());
+        algorithmToDo.addAll(hotseatGameController.getAlgorithmToDo());
         discardPile.addAll(hotseatGameController.getDiscardPile());
         talon.addAll(hotseatGameController.getTalon());
         initContainers();
@@ -120,13 +119,8 @@ public final class OnlineGameController extends GameController {
             gameCard.setPlayer(thisPlayer);
         }
         // set data to server
-        sendToServer();
-        networkManager.toNextPlayer(room);
-    }
-
-    public void sendToServer() {
         networkManager.updateGameData(room, this, thisPlayer);
-        networkManager.setFieldData(room, field);
+        networkManager.toNextPlayer(room);
     }
 
     public PlayerCardWindow getPlayerCardWindow() {
@@ -187,6 +181,28 @@ public final class OnlineGameController extends GameController {
                 room, cardsData, new Procedure() {
                     @Override
                     public void call() {
+                        // do algorithmToDo
+                        if (!networkManager.isThisPlayerTurn(playersData)) {
+                            NetworkManager.GameData.Player playerData = playersData.getPlayers()
+                                    .get(playersData.getIndex());
+                            Car car = null;
+                            for (Car item : cars) {
+                                if (item.getBase().getBaseColor() == playerData.getCar().getBase().getBaseColor()) {
+                                    car = item;
+                                    break;
+                                }
+                            }
+                            Player player = new Player(car);
+                            for (NetworkManager.GameData.GameCard gameCardData : cardsData.getAlgorithmToDo()) {
+                                GameCard gameCard = new GameCard(gameCardData.getCardType(), player);
+                                for (NetworkManager.GameData.GameCard item : gameCardData.getCards()) {
+                                    gameCard.getCards().add(new GameCard(item.getCardType(), player));
+                                }
+                                player.addCard(gameCard);
+                                gameCard.apply();
+                            }
+                        }
+                        //
                         updateNonPlayerCards(cardsData);
                         // update algorithmCardWindow
                         algorithmCardWindow.getActionsCardContainer().clearChildren();

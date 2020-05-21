@@ -3,6 +3,7 @@ package com.mygdx.game;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.badlogic.gdx.Gdx;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.programmers.enums.Difficulty;
+import com.programmers.game.GameCard;
 import com.programmers.game.Player;
 import com.programmers.game.hotseat.HotseatGameController;
 import com.programmers.game.online.OnlineGameController;

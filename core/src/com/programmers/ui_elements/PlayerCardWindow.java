@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.programmers.enums.Difficulty;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
 import com.programmers.screens.ScreenLoader;
@@ -14,6 +15,7 @@ public final class PlayerCardWindow extends Table {
 
     private boolean discarding = false;
     private CardContainer cardContainer;
+    private final GameController gameController;
 
     private final Button discardButton;
 
@@ -21,6 +23,7 @@ public final class PlayerCardWindow extends Table {
                             final GameController gameController) {
         setFillParent(true);
         setDebug(true);
+        this.gameController = gameController;
         this.cardContainer = cardContainer;
         final Table tableTemp = new Table();
         final Table table = new Table();
@@ -69,6 +72,9 @@ public final class PlayerCardWindow extends Table {
                     gameController.getAlgorithmCardWindow().enable();
                     cardContainer.discardMode = false;
                     CardContainer.cardContainers.removeValue(discardContainer, false);
+                    if (gameController.getDifficulty() == Difficulty.Easy) {
+                        gameController.getAlgorithmToDo().clear();
+                    }
                     gameController.toNextPlayer();
                 }
                 cardContainer.setTouchable();

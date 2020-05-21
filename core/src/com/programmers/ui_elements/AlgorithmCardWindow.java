@@ -48,7 +48,7 @@ public final class AlgorithmCardWindow extends Table {
             table.add(button).top().row();
         }
         actionsCardContainer = new CardContainer(
-                gameController.getAlgorithmCards(), gameController.getDifficulty(),
+                gameController.getAlgorithmToDo(), gameController.getDifficulty(),
                 CardContainer.Content.Actions, gameController) {
             @Override
             protected void setTouchable() { }
@@ -74,6 +74,7 @@ public final class AlgorithmCardWindow extends Table {
         button.addListener(new MyButton.Listener() {
             @Override
             public void call() {
+                gameController.getAlgorithmToDo().clear();
                 if (gameController.getDifficulty() == Difficulty.Easy) {
                     Array<Actor> array = actionsCardContainer.getChildren();
                     for (int i = 0; i < array.size + 10; i++) {
@@ -83,6 +84,7 @@ public final class AlgorithmCardWindow extends Table {
                             continue;
                         gameCard.apply();
                         gameController.getDiscardPile().add(gameCard);
+                        gameController.getAlgorithmToDo().add(gameCard);
 
                         Cell cell = getCell(array.get(0));
                         array.get(0).remove();
@@ -107,35 +109,44 @@ public final class AlgorithmCardWindow extends Table {
                                             ((Card) actions.get(mathCycleFull(i, actions.size))).getGameCard()
                                     );
                                     thisCycleCard.getGameCard().apply();
+                                    gameController.getAlgorithmToDo().add(thisCycleCard.getGameCard());
                                 } else {
                                     thisCycleCard.getGameCard().getCards().add(
                                             ((Card) actions.get(mathCycleFull(i - 1, actions.size))).getGameCard(),
                                             ((Card) actions.get(mathCycleFull(i - 1, actions.size) + 1)).getGameCard()
                                     );
                                     thisCycleCard.getGameCard().apply();
+                                    gameController.getAlgorithmToDo().add(thisCycleCard.getGameCard());
                                 }
                             } else {
                                 if (i % 2 != 0 || i == n - 1) {
                                     Card actionCard = (Card) actions.get(mathCycleEmptyOdd(i, actions.size));
                                     if (actionCard.getGameCard() != null) {
-                                        if (i == n - 1 || i == 1)
+                                        if (i == n - 1 || i == 1) {
                                             actionCard.getGameCard().apply();
+                                            gameController.getAlgorithmToDo().add(actionCard.getGameCard());
+                                        }
                                         else if (i % 2 != 0) {
                                             Card prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 1).getActor(),
                                                     _prevCycleCard = (Card) cyclesCardContainer.getCells().get(i - 2).getActor();
                                             if ((prevCycleCard != null && prevCycleCard.getGameCard() == null)
-                                                    || (_prevCycleCard != null && _prevCycleCard.getGameCard() == null))
+                                                    || (_prevCycleCard != null && _prevCycleCard.getGameCard() == null)) {
                                                 actionCard.getGameCard().apply();
+                                                gameController.getAlgorithmToDo().add(actionCard.getGameCard());
+                                            }
                                         }
                                     }
                                 } else if (i < n - 1) {
                                     Card actionCard = (Card) actions.get(mathCycleEmptyEven(i, actions.size));
                                     if (actionCard.getGameCard() != null) {
                                         Card nextCycleCard = (Card) cyclesCardContainer.getCells().get(i + 1).getActor();
-                                        if (i == 0 && nextCycleCard == null)
+                                        if (i == 0 && nextCycleCard == null) {
                                             actionCard.getGameCard().apply();
-                                        else if (nextCycleCard == null)
+                                            gameController.getAlgorithmToDo().add(actionCard.getGameCard());
+                                        } else if (nextCycleCard == null) {
                                             actionCard.getGameCard().apply();
+                                            gameController.getAlgorithmToDo().add(actionCard.getGameCard());
+                                        }
                                     }
                                 }
                             }

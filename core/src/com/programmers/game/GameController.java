@@ -19,7 +19,7 @@ public abstract class GameController {
     protected AlgorithmCardWindow algorithmCardWindow;
     protected final Field field;
 
-    protected final Array<GameCard> algorithmCards = new Array<>();
+    protected final Array<GameCard> algorithmToDo = new Array<>();
     protected final Array<GameCard> discardPile = new Array<>(52);
     protected final Stack<GameCard> talon = new Stack<>();
 
@@ -38,8 +38,8 @@ public abstract class GameController {
         return algorithmCardWindow;
     }
 
-    public Array<GameCard> getAlgorithmCards() {
-        return algorithmCards;
+    public Array<GameCard> getAlgorithmToDo() {
+        return algorithmToDo;
     }
 
     public Array<GameCard> getDiscardPile() {
