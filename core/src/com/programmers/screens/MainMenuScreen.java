@@ -21,7 +21,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
     private final YesNoDialog yesNoDialog;
     private boolean isYesNoDialogHidden = true;
 
-    private Texture back = new Texture("");
+    //private Texture back = new Texture("");
 
     private OrthographicCamera camera;
 
