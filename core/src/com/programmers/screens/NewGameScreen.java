@@ -1,6 +1,5 @@
 package com.programmers.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -52,13 +51,12 @@ public final class NewGameScreen extends ReturnableScreen {
                 false, skin) {
             @Override
             public float getPrefWidth() {
-                return 0.4f * Gdx.graphics.getWidth();
+                return 600;
             }
         };
         playerCountSlider.setValue(playerCountSlider.getMaxValue());
 
-        ui.add(new Label("Choose number of players in new room :", skin))
-                .space(0.025f * Gdx.graphics.getHeight()).row();
+        ui.add(new Label("Choose number of players in new room :", skin)).space(18).row();
 
         ui.add(playerCountSlider).row();
 
@@ -66,13 +64,11 @@ public final class NewGameScreen extends ReturnableScreen {
         sliderDisplay.addActor(new Label("2", skin));
         sliderDisplay.addActor(new Label("3", skin));
         sliderDisplay.addActor(new Label("4", skin));
-        sliderDisplay.space(0.4525f * playerCountSlider.getPrefWidth());
+        sliderDisplay.space(264);
 
-        ui.add(sliderDisplay).
-                spaceBottom(0.05f * Gdx.graphics.getHeight()).row();
+        ui.add(sliderDisplay).spaceBottom(36).row();
 
-        ui.add(new Label("Choose game difficulty in new room :", skin))
-                .spaceBottom(0.025f * Gdx.graphics.getHeight()).row();
+        ui.add(new Label("Choose game difficulty in new room :", skin)).spaceBottom(18).row();
 
         CheckBox EasyButton = new CheckBox("   EASY   ", skin);
         CheckBox HardButton = new CheckBox("   HARD   ", skin);
@@ -80,12 +76,12 @@ public final class NewGameScreen extends ReturnableScreen {
         final HorizontalGroup difficultyRadioButton = new HorizontalGroup();
         difficultyRadioButton.addActor(EasyButton);
         difficultyRadioButton.addActor(HardButton);
-        difficultyRadioButton.space(0.05f * Gdx.graphics.getWidth());
+        difficultyRadioButton.space(64);
 
         final ButtonGroup<CheckBox> radioButtonController = new ButtonGroup<>(EasyButton, HardButton);
         radioButtonController.setChecked("EASY");
 
-        ui.add(difficultyRadioButton).spaceBottom(0.025f * Gdx.graphics.getHeight()).row();
+        ui.add(difficultyRadioButton).spaceBottom(18).row();
 
         final NewRoomDialog newRoomDialog = new NewRoomDialog("Waiting for players...", skin);
         TextButton start = new MyButton("   START PLAYING !   ", ScreenLoader.getGameSkin()) {
@@ -123,7 +119,7 @@ public final class NewGameScreen extends ReturnableScreen {
             }
         };
         start.getLabel().setFontScale(2);
-        ui.add(start).space(0.1f * Gdx.graphics.getHeight());
+        ui.add(start).space(72);
 
         ui.center();
     }
