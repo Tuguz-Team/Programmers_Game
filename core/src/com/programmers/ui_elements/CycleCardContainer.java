@@ -376,7 +376,7 @@ public final class CycleCardContainer extends CardContainer {
         int i, n;
         Array<Cell> cells = getCells();
 
-        if (prevSize < currSize) {
+        if (prevSize < currSize && prevSize != 0) {
             i = cycleCards.length - currSize * 2 + 1;
             n = cycleCards.length - prevSize * 2 + 1;
 
@@ -393,6 +393,15 @@ public final class CycleCardContainer extends CardContainer {
 
             for (; i < n; i++)
                 cells.get(i).setActor(null);
+        } else if (prevSize == 0) {
+            i = 0;
+            n = cycleCards.length - currSize * 2 + 1;
+
+            for (; i < n; i++)
+                cells.get(i).setActor(null);
+
+            //if (n == 8 && getCells().get(i).getActor() == null)
+            //drawLast();
         }
 
         restoringCycle(cells, null);

@@ -206,9 +206,18 @@ public final class OnlineGameController extends GameController {
                                 card.setActionToPrevious(algorithmCardWindow.getActionsCardContainer());
                             }
                         }
-                        /*
                         if (algorithmCardWindow.getCyclesCardContainer() != null) {
                             //algorithmCardWindow.getCyclesCardContainer().clearChildren();
+                            ((CycleCardContainer) algorithmCardWindow.getCyclesCardContainer()).drawPoints(
+                                    0, algorithmCardWindow.getActionsCardContainer().getChildren().size
+                            );
+
+                            if (algorithmCardWindow.getActionsCardContainer().getChildren().size == 1
+                                    && ((Card)algorithmCardWindow.getActionsCardContainer()
+                                    .getChild(0)).getGameCard() != null) {
+                                ((CycleCardContainer) algorithmCardWindow.getCyclesCardContainer()).drawLast();
+                            }
+
                             List<NetworkManager.GameData.GameCard> cards = cardsData.getAlgorithmCardWindow().getCycles();
                             for (int i = 0; i < cards.size(); i++) {
                                 NetworkManager.GameData.GameCard gameCard = cards.get(i);
@@ -229,7 +238,6 @@ public final class OnlineGameController extends GameController {
                                 }
                             }
                         }
-                        */
                     }
                 }, new Procedure() {
                     @Override
