@@ -1,6 +1,5 @@
 package com.programmers.game.online;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -12,12 +11,15 @@ import com.programmers.game.GameController;
 import com.programmers.game.Player;
 import com.programmers.game.hotseat.HotseatGameController;
 import com.programmers.game_objects.Car;
+import com.programmers.game_objects.Chunk;
 import com.programmers.interfaces.NetworkManager;
 import com.programmers.interfaces.Procedure;
+import com.programmers.screens.ScreenLoader;
 import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.CycleCardContainer;
+import com.programmers.ui_elements.OKDialog;
 import com.programmers.ui_elements.PlayerCardWindow;
 
 import java.util.Collections;
@@ -140,11 +142,45 @@ public final class OnlineGameController extends GameController {
         return cars;
     }
 
+    public Car.Color getWinnerColor(NetworkManager.GameData.PlayersData playersData) {
+        List<NetworkManager.GameData.Player> players = playersData.getPlayers();
+        for (NetworkManager.GameData.Player player : players) {
+            if ((getDifficulty() == Difficulty.Easy && player.getScore() >= 7)
+                    || (getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {
+                return player.getCar().getBase().getBaseColor();
+            }
+        }
+        for (Chunk[] chunks : field.getChunks()) {
+            for (Chunk chunk : chunks) {
+                if (!chunk.getLives().isEmpty()) {
+                    return null;
+                }
+            }
+        }
+        int maxI = 0;
+        for (int i = 1; i < players.size(); i++) {
+            if (players.get(i).getScore() > players.get(maxI).getScore()) {
+                maxI = i;
+            }
+        }
+        return players.get(maxI).getCar().getBase().getBaseColor();
+    }
+
     private void initDataListeners() {
         networkManager.addPlayersDataChangedListener(
                 room, playersData, new Procedure() {
                     @Override
                     public void call() {
+                        // if we got the winner
+                        Car.Color winnerColor = getWinnerColor(playersData);
+                        if (winnerColor != null) {
+                            OKDialog winnerDialog = new OKDialog("Winner of the game is "
+                                    + winnerColor.toString().toUpperCase() + " car!",
+                                    ScreenLoader.getGameSkin()
+                            );
+                            winnerDialog.show(gameScreen);
+                        }
+                        // update data
                         if (networkManager.getThisPlayerData(playersData) != null) {
                             playerCardWindow.getCardContainer().clearChildren();
                             for (NetworkManager.GameData.GameCard gameCard

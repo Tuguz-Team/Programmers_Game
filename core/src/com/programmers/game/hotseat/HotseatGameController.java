@@ -9,11 +9,13 @@ import com.programmers.game.Field;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
 import com.programmers.game.Player;
+import com.programmers.game_objects.Car;
+import com.programmers.game_objects.Chunk;
 import com.programmers.screens.GameScreen;
+import com.programmers.screens.ScreenLoader;
 import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
-
-import static com.badlogic.gdx.math.MathUtils.random;
+import com.programmers.ui_elements.OKDialog;
 
 public final class HotseatGameController extends GameController {
 
@@ -66,6 +68,29 @@ public final class HotseatGameController extends GameController {
         return difficulty;
     }
 
+    public Car.Color getWinnerColor() {
+        for (Player player : players) {
+            if ((getDifficulty() == Difficulty.Easy && player.getScore() >= 7)
+                    || (getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {
+                return player.getCar().getBase().getBaseColor();
+            }
+        }
+        for (Chunk[] chunks : field.getChunks()) {
+            for (Chunk chunk : chunks) {
+                if (!chunk.getLives().isEmpty()) {
+                    return null;
+                }
+            }
+        }
+        int maxI = 0;
+        for (int i = 1; i < players.length; i++) {
+            if (players[i].getScore() > players[maxI].getScore()) {
+                maxI = i;
+            }
+        }
+        return players[maxI].getCar().getBase().getBaseColor();
+    }
+
     public void toNextPlayer() {
         // add new cards to the player and clear playerCardWindow
         final Array<GameCard> gameCards = thisPlayer.getGameCards();
@@ -110,6 +135,15 @@ public final class HotseatGameController extends GameController {
             );
             playerCardContainer.addCard(card, 0, 0);
             gameCard.setPlayer(thisPlayer);
+        }
+        // check on winner
+        Car.Color winnerColor = getWinnerColor();
+        if (winnerColor != null) {
+            OKDialog winnerDialog = new OKDialog("Winner of the game is "
+                    + winnerColor.toString().toUpperCase() + " car!",
+                    ScreenLoader.getGameSkin()
+            );
+            winnerDialog.show(gameScreen);
         }
     }
 

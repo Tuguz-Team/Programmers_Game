@@ -31,6 +31,7 @@ import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameInputProcessor;
 import com.programmers.ui_elements.CardContainer;
+import com.programmers.ui_elements.OKDialog;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
 
@@ -41,16 +42,16 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
 
     protected final ScreenLoader screenLoader;
     protected final Difficulty difficulty;
-    protected final Array<ModelInstance> instances;
-    protected final AssetManager assetManager;
+    private final Array<ModelInstance> instances;
+    private final AssetManager assetManager;
 
     protected final PerspectiveCamera perspectiveCamera;
     protected final OrthographicCamera orthographicCamera;
 
-    protected final Environment environment;
-    protected final ModelBatch modelBatch;
-    protected final GameInputProcessor gameInputProcessor;
-    protected final InputMultiplexer multiplexer;
+    private final Environment environment;
+    private final ModelBatch modelBatch;
+    private final GameInputProcessor gameInputProcessor;
+    private final InputMultiplexer multiplexer;
 
     private Dialog pauseMenu;
     private boolean isPauseMenuHidden = true;

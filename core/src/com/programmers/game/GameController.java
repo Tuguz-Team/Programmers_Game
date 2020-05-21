@@ -83,19 +83,4 @@ public abstract class GameController {
             discardPile.removeIndex(i);
         }
     }
-
-    public boolean isWinner() {
-        if ((getDifficulty() == Difficulty.Easy && thisPlayer.getScore() >= 7)
-                || (getDifficulty() == Difficulty.Hard && thisPlayer.getScore() >= 9)
-                && thisPlayer.getCar().getLives().isEmpty()) {
-            for (Chunk[] chunks : field.getChunks()) {
-                for (Chunk chunk : chunks) {
-                    if (!chunk.getLives().isEmpty()) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
 }
