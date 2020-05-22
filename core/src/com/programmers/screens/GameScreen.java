@@ -132,15 +132,6 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                 };
         returnButton.getLabel().setFontScale(2);
 
-        TextButton settingsButton =
-                new MyButton("   SETTINGS   ", ScreenLoader.getGameSkin()) {
-                    @Override
-                    public void call() {
-                        screenLoader.setScreen(new SettingsScreen(screenLoader, GameScreen.this));
-                    }
-                };
-        settingsButton.getLabel().setFontScale(2);
-
         TextButton mainMenuButton =
                 new MyButton("   QUIT ROOM   ", ScreenLoader.getGameSkin()) {
                     @Override
@@ -155,7 +146,6 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                 0.025f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight());
 
         pauseMenu.getContentTable().add(returnButton).space(0.05f * Gdx.graphics.getHeight()).row();
-        pauseMenu.getContentTable().add(settingsButton).space(0.05f * Gdx.graphics.getHeight()).row();
         pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
 
         TextButton toDialogButton = new MyButton("  PAUSE  ", ScreenLoader.getGameSkin()) {

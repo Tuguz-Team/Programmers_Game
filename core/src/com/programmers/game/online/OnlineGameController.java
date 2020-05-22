@@ -113,10 +113,7 @@ public final class OnlineGameController extends GameController {
         }
         // add this player cards to the playerCardWindow
         for (GameCard gameCard : thisPlayer.getGameCards()) {
-            Card card = new Card(
-                    gameCard, gameScreen.getGameInputProcessor(),
-                    gameScreen.getAssetManager()
-            );
+            Card card = new Card(gameCard, gameScreen.getAssetManager());
             playerCardContainer.addCard(card, 0, 0);
             gameCard.setPlayer(thisPlayer);
         }
@@ -187,7 +184,6 @@ public final class OnlineGameController extends GameController {
                                     : networkManager.getThisPlayerData(playersData).getCards()) {
                                 playerCardWindow.getCardContainer().addCard(new Card(
                                         new GameCard(gameCard.getCardType(), thisPlayer),
-                                        gameScreen.getGameInputProcessor(),
                                         gameScreen.getAssetManager()), 0, 0
                                 );
                             }
@@ -249,42 +245,10 @@ public final class OnlineGameController extends GameController {
                             if (gameCard != null && gameCard.getCardType() != null) {
                                 Card card = new Card(new GameCard(
                                         gameCard.getCardType(), thisPlayer),
-                                        gameScreen.getGameInputProcessor(),
                                         gameScreen.getAssetManager()
                                 );
                                 algorithmCardWindow.getActionsCardContainer().addCard(card, 0, 0);
                                 card.setActionToPrevious(algorithmCardWindow.getActionsCardContainer());
-                            }
-                        }
-                        if (algorithmCardWindow.getCyclesCardContainer() != null) {
-                            ((CycleCardContainer) algorithmCardWindow.getCyclesCardContainer()).drawPoints(
-                                    0, algorithmCardWindow.getActionsCardContainer().getChildren().size
-                            );
-
-                            if (algorithmCardWindow.getActionsCardContainer().getChildren().size == 1
-                                    && ((Card)algorithmCardWindow.getActionsCardContainer()
-                                    .getChild(0)).getGameCard() != null) {
-                                ((CycleCardContainer) algorithmCardWindow.getCyclesCardContainer()).drawLast();
-                            }
-
-                            List<NetworkManager.GameData.GameCard> cards = cardsData.getAlgorithmCardWindow().getCycles();
-                            for (int i = 0; i < cards.size(); i++) {
-                                NetworkManager.GameData.GameCard gameCard = cards.get(i);
-                                if (gameCard != null && gameCard.getCardType() != null) {
-                                    Card card = new Card(new GameCard(
-                                            gameCard.getCardType(), thisPlayer),
-                                            gameScreen.getGameInputProcessor(),
-                                            gameScreen.getAssetManager()
-                                    );
-                                    Card temp = ((CycleCardContainer) algorithmCardWindow
-                                            .getCyclesCardContainer()).getCycleCards()[i];
-                                    Vector2 vector = temp.localToStageCoordinates(new Vector2());
-                                    algorithmCardWindow.getCyclesCardContainer().addCard(
-                                            card, vector.x + 1, vector.y + 1
-                                    );
-                                    card.setCycleToPrevious((CycleCardContainer)
-                                            algorithmCardWindow.getCyclesCardContainer());
-                                }
                             }
                         }
                     }

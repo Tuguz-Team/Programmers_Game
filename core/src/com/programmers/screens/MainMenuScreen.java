@@ -74,21 +74,10 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         };
         exitButton.getLabel().setFontScale(2);
 
-        TextButton settingsButton =
-                new MyButton("   SETTINGS   ", ScreenLoader.getGameSkin()) {
-                    @Override
-                    public void call() {
-                        screenLoader.setScreen(new SettingsScreen(screenLoader,
-                                MainMenuScreen.this));
-                    }
-                };
-        settingsButton.getLabel().setFontScale(2);
-
         mainButtons.addActor(logo);
         mainButtons.addActor(startButton);
-        mainButtons.addActor(settingsButton);
         mainButtons.addActor(exitButton);
-        mainButtons.center().space(25);
+        mainButtons.center().space(75);
 
         screenLoader.networkManager.registerAnon();
     }

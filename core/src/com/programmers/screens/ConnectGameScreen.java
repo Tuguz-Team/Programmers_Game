@@ -126,17 +126,17 @@ public final class ConnectGameScreen extends ReturnableScreen {
         private NetworkManager.Room room;
 
         private GameRoom(final NetworkManager.Room room) {
-            super("   ROOM NAME:  " + room.getName().toUpperCase() + "   "
-                    + "\n\n   PLAYERS:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
-                    + "\n\n   DIFFICULTY:  " + room.getDifficulty().toString().toUpperCase() + "   ", ScreenLoader.getGameSkin());
+            super("   Room name:  " + room.getName() + "   "
+                    + "\n\n   Players:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
+                    + "\n\n   Difficulty:  " + room.getDifficulty().toString() + "   ", ScreenLoader.getGameSkin());
             this.room = room;
             screenLoader.networkManager.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
-                            setText("   ROOM NAME:  " + room.getName().toUpperCase() + "   "
-                                    + "\n\n   PLAYERS:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
-                                    + "\n\n   DIFFICULTY:  " + room.getDifficulty().toString().toUpperCase() + "   ");
+                            setText("   Room name:  " + room.getName() + "   "
+                                    + "\n\n   Players:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
+                                    + "\n\n   Difficulty:  " + room.getDifficulty().toString() + "   ");
                         }
                     }, new Procedure() {
                         @Override

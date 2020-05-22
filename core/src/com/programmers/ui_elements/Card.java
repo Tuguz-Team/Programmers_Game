@@ -7,14 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game.GameCard;
-import com.programmers.game.GameInputProcessor;
 
 import static com.programmers.screens.ScreenLoader.getGameSkin;
 
@@ -22,7 +19,6 @@ public final class Card extends Image implements Comparable<Card> {
 
     private final GameCard gameCard;
     private CardContainer prevParent;
-    private GameInputProcessor gameInputProcessor = null;
     private AssetManager assetManager;
 
     private Cell<Card> cell;
@@ -37,10 +33,9 @@ public final class Card extends Image implements Comparable<Card> {
         setDebug(true);
     }
 
-    public Card(final GameCard gameCard, GameInputProcessor gameInputProcessor, AssetManager assetManager) {
+    public Card(final GameCard gameCard, AssetManager assetManager) {
         super((Texture) assetManager.get("Sprites/EnabledCards/" + gameCard.getCardType().toString() + ".png"));
         this.gameCard = gameCard;
-        this.gameInputProcessor = gameInputProcessor;
         this.assetManager = assetManager;
         setDebug(true);
         addListener(new InputListener() {
@@ -226,63 +221,6 @@ public final class Card extends Image implements Comparable<Card> {
                     y = event.getStageY();
 
                     container.addCard(Card.this, x, y);
-                }
-            });
-        }
-    }
-
-    public void setCycleToPrevious(final CycleCardContainer container) {
-        if (this.getGameCard() != null) {
-            this.setDrawable(new TextureRegionDrawable((Texture) assetManager.get("Sprites/DisabledCards/"
-                    + this.getGameCard().getCardType().toString() + ".png")));
-            this.removeListener(this.getListeners().get(0));
-            this.addListener(new InputListener() {
-                Card thisCard = Card.this;
-                @Override
-                public boolean touchDown(final InputEvent event, float x, float y, int pointer, int button) {
-                    prevParent = (CardContainer) thisCard.getParent();
-                    if (prevParent instanceof CycleCardContainer) {
-                        ((CycleCardContainer) prevParent).restoreSpace(thisCard);
-                    }
-                    Group group = prevParent.getParent();
-                    while (group != null) {
-                        group.addActor(thisCard);
-                        group = group.getParent();
-                    }
-                    if (prevParent instanceof CycleCardContainer) {
-                        ((CycleCardContainer) prevParent).restoreSpace(thisCard);
-                    }
-                    thisCard.setZIndex(thisCard.getParent().getChildren().size + 1);
-
-                    final Dialog dialog = new Dialog("   Do you really want to delete " +
-                            "this cycle card? This change is irreversible.   ", getGameSkin()) {
-                        @Override
-                        protected void result(Object object) {
-                            if (object.equals(true)) {
-                                thisCard.remove();
-                                container.getGameController().getDiscardPile().add(Card.this.getGameCard());
-                                gameInputProcessor.unlockCamera();
-                            } else {
-                                thisCard.setVisible(true);
-                                container.addCard(Card.this, event.getStageX(), event.getStageY());
-                                gameInputProcessor.unlockCamera();
-                            }
-                        }
-                    };
-
-                    dialog.button("   YES   ", true).button("   NO   ", false);
-
-                    dialog.getButtonTable().getCells().get(0).spaceRight(50);
-                    ((TextButton) dialog.getButtonTable().getCells().get(0).getActor()).getLabel().setAlignment(2);
-                    ((TextButton) dialog.getButtonTable().getCells().get(1).getActor()).getLabel().setAlignment(2);
-
-                    dialog.setMovable(false);
-
-                    thisCard.setVisible(false);
-                    dialog.show(Card.this.getParent().getStage());
-                    gameInputProcessor.lockCamera();
-
-                    return true;
                 }
             });
         }

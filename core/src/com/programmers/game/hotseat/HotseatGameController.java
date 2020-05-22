@@ -129,10 +129,7 @@ public final class HotseatGameController extends GameController {
         thisPlayer = players[(i + 1) % players.length];
         // add this player cards to the playerCardWindow
         for (GameCard gameCard : thisPlayer.getGameCards()) {
-            Card card = new Card(
-                    gameCard, gameScreen.getGameInputProcessor(),
-                    gameScreen.getAssetManager()
-            );
+            Card card = new Card(gameCard, gameScreen.getAssetManager());
             playerCardContainer.addCard(card, 0, 0);
             gameCard.setPlayer(thisPlayer);
         }

@@ -171,25 +171,19 @@ public final class AlgorithmCardWindow extends Table {
                                 Card card = (Card) cell.getActor();
                                 if (card != null && card.getGameCard() != null) {
                                     card.getGameCard().getCards().clear();
+                                    gameController.getDiscardPile().add(((Card) cell.getActor()).getGameCard());
                                 }
                             }
                             if (actions.size == 5) {
-                                for (Actor actor : actions) {
+                                for (Actor actor : actions)
                                     gameController.getDiscardPile().add(((Card) actor).getGameCard());
-                                }
                                 actionsCardContainer.clearChildren();
-                                for (Cell cell : cyclesCardContainer.getCells()) {
-                                    Card card = (Card) cell.getActor();
-                                    if (card != null && card.getGameCard() != null) {
-                                        gameController.getDiscardPile().add(((Card) cell.getActor()).getGameCard());
-                                    }
-                                }
                                 cyclesCardContainer.clearChildren();
                             }
 
                             gameController.toNextPlayer();
                             actionsCardContainer.setActionToPrevious();
-                            cyclesCardContainer.setCycleToPrevious();
+                            cyclesCardContainer.drawPoints(actions.size,0);
 
                             for (Actor actor : actions) {
                                 if (((Card) actor).getGameCard() != null)

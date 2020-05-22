@@ -21,6 +21,8 @@ public final class CycleCardContainer extends CardContainer {
         super(gameController.getAlgorithmToDo(), gameController.getDifficulty(), null, gameController);
         this.gameController = gameController;
         pad(PAD, 0, PAD, 0);
+        setDebug(false);
+
         for (int i = 0; i < cycleCards.length; i++) {
             cycleCards[i] = new Card(
                     "Sprites/EnabledCards/CyclePointOn.png",
@@ -379,7 +381,7 @@ public final class CycleCardContainer extends CardContainer {
         int i, n;
         Array<Cell> cells = getCells();
 
-        if (prevSize < currSize && prevSize != 0) {
+        if (prevSize < currSize) {
             i = cycleCards.length - currSize * 2 + 1;
             n = cycleCards.length - prevSize * 2 + 1;
 
@@ -390,21 +392,39 @@ public final class CycleCardContainer extends CardContainer {
                 );
                 cells.get(i).setActor(cycleCards[i]);
             }
-        } else if (currSize < prevSize) {
+        } else if (currSize < prevSize && currSize != 0) {
             i = cycleCards.length - prevSize * 2 + 1;
             n = cycleCards.length - currSize * 2 + 1;
 
             for (; i < n; i++)
                 cells.get(i).setActor(null);
-        } else if (prevSize == 0) {
+        } else if (currSize == 0) {
             i = 0;
-            n = cycleCards.length - currSize * 2 + 1;
+            n = cycleCards.length - prevSize * 2 + 1;
 
-            if (n == cycleCards.length - 1)
+            if (n == cycleCards.length - 1) {
                 zeroingPoints();
-            else {
+                if (((Card) gameController.getAlgorithmCardWindow().getActionsCardContainer()
+                        .getChild(0)).getGameCard() != null)
+                    drawLast();
+            } else {
+                padLeft(0);
+                if (getPadTop() != PAD)
+                    padTop(PAD);
+                if (getPadBottom() != PAD)
+                    padBottom(PAD);
+
                 for (; i < n; i++)
                     cells.get(i).setActor(null);
+
+                for (; n < cycleCards.length; n++) {
+                    cycleCards[n] = new Card(
+                            "Sprites/EnabledCards/CyclePointOn.png",
+                            gameController.getGameScreen().getAssetManager()
+                    );
+                    cells.get(n).setActor(cycleCards[n]);
+                    cells.get(n).spaceBottom(0);
+                }
             }
         }
 
@@ -415,13 +435,5 @@ public final class CycleCardContainer extends CardContainer {
     public int actionSizeToUse() {
         return cycleCards.length - 2 * gameController.getAlgorithmCardWindow().
                 getActionsCardContainer().getChildren().size;
-    }
-
-    public void setCycleToPrevious() {
-        for (int i = 0; i < cycleCards.length; i++) {
-            Actor card = getCells().get(i).getActor();
-            if (card != null)
-                ((Card)card).setCycleToPrevious(this);
-        }
     }
 }

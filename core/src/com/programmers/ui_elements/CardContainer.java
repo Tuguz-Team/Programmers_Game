@@ -25,6 +25,8 @@ public class CardContainer extends Table {
         this.content = content;
         this.difficulty = difficulty;
         this.gameController = gameController;
+        setDebug(true);
+
         emptyCard = new Card(
                 "Sprites/EnabledCards/empty.png",
                 gameController.getGameScreen().getAssetManager()
@@ -34,8 +36,7 @@ public class CardContainer extends Table {
         if (gameCards != null) {
             for (GameCard gameCard : gameCards) {
                 Card card = new Card(
-                        gameCard, gameController.getGameScreen().getGameInputProcessor(),
-                        gameController.getGameScreen().getAssetManager()
+                        gameCard, gameController.getGameScreen().getAssetManager()
                 );
                 addCard(card, 0, 0);
             }
