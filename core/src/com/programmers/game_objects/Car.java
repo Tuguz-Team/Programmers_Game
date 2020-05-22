@@ -1,6 +1,5 @@
 package com.programmers.game_objects;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
@@ -546,7 +545,6 @@ public final class Car extends GameObject implements ICard {
             getGameScreen().getInstances().removeValue(lives.get(lives.size - 1).getModelInstance(), false);
         }
         // if [chunk] is base:
-        Gdx.app.error("Car" + base.getBaseColor(), Boolean.toString(chunk instanceof Base));
         if (chunk instanceof Base
                 && ((Base)chunk).getLabColors().contains(base.getBaseColor(), true)) {
             player.getLives().addAll(lives);

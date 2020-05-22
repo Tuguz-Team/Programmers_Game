@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
@@ -20,6 +21,7 @@ import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.CycleCardContainer;
+import com.programmers.ui_elements.LabelDisappear;
 import com.programmers.ui_elements.OKDialog;
 import com.programmers.ui_elements.OnlineGameInfo;
 import com.programmers.ui_elements.PlayerCardWindow;
@@ -175,47 +177,69 @@ public final class OnlineGameController extends GameController {
                 room, playersData, new Procedure() {
                     @Override
                     public void call() {
-                        // update data
-                        if (networkManager.getThisPlayerData(playersData) != null) {
-                            playerCardWindow.getCardContainer().clearChildren();
-                            for (NetworkManager.GameData.GameCard gameCard
-                                    : networkManager.getThisPlayerData(playersData).getCards()) {
-                                playerCardWindow.getCardContainer().addCard(new Card(
-                                        new GameCard(gameCard.getCardType(), thisPlayer),
-                                        gameScreen.getAssetManager()), 0, 0
-                                );
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    sleep(500);
+                                } catch (InterruptedException e) { }
+                                Table table = new Table();
+                                table.setFillParent(true);
+                                table.center();
+                                LabelDisappear label = new LabelDisappear(networkManager.isThisPlayerTurn(playersData)
+                                        ? "Your turn!"
+                                        : "Turn of player with " + playersData.getPlayers().get(playersData.getIndex())
+                                        .getCar().getBase().getBaseColor() + " car!", 2000);
+                                table.add(label).center();
+                                gameScreen.addActor(table);
                             }
-                        }
-                        if (networkManager.isThisPlayerTurn(playersData)) {
-                            playerCardWindow.getCardContainer().setTouchable(Touchable.enabled);
-                            playerCardWindow.enableButton();
-                            algorithmCardWindow.enable();
-                        } else {
-                            playerCardWindow.getCardContainer().setTouchable(Touchable.disabled);
-                            playerCardWindow.disableButton();
-                            algorithmCardWindow.disable();
-                        }
-                        if (algorithmCardWindow.getActionsCardContainer() != null) {
-                            algorithmCardWindow.getActionsCardContainer().discardMode = false;
-                        }
-                        if (algorithmCardWindow.getCyclesCardContainer() != null) {
-                            algorithmCardWindow.getCyclesCardContainer().discardMode = false;
-                        }
-                        // update data
-                        if (onlineGameInfo != null)
-                            onlineGameInfo.updateData();
-                        // if we got the winner
-                        Car.Color winnerColor = getWinnerColor(playersData);
-                        if (winnerColor != null) {
-                            OKDialog winnerDialog = new OKDialog("Winner of the game is "
-                                    + winnerColor.toString().toUpperCase() + " car!",
-                                    ScreenLoader.getGameSkin()
-                            );
-                            winnerDialog.show(gameScreen);
-                            playerCardWindow.getCardContainer().setTouchable(Touchable.disabled);
-                            playerCardWindow.disableButton();
-                            algorithmCardWindow.disable();
-                        }
+                        }.start();
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                // update data
+                                if (networkManager.getThisPlayerData(playersData) != null) {
+                                    playerCardWindow.getCardContainer().clearChildren();
+                                    for (NetworkManager.GameData.GameCard gameCard
+                                            : networkManager.getThisPlayerData(playersData).getCards()) {
+                                        playerCardWindow.getCardContainer().addCard(new Card(
+                                                new GameCard(gameCard.getCardType(), thisPlayer),
+                                                gameScreen.getAssetManager()), 0, 0
+                                        );
+                                    }
+                                }
+                                if (networkManager.isThisPlayerTurn(playersData)) {
+                                    playerCardWindow.getCardContainer().setTouchable(Touchable.enabled);
+                                    playerCardWindow.enableButton();
+                                    algorithmCardWindow.enable();
+                                } else {
+                                    playerCardWindow.getCardContainer().setTouchable(Touchable.disabled);
+                                    playerCardWindow.disableButton();
+                                    algorithmCardWindow.disable();
+                                }
+                                if (algorithmCardWindow.getActionsCardContainer() != null) {
+                                    algorithmCardWindow.getActionsCardContainer().discardMode = false;
+                                }
+                                if (algorithmCardWindow.getCyclesCardContainer() != null) {
+                                    algorithmCardWindow.getCyclesCardContainer().discardMode = false;
+                                }
+                                // update data
+                                if (onlineGameInfo != null)
+                                    onlineGameInfo.updateData();
+                                // if we got the winner
+                                Car.Color winnerColor = getWinnerColor(playersData);
+                                if (winnerColor != null) {
+                                    OKDialog winnerDialog = new OKDialog("Winner of the game is "
+                                            + winnerColor.toString().toUpperCase() + " car!",
+                                            ScreenLoader.getGameSkin()
+                                    );
+                                    winnerDialog.show(gameScreen);
+                                    playerCardWindow.getCardContainer().setTouchable(Touchable.disabled);
+                                    playerCardWindow.disableButton();
+                                    algorithmCardWindow.disable();
+                                }
+                            }
+                        });
                     }
                 }, new Procedure() {
                     @Override
@@ -238,6 +262,16 @@ public final class OnlineGameController extends GameController {
                                 }
                             }
                             Player player = new Player(car);
+                            //
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (NetworkManager.GameData.GameCard gameCard : cardsData.getAlgorithmToDo()) {
+                                for (NetworkManager.GameData.GameCard gameCard1 : gameCard.getCards()) {
+                                    stringBuilder.append(gameCard1.getCardType()).append(' ');
+                                }
+                                stringBuilder.append(gameCard.getCardType()).append(' ');
+                            }
+                            Gdx.app.error("ACW", stringBuilder.toString());
+                            //
                             for (NetworkManager.GameData.GameCard gameCardData : cardsData.getAlgorithmToDo()) {
                                 GameCard gameCard = new GameCard(gameCardData.getCardType(), player);
                                 for (NetworkManager.GameData.GameCard item : gameCardData.getCards()) {
@@ -245,6 +279,11 @@ public final class OnlineGameController extends GameController {
                                 }
                                 player.addCard(gameCard);
                                 gameCard.apply();
+                            }
+                            if (car.getChunk().getLift() != null) {
+                                car.setCompensated(false);
+                                car.setPosition(car.getChunk().getLift());
+                                car.addLivesFrom(car.getChunk());
                             }
                         }
                         //

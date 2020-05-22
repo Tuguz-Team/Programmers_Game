@@ -2,6 +2,8 @@ package com.programmers.game.hotseat;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 import com.programmers.enums.CardType;
@@ -17,6 +19,7 @@ import com.programmers.screens.ScreenLoader;
 import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.HotseatGameInfo;
+import com.programmers.ui_elements.LabelDisappear;
 import com.programmers.ui_elements.OKDialog;
 
 public final class HotseatGameController extends GameController {
@@ -64,6 +67,22 @@ public final class HotseatGameController extends GameController {
             }
         }
         initContainers();
+        //
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    sleep(500);
+                } catch (InterruptedException e) { }
+                Table table = new Table();
+                table.setFillParent(true);
+                table.center();
+                LabelDisappear label = new LabelDisappear("Turn of player with "
+                        + thisPlayer.getCar().getBase().getBaseColor() + " car!", 2000);
+                table.add(label).center();
+                gameScreen.addActor(table);
+            }
+        }.start();
     }
 
     @Override
@@ -151,6 +170,22 @@ public final class HotseatGameController extends GameController {
             playerCardWindow.disableButton();
             algorithmCardWindow.disable();
         }
+        //
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    sleep(500);
+                } catch (InterruptedException e) { }
+                Table table = new Table();
+                table.setFillParent(true);
+                table.center();
+                LabelDisappear label = new LabelDisappear("Turn of player with "
+                        + thisPlayer.getCar().getBase().getBaseColor() + " car!", 2000);
+                table.add(label).center();
+                gameScreen.addActor(table);
+            }
+        }.start();
     }
 
     public Player[] getPlayers() {

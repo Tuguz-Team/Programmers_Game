@@ -1,11 +1,13 @@
 package com.programmers.interfaces;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.enums.Direction;
 import com.programmers.game.Field;
+import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
 import com.programmers.game.Player;
 import com.programmers.game.hotseat.HotseatGameController;
@@ -391,11 +393,18 @@ public interface NetworkManager {
                 algorithmToDo = new LinkedList<>();
                 for (com.programmers.game.GameCard gameCard : gameController.getAlgorithmToDo()) {
                     NetworkManager.GameData.GameCard temp = new NetworkManager.GameData.GameCard(gameCard);
-                    for (com.programmers.game.GameCard item : gameCard.getCards()) {
-                        temp.getCards().add(new NetworkManager.GameData.GameCard(item));
-                    }
                     algorithmToDo.add(temp);
                 }
+                //
+                StringBuilder stringBuilder = new StringBuilder();
+                for (NetworkManager.GameData.GameCard gameCard : algorithmToDo) {
+                    for (NetworkManager.GameData.GameCard gameCard1 : gameCard.getCards()) {
+                        stringBuilder.append(gameCard1.getCardType()).append(' ');
+                    }
+                    stringBuilder.append(gameCard.getCardType()).append(' ');
+                }
+                Gdx.app.error("NM", stringBuilder.toString());
+                //
                 algorithmCardWindow = new AlgorithmCardWindow(gameController.getAlgorithmCardWindow());
                 discardPile = new LinkedList<>();
                 for (com.programmers.game.GameCard gameCard : gameController.getDiscardPile()) {
@@ -496,6 +505,9 @@ public interface NetworkManager {
                 cards = new LinkedList<>();
                 if (gameCard != null) {
                     cardType = gameCard.getCardType();
+                    for (com.programmers.game.GameCard gameCard1 : gameCard.getCards()) {
+                        cards.add(new GameCard(gameCard1));
+                    }
                 }
             }
 

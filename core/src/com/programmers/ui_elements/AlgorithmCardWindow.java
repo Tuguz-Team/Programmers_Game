@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -158,6 +159,14 @@ public final class AlgorithmCardWindow extends Table {
                                     }
                                 }
                             }
+                            StringBuilder stringBuilder = new StringBuilder();
+                            for (GameCard gameCard : gameController.getAlgorithmToDo()) {
+                                for (GameCard gameCard1 : gameCard.getCards()) {
+                                    stringBuilder.append(gameCard1.getCardType()).append(' ');
+                                }
+                                stringBuilder.append(gameCard.getCardType()).append(' ');
+                            }
+                            Gdx.app.error("ACW", stringBuilder.toString());
                             // set position if car is on the Lift
                             Car car = gameController.getThisPlayer().getCar();
                             if (car.getChunk().getLift() != null) {
