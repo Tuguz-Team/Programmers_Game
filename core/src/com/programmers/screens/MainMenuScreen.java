@@ -24,7 +24,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
     private OrthographicCamera camera;
 
     public MainMenuScreen(final ScreenLoader screenLoader) {
-        Image main = new Image((Texture) screenLoader.getAssetManager().get("Sprites/main.jpg"));
+        Image main = new Image((Texture) screenLoader.getAssetManager().get("Sprites/Background/main.jpg"));
         main.setFillParent(true);
         addActor(main);
 
@@ -49,10 +49,10 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         mainButtons.setFillParent(true);
         addActor(mainButtons);
 
-        Image logo = new Image((Texture) screenLoader.getAssetManager().get("Sprites/logo.png"));
+        Image logo = new Image((Texture) screenLoader.getAssetManager().get("Sprites/Background/logo.png"));
 
         TextButton startButton =
-                new MyButton("   START   ", ScreenLoader.getGameSkin()) {
+                new MyButton("   START GAME   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
                 screenLoader.setScreen(new ChooseGameScreen(
@@ -74,10 +74,21 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         };
         exitButton.getLabel().setFontScale(2);
 
+        TextButton settingsButton =
+                new MyButton("   SETTINGS   ", ScreenLoader.getGameSkin()) {
+                    @Override
+                    public void call() {
+                        screenLoader.setScreen(new SettingsScreen(screenLoader,
+                                MainMenuScreen.this));
+                    }
+                };
+        settingsButton.getLabel().setFontScale(2);
+
         mainButtons.addActor(logo);
         mainButtons.addActor(startButton);
+        mainButtons.addActor(settingsButton);
         mainButtons.addActor(exitButton);
-        mainButtons.center().space(50);
+        mainButtons.center().space(25);
 
         screenLoader.networkManager.registerAnon();
     }

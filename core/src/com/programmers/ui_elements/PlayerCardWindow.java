@@ -1,5 +1,6 @@
 package com.programmers.ui_elements;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -18,18 +19,19 @@ public final class PlayerCardWindow extends Table {
     private final GameController gameController;
 
     private final Button discardButton;
+    private AssetManager assetManager;
 
     public PlayerCardWindow(final String name, final CardContainer cardContainer,
-                            final GameController gameController) {
+                            final GameController gameController, final AssetManager assetManager) {
         setFillParent(true);
-        setDebug(true);
         this.gameController = gameController;
         this.cardContainer = cardContainer;
+        this.assetManager = assetManager;
         final Table tableTemp = new Table();
         final Table table = new Table();
         discardButton = new Button(
-                new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOn.png")),
-                new TextureRegionDrawable(new Texture("Sprites/AlgorithmButton/StartButtonOff.png"))
+                new TextureRegionDrawable((Texture) assetManager.get("Sprites/AlgorithmButton/ExchangeButtonOn.png")),
+                new TextureRegionDrawable((Texture) assetManager.get("Sprites/AlgorithmButton/ExchangeButtonOff.png"))
         );
         final CardContainer discardContainer = new CardContainer(null,
                 gameController.getDifficulty(), CardContainer.Content.All, gameController)
@@ -48,6 +50,8 @@ public final class PlayerCardWindow extends Table {
                 }
             }
         };
+        discardContainer.setBackground(new BackgroundColor("Sprites/Background/background-red.png"));
+
         add(cardContainer).bottom();
         add(tableTemp).bottom();
         tableTemp.add(table);
@@ -61,23 +65,18 @@ public final class PlayerCardWindow extends Table {
         discardButton.addListener(new MyButton.Listener() {
             @Override
             public void call() {
-                discarding = !discarding;
-                discardContainer.setVisible(discarding);
-                if (discarding) {
-                    gameController.getAlgorithmCardWindow().disable();
-                    cardContainer.setTouchable(Touchable.enabled);
-                    cardContainer.discardMode = true;
-                    CardContainer.cardContainers.add(discardContainer);
-                } else {
-                    gameController.getAlgorithmCardWindow().enable();
-                    cardContainer.discardMode = false;
-                    CardContainer.cardContainers.removeValue(discardContainer, false);
-                    if (gameController.getDifficulty() == Difficulty.Easy) {
-                        gameController.getAlgorithmToDo().clear();
+                final YesNoDialog dialog = new YesNoDialog("   Do you want to exchange "
+                        + "some of your cards for new? You won't be able to make your move.   ",
+                        ScreenLoader.getGameSkin()) {
+                    @Override
+                    public void call() {
+                        discarding(discardContainer);
                     }
-                    gameController.toNextPlayer();
-                }
-                cardContainer.setTouchable();
+                };
+                if (!discarding) {
+                    dialog.show(gameController.getGameScreen());
+                } else
+                    discarding(discardContainer);
             }
         });
 
@@ -86,6 +85,26 @@ public final class PlayerCardWindow extends Table {
 
         table.add(label).colspan(2).bottom();
         left().bottom();
+    }
+
+    public void discarding(CardContainer discardContainer) {
+        discarding = !discarding;
+        discardContainer.setVisible(discarding);
+        if (discarding) {
+            gameController.getAlgorithmCardWindow().disable();
+            cardContainer.setTouchable(Touchable.enabled);
+            cardContainer.discardMode = true;
+            CardContainer.cardContainers.add(discardContainer);
+        } else {
+            gameController.getAlgorithmCardWindow().enable();
+            cardContainer.discardMode = false;
+            CardContainer.cardContainers.removeValue(discardContainer, false);
+            if (gameController.getDifficulty() == Difficulty.Easy) {
+                gameController.getAlgorithmToDo().clear();
+            }
+            gameController.toNextPlayer();
+        }
+        cardContainer.setTouchable();
     }
 
     public CardContainer getCardContainer() {

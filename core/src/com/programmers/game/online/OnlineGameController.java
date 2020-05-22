@@ -252,14 +252,11 @@ public final class OnlineGameController extends GameController {
                                         gameScreen.getGameInputProcessor(),
                                         gameScreen.getAssetManager()
                                 );
-                                algorithmCardWindow.getActionsCardContainer().addCard(
-                                        card, 0, 0
-                                );
+                                algorithmCardWindow.getActionsCardContainer().addCard(card, 0, 0);
                                 card.setActionToPrevious(algorithmCardWindow.getActionsCardContainer());
                             }
                         }
                         if (algorithmCardWindow.getCyclesCardContainer() != null) {
-                            //algorithmCardWindow.getCyclesCardContainer().clearChildren();
                             ((CycleCardContainer) algorithmCardWindow.getCyclesCardContainer()).drawPoints(
                                     0, algorithmCardWindow.getActionsCardContainer().getChildren().size
                             );

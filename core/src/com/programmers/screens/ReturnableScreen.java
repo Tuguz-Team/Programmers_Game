@@ -27,7 +27,7 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
         this.screenLoader = screenLoader;
         this.previousScreen = previousScreen;
 
-        Texture texture = screenLoader.getAssetManager().get("Sprites/back.jpg");
+        Texture texture = screenLoader.getAssetManager().get("Sprites/Background/back.jpg");
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
         TextureRegion textureRegion = new TextureRegion(texture);
         textureRegion.setRegion(865, 250, texture.getWidth() * 2, texture.getHeight() * 2);

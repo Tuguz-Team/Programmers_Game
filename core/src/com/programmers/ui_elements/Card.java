@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.game.GameCard;
 import com.programmers.game.GameInputProcessor;
-import com.programmers.screens.ScreenLoader;
 
 import static com.programmers.screens.ScreenLoader.getGameSkin;
 
@@ -107,7 +106,7 @@ public final class Card extends Image implements Comparable<Card> {
                     if (x >= stagePos.x && x < stagePos.x + card.getWidth() && y >= stagePos.y
                             && y < stagePos.y + card.getHeight() && !card.isEnabled() && !Card.this.isReplaced()
                             && card.getParent() == Card.this.getPrevParent()) {
-                        YesNoDialog dialog = new YesNoDialog("   Do you really want to replace card from " +
+                        YesNoDialog dialog = new YesNoDialog("   Do you want to replace card from " +
                                 "previous move with your's new card? This change is irreversible.   ", getGameSkin()) {
                             @Override
                             public void call() {

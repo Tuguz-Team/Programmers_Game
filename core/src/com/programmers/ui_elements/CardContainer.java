@@ -42,7 +42,7 @@ public class CardContainer extends Table {
         }
         prevChildrenCount = getChildren().size;
         cardContainers.add(this);
-        setDebug(true);
+        //setDebug(true);
     }
 
     @Override

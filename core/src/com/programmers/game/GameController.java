@@ -67,9 +67,11 @@ public abstract class GameController {
                 this
         );
         playerCardWindow = new PlayerCardWindow(
-                "  Player cards  ", playerCardContainer, this
+                "  Player cards  ", playerCardContainer,
+                this, gameScreen.getAssetManager()
         );
-        algorithmCardWindow = new AlgorithmCardWindow("  Algorithm  ", this);
+        algorithmCardWindow = new AlgorithmCardWindow("  Algorithm  ",
+                this, gameScreen.getAssetManager());
     }
 
     public abstract Difficulty getDifficulty();

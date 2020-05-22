@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -170,6 +171,9 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
 
         addActor(toDialogButton);
         toDialogButton.setPosition(1590, 890, Align.topRight);
+
+        Table smallScoreTable = new Table();
+
 
         addCardWindows();
     }

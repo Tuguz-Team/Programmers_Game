@@ -25,8 +25,7 @@ public final class GameAssets extends AssetManager {
 
     private void loadUI() {
         load("GameSkin/GameSkin.json", Skin.class);
-        load("buttons.pack", TextureAtlas.class);
-
+        //load("buttons.pack", TextureAtlas.class);
     }
 
     private void loadTextures() {
@@ -55,10 +54,12 @@ public final class GameAssets extends AssetManager {
 
         load("Sprites/AlgorithmButton/StartButtonOff.png", Texture.class);
         load("Sprites/AlgorithmButton/StartButtonOn.png", Texture.class);
+        load("Sprites/AlgorithmButton/ExchangeButtonOff.png", Texture.class);
+        load("Sprites/AlgorithmButton/ExchangeButtonOn.png", Texture.class);
 
-        load("Sprites/back.jpg", Texture.class);
-        load("Sprites/main.jpg", Texture.class);
-        load("Sprites/logo.png", Texture.class);
+        load("Sprites/Background/back.jpg", Texture.class);
+        load("Sprites/Background/main.jpg", Texture.class);
+        load("Sprites/Background/logo.png", Texture.class);
     }
 
     private void loadModels() {

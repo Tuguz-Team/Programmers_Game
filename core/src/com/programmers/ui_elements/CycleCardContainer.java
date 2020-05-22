@@ -38,7 +38,8 @@ public final class CycleCardContainer extends CardContainer {
     protected void childrenChanged() {
         super.childrenChanged();
         if (gameController != null && gameController.getAlgorithmCardWindow() != null) {
-            if (gameController.getAlgorithmCardWindow().areContainersEmpty())
+            if (gameController.getAlgorithmCardWindow().areContainersEmpty()
+                    || gameController.getPlayerCardWindow().getCardContainer().getChildren().size == 5)
                 gameController.getPlayerCardWindow().enableButton();
             else
                 gameController.getPlayerCardWindow().disableButton();
@@ -86,6 +87,7 @@ public final class CycleCardContainer extends CardContainer {
                     card.getPrevParent().add(card).row();
                     removeSpace(card, getCells());
                 } else {
+                    card.remove();
                     Gdx.app.error("CCC", "ERROR");
                 }
             } else {
@@ -138,7 +140,7 @@ public final class CycleCardContainer extends CardContainer {
             }
 
             if (i == 1) {
-                padTop(58);
+                padTop(PAD * 2);
                 cells.get(i + 1).spaceBottom(PAD);
 
                 if (cells.get(i + 1).getActor() == null)
@@ -150,7 +152,7 @@ public final class CycleCardContainer extends CardContainer {
                 if (cells.get(i + 3).getActor() != null && ((Card) cells.get(i + 3).getActor()).getGameCard() == null)
                     cells.get(i + 1).spaceBottom(PAD);
             } else if (i == cells.size - 2) {
-                padBottom(58);
+                padBottom(PAD * 2);
                 cells.get(i - 2).spaceBottom(PAD);
 
                 if (cells.get(i - 2).getActor() == null)
@@ -352,7 +354,8 @@ public final class CycleCardContainer extends CardContainer {
     }
 
     public void zeroingPoints() {
-        padLeft(WIDTH);
+        padLeft(WIDTH).padBottom(0).padTop(PAD * 4);
+
         for (int i = 0; i < cycleCards.length; i++)
             getCells().get(i).setActor(null);
     }
@@ -363,8 +366,8 @@ public final class CycleCardContainer extends CardContainer {
             padTop(PAD);
         if (getPadBottom() != PAD)
             padBottom(PAD);
-        int i = cycleCards.length - 1;
 
+        int i = cycleCards.length - 1;
         cycleCards[i] = new Card(
                 "Sprites/EnabledCards/CyclePointOn.png",
                 gameController.getGameScreen().getAssetManager()
@@ -397,11 +400,12 @@ public final class CycleCardContainer extends CardContainer {
             i = 0;
             n = cycleCards.length - currSize * 2 + 1;
 
-            for (; i < n; i++)
-                cells.get(i).setActor(null);
-
-            //if (n == 8 && getCells().get(i).getActor() == null)
-            //drawLast();
+            if (n == cycleCards.length - 1)
+                zeroingPoints();
+            else {
+                for (; i < n; i++)
+                    cells.get(i).setActor(null);
+            }
         }
 
         restoringCycle(cells, null);
@@ -420,24 +424,4 @@ public final class CycleCardContainer extends CardContainer {
                 ((Card)card).setCycleToPrevious(this);
         }
     }
-
-    /*public void restorePointsFromZero(int size) {
-        if (size == 1 && getCells().get(8).getActor() == null) {
-            //
-        } else {
-            size = cycleCards.length - (size * 2) + 1;
-            for (int i = size; i < cycleCards.length; i++) {
-                Card card = new Card(
-                        "Sprites/EnabledCards/CyclePointOn.png",
-                        gameController.getGameScreen().getAssetManager());
-                card.setCellEnabled(true);
-                getCells().get(i).setActor(card);
-            }
-            padLeft(0);
-            if (getPadTop() != PAD)
-                padTop(PAD);
-            if (getPadBottom() != PAD)
-                padBottom(PAD);
-        }
-    }*/
 }
