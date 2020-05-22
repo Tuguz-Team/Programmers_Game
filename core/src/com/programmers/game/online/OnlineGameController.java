@@ -1,5 +1,6 @@
 package com.programmers.game.online;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -20,6 +21,7 @@ import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
 import com.programmers.ui_elements.CycleCardContainer;
 import com.programmers.ui_elements.OKDialog;
+import com.programmers.ui_elements.OnlineGameInfo;
 import com.programmers.ui_elements.PlayerCardWindow;
 
 import java.util.Collections;
@@ -33,6 +35,7 @@ public final class OnlineGameController extends GameController {
     private NetworkManager.GameData.CardsData cardsData = new NetworkManager.GameData.CardsData();
 
     private final Car[] cars;
+    private OnlineGameInfo onlineGameInfo;
 
     public OnlineGameController(NetworkManager networkManager, HotseatGameController hotseatGameController,
                                 NetworkManager.Room room, OnlineGame onlineGame, Field field, Car[] cars) {
@@ -135,8 +138,12 @@ public final class OnlineGameController extends GameController {
         return room.getDifficulty();
     }
 
-    public Car[] getCars() {
-        return cars;
+    public NetworkManager.GameData.PlayersData getPlayersData() {
+        return playersData;
+    }
+
+    public void setOnlineGameInfo(OnlineGameInfo onlineGameInfo) {
+        this.onlineGameInfo = onlineGameInfo;
     }
 
     public Car.Color getWinnerColor(NetworkManager.GameData.PlayersData playersData) {
@@ -168,15 +175,6 @@ public final class OnlineGameController extends GameController {
                 room, playersData, new Procedure() {
                     @Override
                     public void call() {
-                        // if we got the winner
-                        Car.Color winnerColor = getWinnerColor(playersData);
-                        if (winnerColor != null) {
-                            OKDialog winnerDialog = new OKDialog("Winner of the game is "
-                                    + winnerColor.toString().toUpperCase() + " car!",
-                                    ScreenLoader.getGameSkin()
-                            );
-                            winnerDialog.show(gameScreen);
-                        }
                         // update data
                         if (networkManager.getThisPlayerData(playersData) != null) {
                             playerCardWindow.getCardContainer().clearChildren();
@@ -202,6 +200,21 @@ public final class OnlineGameController extends GameController {
                         }
                         if (algorithmCardWindow.getCyclesCardContainer() != null) {
                             algorithmCardWindow.getCyclesCardContainer().discardMode = false;
+                        }
+                        // update data
+                        if (onlineGameInfo != null)
+                            onlineGameInfo.updateData();
+                        // if we got the winner
+                        Car.Color winnerColor = getWinnerColor(playersData);
+                        if (winnerColor != null) {
+                            OKDialog winnerDialog = new OKDialog("Winner of the game is "
+                                    + winnerColor.toString().toUpperCase() + " car!",
+                                    ScreenLoader.getGameSkin()
+                            );
+                            winnerDialog.show(gameScreen);
+                            playerCardWindow.getCardContainer().setTouchable(Touchable.disabled);
+                            playerCardWindow.disableButton();
+                            algorithmCardWindow.disable();
                         }
                     }
                 }, new Procedure() {
@@ -235,22 +248,27 @@ public final class OnlineGameController extends GameController {
                             }
                         }
                         //
-                        updateNonPlayerCards(cardsData);
-                        // update algorithmCardWindow
-                        algorithmCardWindow.getActionsCardContainer().clearChildren();
-                        Collections.reverse(cardsData.getAlgorithmCardWindow().getActions());
-                        for (int i = cardsData.getAlgorithmCardWindow().getActions().size() - 1; i >= 0; i--) {
-                            NetworkManager.GameData.GameCard gameCard =
-                                    cardsData.getAlgorithmCardWindow().getActions().get(i);
-                            if (gameCard != null && gameCard.getCardType() != null) {
-                                Card card = new Card(new GameCard(
-                                        gameCard.getCardType(), thisPlayer),
-                                        gameScreen.getAssetManager()
-                                );
-                                algorithmCardWindow.getActionsCardContainer().addCard(card, 0, 0);
-                                card.setActionToPrevious(algorithmCardWindow.getActionsCardContainer());
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateNonPlayerCards(cardsData);
+                                // update algorithmCardWindow
+                                algorithmCardWindow.getActionsCardContainer().clearChildren();
+                                Collections.reverse(cardsData.getAlgorithmCardWindow().getActions());
+                                for (int i = cardsData.getAlgorithmCardWindow().getActions().size() - 1; i >= 0; i--) {
+                                    NetworkManager.GameData.GameCard gameCard =
+                                            cardsData.getAlgorithmCardWindow().getActions().get(i);
+                                    if (gameCard != null && gameCard.getCardType() != null) {
+                                        Card card = new Card(new GameCard(
+                                                gameCard.getCardType(), thisPlayer),
+                                                gameScreen.getAssetManager()
+                                        );
+                                        algorithmCardWindow.getActionsCardContainer().addCard(card, 0, 0);
+                                        card.setActionToPrevious(algorithmCardWindow.getActionsCardContainer());
+                                    }
+                                }
                             }
-                        }
+                        });
                     }
                 }, new Procedure() {
                     @Override

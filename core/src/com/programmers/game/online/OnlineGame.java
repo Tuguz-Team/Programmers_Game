@@ -11,7 +11,9 @@ import com.programmers.interfaces.Procedure;
 import com.programmers.interfaces.NetworkManager;
 import com.programmers.screens.GameScreen;
 import com.programmers.screens.ScreenLoader;
+import com.programmers.ui_elements.GameInfo;
 import com.programmers.ui_elements.OKDialog;
+import com.programmers.ui_elements.OnlineGameInfo;
 
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class OnlineGame extends GameScreen {
 
     private OnlineGameController onlineGameController;
     private final NetworkManager.Room room;
-    private NetworkManager.FieldData fieldData;
+    private NetworkManager.FieldData fieldData = new NetworkManager.FieldData();
     private NetworkManager.GameData gameData = new NetworkManager.GameData();
 
     private boolean loadGame;
@@ -68,6 +70,7 @@ public class OnlineGame extends GameScreen {
                     screenLoader.networkManager, hotseatGameController,
                     room, this, field, cars
             );
+            gameData = new NetworkManager.GameData(hotseatGameController);
             loadGame();
             initDataListener();
         } else {
@@ -150,6 +153,13 @@ public class OnlineGame extends GameScreen {
     }
 
     @Override
+    protected void addUI() {
+        super.addUI();
+        GameInfo gameInfo = new OnlineGameInfo(gameData, this);
+        addActor(gameInfo);
+    }
+
+    @Override
     protected void addCardWindows() {
         addActor(onlineGameController.getPlayerCardWindow());
         addActor(onlineGameController.getAlgorithmCardWindow());
@@ -158,6 +168,10 @@ public class OnlineGame extends GameScreen {
     @Override
     protected void loadModels() {
         field.loadModels();
+    }
+
+    public OnlineGameController getOnlineGameController() {
+        return onlineGameController;
     }
 
     @Override

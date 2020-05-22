@@ -1,5 +1,8 @@
 package com.programmers.game.hotseat;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
@@ -8,6 +11,8 @@ import com.programmers.game_objects.Base;
 import com.programmers.game_objects.Car;
 import com.programmers.screens.GameScreen;
 import com.programmers.screens.ScreenLoader;
+import com.programmers.ui_elements.GameInfo;
+import com.programmers.ui_elements.HotseatGameInfo;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
@@ -50,6 +55,13 @@ public class HotseatGame extends GameScreen {
         }
         perspectiveCamera.position.set(x, size, z);
         perspectiveCamera.update();
+    }
+
+    @Override
+    protected void addUI() {
+        super.addUI();
+        GameInfo gameInfo = new HotseatGameInfo(hotseatGameController);
+        addActor(gameInfo);
     }
 
     @Override

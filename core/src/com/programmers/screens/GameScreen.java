@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -93,7 +95,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         Gdx.input.setInputProcessor(multiplexer);
     }
 
-    private void addUI() {
+    protected void addUI() {
         final Skin skin = ScreenLoader.getGameSkin();
 
         final YesNoDialog yesNoDialog = new YesNoDialog
@@ -161,9 +163,6 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
 
         addActor(toDialogButton);
         toDialogButton.setPosition(1590, 890, Align.topRight);
-
-        Table smallScoreTable = new Table();
-
 
         addCardWindows();
     }

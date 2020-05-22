@@ -60,6 +60,22 @@ public final class GameAssets extends AssetManager {
         load("Sprites/Background/back.jpg", Texture.class);
         load("Sprites/Background/main.jpg", Texture.class);
         load("Sprites/Background/logo.png", Texture.class);
+
+        load("Sprites/Cars/BlueOn.png", Texture.class);
+        load("Sprites/Cars/GreenOn.png", Texture.class);
+        load("Sprites/Cars/RedOn.png", Texture.class);
+        load("Sprites/Cars/YellowOn.png", Texture.class);
+
+        load("Sprites/Cars/BlueOff.png", Texture.class);
+        load("Sprites/Cars/GreenOff.png", Texture.class);
+        load("Sprites/Cars/RedOff.png", Texture.class);
+        load("Sprites/Cars/YellowOff.png", Texture.class);
+
+        load("Sprites/Lives/LifeObjectUnknown.png", Texture.class);
+        load("Sprites/Lives/LifeObjectGreen.png", Texture.class);
+        load("Sprites/Lives/LifeObjectYellow.png", Texture.class);
+        load("Sprites/Lives/LifeObjectPurple.png", Texture.class);
+        load("Sprites/Lives/LifeObjectBlue.png", Texture.class);
     }
 
     private void loadModels() {

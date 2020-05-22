@@ -1,6 +1,7 @@
 package com.programmers.game.hotseat;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.utils.Array;
 
 import com.programmers.enums.CardType;
@@ -15,12 +16,14 @@ import com.programmers.screens.GameScreen;
 import com.programmers.screens.ScreenLoader;
 import com.programmers.ui_elements.Card;
 import com.programmers.ui_elements.CardContainer;
+import com.programmers.ui_elements.HotseatGameInfo;
 import com.programmers.ui_elements.OKDialog;
 
 public final class HotseatGameController extends GameController {
 
     private final Player[] players;
     private final Difficulty difficulty;
+    private HotseatGameInfo hotseatGameInfo;
 
     protected HotseatGameController(final Player[] players, final Field field,
                                     final GameScreen gameScreen, final Void v) {
@@ -133,6 +136,9 @@ public final class HotseatGameController extends GameController {
             playerCardContainer.addCard(card, 0, 0);
             gameCard.setPlayer(thisPlayer);
         }
+        // update data
+        if (hotseatGameInfo != null)
+            hotseatGameInfo.updateData();
         // check on winner
         Car.Color winnerColor = getWinnerColor();
         if (winnerColor != null) {
@@ -141,10 +147,17 @@ public final class HotseatGameController extends GameController {
                     ScreenLoader.getGameSkin()
             );
             winnerDialog.show(gameScreen);
+            playerCardWindow.getCardContainer().setTouchable(Touchable.disabled);
+            playerCardWindow.disableButton();
+            algorithmCardWindow.disable();
         }
     }
 
     public Player[] getPlayers() {
         return players;
+    }
+
+    public void setHotseatGameInfo(HotseatGameInfo hotseatGameInfo) {
+        this.hotseatGameInfo = hotseatGameInfo;
     }
 }
