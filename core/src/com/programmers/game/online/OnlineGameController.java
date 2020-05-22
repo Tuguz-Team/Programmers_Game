@@ -189,7 +189,7 @@ public final class OnlineGameController extends GameController {
                                 LabelDisappear label = new LabelDisappear(networkManager.isThisPlayerTurn(playersData)
                                         ? "Your turn!"
                                         : "Turn of player with " + playersData.getPlayers().get(playersData.getIndex())
-                                        .getCar().getBase().getBaseColor() + " car!", 2000);
+                                        .getCar().getBase().getBaseColor() + " car!", 5000);
                                 table.add(label).center();
                                 gameScreen.addActor(table);
                             }

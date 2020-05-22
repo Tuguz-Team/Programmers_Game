@@ -78,7 +78,7 @@ public final class HotseatGameController extends GameController {
                 table.setFillParent(true);
                 table.center();
                 LabelDisappear label = new LabelDisappear("Turn of player with "
-                        + thisPlayer.getCar().getBase().getBaseColor() + " car!", 2000);
+                        + thisPlayer.getCar().getBase().getBaseColor() + " car!", 5000);
                 table.add(label).center();
                 gameScreen.addActor(table);
             }
@@ -181,7 +181,7 @@ public final class HotseatGameController extends GameController {
                 table.setFillParent(true);
                 table.center();
                 LabelDisappear label = new LabelDisappear("Turn of player with "
-                        + thisPlayer.getCar().getBase().getBaseColor() + " car!", 2000);
+                        + thisPlayer.getCar().getBase().getBaseColor() + " car!", 5000);
                 table.add(label).center();
                 gameScreen.addActor(table);
             }
