@@ -9,10 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
@@ -28,6 +26,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         main.setFillParent(true);
         addActor(main);
 
+        ScreenLoader.getMusicManager().getMainTheme().play();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         setViewport(new FillViewport(1100, 1100, camera));
@@ -55,6 +54,11 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
                 new MyButton("   START GAME   ", ScreenLoader.getGameSkin()) {
             @Override
             public void call() {
+                ScreenLoader.getMusicManager().getMainTheme().pause();
+
+                ScreenLoader.getMusicManager().getMenuTheme().stop();
+                ScreenLoader.getMusicManager().getMenuTheme().play();
+
                 screenLoader.setScreen(new ChooseGameScreen(
                         screenLoader, MainMenuScreen.this)
                 );

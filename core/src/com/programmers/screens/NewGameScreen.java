@@ -92,6 +92,12 @@ public final class NewGameScreen extends ReturnableScreen {
                 final int playersCount = (int)playerCountSlider.getValue();
                 if (isHotseat) {
                     dispose();
+
+                    ScreenLoader.getMusicManager().getMenuTheme().pause();
+
+                    ScreenLoader.getMusicManager().getGameTheme().stop();
+                    ScreenLoader.getMusicManager().getGameTheme().play();
+
                     screenLoader.setScreen(new HotseatGame(screenLoader, difficulty, playersCount));
                 } else {
                     final String name = textField.getText(), trimmed = name.trim();
@@ -129,6 +135,11 @@ public final class NewGameScreen extends ReturnableScreen {
         super.render(delta);
         if (launchOnline) {
             dispose();
+            ScreenLoader.getMusicManager().getMenuTheme().pause();
+
+            ScreenLoader.getMusicManager().getGameTheme().stop();
+            ScreenLoader.getMusicManager().getGameTheme().play();
+
             screenLoader.setScreen(new OnlineGame(screenLoader, room, true));
         }
     }

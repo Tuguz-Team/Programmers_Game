@@ -117,6 +117,11 @@ public final class ConnectGameScreen extends ReturnableScreen {
     public void render(float delta) {
         super.render(delta);
         if (launchOnline) {
+            ScreenLoader.getMusicManager().getMenuTheme().pause();
+
+            ScreenLoader.getMusicManager().getGameTheme().stop();
+            ScreenLoader.getMusicManager().getGameTheme().play();
+
             screenLoader.setScreen(new OnlineGame(screenLoader, room, false));
         }
     }
@@ -126,17 +131,17 @@ public final class ConnectGameScreen extends ReturnableScreen {
         private NetworkManager.Room room;
 
         private GameRoom(final NetworkManager.Room room) {
-            super("   Room name:  " + room.getName() + "   "
-                    + "\n\n   Players:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
-                    + "\n\n   Difficulty:  " + room.getDifficulty().toString() + "   ", ScreenLoader.getGameSkin());
+            super("   Room name :  " + room.getName() + "   "
+                    + "\n\n   Players :  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
+                    + "\n\n   Difficulty :  " + room.getDifficulty().toString() + "   ", ScreenLoader.getGameSkin());
             this.room = room;
             screenLoader.networkManager.addRoomChangedListener(
                     room, new Procedure() {
                         @Override
                         public void call() {
-                            setText("   Room name:  " + room.getName() + "   "
-                                    + "\n\n   Players:  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
-                                    + "\n\n   Difficulty:  " + room.getDifficulty().toString() + "   ");
+                            setText("   Room name :  " + room.getName() + "   "
+                                    + "\n\n   Players :  " + room.getPlayers().size() + "/" + room.getPlayersCount() + "   "
+                                    + "\n\n   Difficulty :  " + room.getDifficulty().toString() + "   ");
                         }
                     }, new Procedure() {
                         @Override

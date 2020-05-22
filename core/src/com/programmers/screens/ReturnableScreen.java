@@ -20,7 +20,6 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
 
     protected final ScreenLoader screenLoader;
     private final Screen previousScreen;
-
     private final OrthographicCamera camera;
 
     public ReturnableScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
@@ -48,6 +47,7 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
                 returnToPreviousScreen();
             }
         };
+        returnButton.getLabel().setFontScale(1.25f);
 
         addActor(returnButton);
         returnButton.setPosition(1270, 710, Align.topRight);
@@ -55,6 +55,12 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
 
     public void returnToPreviousScreen() {
         dispose();
+        if (!(previousScreen instanceof ReturnableScreen)) {
+            ScreenLoader.getMusicManager().getMenuTheme().pause();
+
+            ScreenLoader.getMusicManager().getMainTheme().stop();
+            ScreenLoader.getMusicManager().getMainTheme().play();
+        }
         screenLoader.setScreen(previousScreen);
     }
 

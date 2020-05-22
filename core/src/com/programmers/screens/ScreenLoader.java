@@ -17,6 +17,7 @@ public final class ScreenLoader extends Game {
     private AssetManager assetManager;
     private SkyBox skyBox;
 
+    private static MusicManager musicManager;
     private static Skin gameSkin;
     public final NetworkManager networkManager;
 
@@ -26,6 +27,7 @@ public final class ScreenLoader extends Game {
 
     @Override
     public void create() {
+        musicManager = new MusicManager();
         Gdx.input.setCatchKey(Input.Keys.BACK, true);
 
         assetManager = new GameAssets();
@@ -50,6 +52,10 @@ public final class ScreenLoader extends Game {
         assetManager.dispose();
         skyBox.dispose();
         super.dispose();
+    }
+
+    public static MusicManager getMusicManager() {
+        return musicManager;
     }
 
     public AssetManager getAssetManager() {

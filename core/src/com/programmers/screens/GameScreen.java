@@ -25,7 +25,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -34,7 +33,6 @@ import com.programmers.enums.Difficulty;
 import com.programmers.game.Field;
 import com.programmers.game.GameInputProcessor;
 import com.programmers.ui_elements.CardContainer;
-import com.programmers.ui_elements.OKDialog;
 import com.programmers.ui_elements.YesNoDialog;
 import com.programmers.ui_elements.MyButton;
 
@@ -143,12 +141,10 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
                 };
         mainMenuButton.getLabel().setFontScale(2);
 
-        pauseMenu.getContentTable().pad(
-                0.075f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight(),
-                0.025f * Gdx.graphics.getHeight(), 0.05f * Gdx.graphics.getHeight());
+        pauseMenu.getContentTable().pad(75, 50, 25, 50);
 
-        pauseMenu.getContentTable().add(returnButton).space(0.05f * Gdx.graphics.getHeight()).row();
-        pauseMenu.getContentTable().add(mainMenuButton).space(0.05f * Gdx.graphics.getHeight());
+        pauseMenu.getContentTable().add(returnButton).space(50).row();
+        pauseMenu.getContentTable().add(mainMenuButton).space(50);
 
         TextButton toDialogButton = new MyButton("  PAUSE  ", ScreenLoader.getGameSkin()) {
             @Override
@@ -163,6 +159,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
 
         addActor(toDialogButton);
         toDialogButton.setPosition(1590, 890, Align.topRight);
+        toDialogButton.getLabel().setFontScale(1.25f);
 
         addCardWindows();
     }
@@ -205,6 +202,12 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
 
     protected void exit() {
         dispose();
+
+        ScreenLoader.getMusicManager().getGameTheme().pause();
+
+        ScreenLoader.getMusicManager().getMainTheme().stop();
+        ScreenLoader.getMusicManager().getMainTheme().play();
+
         screenLoader.setScreen(screenLoader.getMainMenu());
     }
 

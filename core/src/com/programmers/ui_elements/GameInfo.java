@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.programmers.game.Player;
 import com.programmers.game.hotseat.HotseatGameController;
-import com.programmers.game.online.OnlineGameController;
 import com.programmers.game_objects.Car;
 import com.programmers.interfaces.NetworkManager;
 import com.programmers.screens.GameScreen;
@@ -66,6 +65,7 @@ public abstract class GameInfo extends Table {
 
         private Dialog() {
             super("Player's score", ScreenLoader.getGameSkin());
+            padLeft(30).padRight(15);
             getTitleLabel().setAlignment(Align.center);
             getContentTable().add();
         }
