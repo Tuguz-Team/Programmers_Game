@@ -84,7 +84,6 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         mainButtons.center().space(75);
 
         screenLoader.networkManager.registerAnon();
-        screenLoader.networkManager.onDisconnect();
     }
 
     @Override
