@@ -70,7 +70,7 @@ public final class ScreenLoader extends Game {
         return mainMenu;
     }
 
-    public SkyBox getSkyBox() {
+    SkyBox getSkyBox() {
         return skyBox;
     }
 }

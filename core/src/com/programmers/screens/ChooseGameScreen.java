@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.programmers.ui_elements.MyButton;
 
-public final class ChooseGameScreen extends ReturnableScreen {
+final class ChooseGameScreen extends ReturnableScreen {
 
-    public ChooseGameScreen(final ScreenLoader screenLoader, Screen previousScreen) {
+    ChooseGameScreen(final ScreenLoader screenLoader, Screen previousScreen) {
         super(screenLoader, previousScreen);
 
         VerticalGroup buttons = new VerticalGroup();

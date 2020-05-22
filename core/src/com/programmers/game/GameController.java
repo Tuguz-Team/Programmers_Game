@@ -2,7 +2,6 @@ package com.programmers.game;
 
 import com.badlogic.gdx.utils.Array;
 import com.programmers.enums.Difficulty;
-import com.programmers.game_objects.Chunk;
 import com.programmers.screens.GameScreen;
 import com.programmers.ui_elements.AlgorithmCardWindow;
 import com.programmers.ui_elements.CardContainer;
@@ -60,7 +59,7 @@ public abstract class GameController {
 
     public abstract void toNextPlayer();
 
-    public void initContainers() {
+    protected void initContainers() {
         CardContainer playerCardContainer = new CardContainer(
                 thisPlayer.getGameCards(),
                 getDifficulty(), CardContainer.Content.All,
@@ -76,7 +75,7 @@ public abstract class GameController {
 
     public abstract Difficulty getDifficulty();
 
-    public void makeTalon() {
+    protected void makeTalon() {
         while (!discardPile.isEmpty()) {
             final int i = random.nextInt(discardPile.size);
             final GameCard gameCard = discardPile.get(i);

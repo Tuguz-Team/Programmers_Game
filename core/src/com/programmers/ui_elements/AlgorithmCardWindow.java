@@ -23,11 +23,9 @@ public final class AlgorithmCardWindow extends Table {
     private final Button button;
     private CardContainer actionsCardContainer;
     private CycleCardContainer cyclesCardContainer;
-    private AssetManager assetManager;
 
     public AlgorithmCardWindow(final String name, final GameController gameController, final AssetManager assetManager) {
         this.gameController = gameController;
-        this.assetManager = assetManager;
         setFillParent(true);
         final Table table = new Table();
         button = new Button(
@@ -217,7 +215,7 @@ public final class AlgorithmCardWindow extends Table {
         }
     }
 
-    public boolean areContainersEmpty() {
+    boolean areContainersEmpty() {
         if (actionsCardContainer != null) {
             boolean flag = ((Card)actionsCardContainer.getChild(0)).getGameCard() == null;
             if (gameController.getDifficulty() == Difficulty.Hard
@@ -230,7 +228,7 @@ public final class AlgorithmCardWindow extends Table {
         return true;
     }
 
-    public int mathCycleFull(int i,int size) {
+    private int mathCycleFull(int i, int size) {
         int a = cyclesCardContainer.actionSizeToUse(),
         b = size + a;
         b = (b % 2 == 0) ? (b / 2) : (b / 2 + 1);
@@ -240,7 +238,7 @@ public final class AlgorithmCardWindow extends Table {
         return b;
     }
 
-    public int mathCycleEmptyOdd(int i,int size) {
+    private int mathCycleEmptyOdd(int i, int size) {
         int k = i - (size + cyclesCardContainer.actionSizeToUse());
 
         if (i == size) k = 2;
@@ -251,7 +249,7 @@ public final class AlgorithmCardWindow extends Table {
         return k;
     }
 
-    public int mathCycleEmptyEven(int i,int size) {
+    private int mathCycleEmptyEven(int i, int size) {
         int k = i - (size + cyclesCardContainer.actionSizeToUse());
         k = k + (cyclesCardContainer.actionSizeToUse() < 0 ? 2 : 1);
 

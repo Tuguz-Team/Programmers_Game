@@ -12,7 +12,7 @@ public abstract class GameObject {
     private int x, y, z;
     private String modelFileName;
 
-    protected GameObject(final int x, final int y, final int z, final GameScreen gameScreen) {
+    GameObject(final int x, final int y, final int z, final GameScreen gameScreen) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -59,27 +59,27 @@ public abstract class GameObject {
         this.z = z;
     }
 
-    protected Model getModel() {
+    Model getModel() {
         return model;
     }
 
-    protected void setModel(Model model) {
+    void setModel(Model model) {
         this.model = model;
     }
 
-    public ModelInstance getModelInstance() {
+    ModelInstance getModelInstance() {
         return modelInstance;
     }
 
-    protected void setModelInstance(ModelInstance modelInstance) {
+    void setModelInstance(ModelInstance modelInstance) {
         this.modelInstance = modelInstance;
     }
 
-    public String getModelFileName() {
+    String getModelFileName() {
         return modelFileName;
     }
 
-    protected void setModelFileName(String modelFileName) {
+    void setModelFileName(String modelFileName) {
         this.modelFileName = modelFileName;
     }
 }

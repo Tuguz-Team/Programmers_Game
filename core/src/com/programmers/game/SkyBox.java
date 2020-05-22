@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
-public class SkyBox implements Disposable {
+public final class SkyBox implements Disposable {
 
     private final Matrix4 transformation;
     private final ShaderProgram program;

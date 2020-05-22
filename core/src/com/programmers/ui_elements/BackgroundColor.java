@@ -23,7 +23,7 @@ public class BackgroundColor implements Drawable {
     private Sprite sprite;
     private Color color;
 
-    public BackgroundColor(String filename) {
+    BackgroundColor(String filename) {
         this(filename, 0.0f, 0.0f, 0.0f, 0.0f);
     }
 
@@ -31,7 +31,7 @@ public class BackgroundColor implements Drawable {
         this(filename, x, y, 0.0f, 0.0f);
     }
 
-    public BackgroundColor(String filename, float x, float y, float width, float height) {
+    private BackgroundColor(String filename, float x, float y, float width, float height) {
         this.setPosition(x, y);
         this.setSize(width, height);
         initialize(filename);
@@ -197,7 +197,6 @@ public class BackgroundColor implements Drawable {
     @Override
     public void setMinHeight(float minHeight) {
         // TODO Auto-generated method stub
-
     }
 
     private void setFilename(String filename) {
@@ -239,13 +238,4 @@ public class BackgroundColor implements Drawable {
     public void setHeight(float height) {
         this.height = height;
     }
-
-    public Boolean getFillParent() {
-        return fillParent;
-    }
-
-    public void setFillParent(Boolean fillParent) {
-        this.fillParent = fillParent;
-    }
-
 }

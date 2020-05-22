@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.programmers.game_objects.Car;
 import com.programmers.game_objects.Life;
 
-public class Player {
+public final class Player {
 
     private int score;
     private final Car car;

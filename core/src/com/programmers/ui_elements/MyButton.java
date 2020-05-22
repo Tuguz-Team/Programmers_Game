@@ -3,7 +3,6 @@ package com.programmers.ui_elements;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.programmers.interfaces.Procedure;
@@ -12,16 +11,6 @@ public abstract class MyButton extends TextButton implements Procedure {
 
     public MyButton(String text, Skin skin) {
         super(text, skin);
-        addMyListener();
-    }
-
-    public MyButton(String text, Skin skin, String styleName) {
-        super(text, skin, styleName);
-        addMyListener();
-    }
-
-    public MyButton(String text, TextButtonStyle style) {
-        super(text, style);
         addMyListener();
     }
 

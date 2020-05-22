@@ -3,7 +3,6 @@ package com.programmers.ui_elements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -102,7 +101,7 @@ public final class CycleCardContainer extends CardContainer {
         }
     }
 
-    public void removeSpace(final Card card, final Array<Cell> cells) {
+    void removeSpace(final Card card, final Array<Cell> cells) {
         if (card.getCell() != null && card.getCell().getActor() != null) {
             settingCellEnabled(card.getCell().getActor(), false);
             int i = card.getIndexForCycles();
@@ -213,7 +212,7 @@ public final class CycleCardContainer extends CardContainer {
 
     void restoreSpace(Card card) {
         card.getCell().setActor(
-                ((CycleCardContainer) card.getPrevParent()).getCycleCards()[card.getIndexForCycles()]
+                ((CycleCardContainer) card.getPrevParent()).cycleCards[card.getIndexForCycles()]
         );
         Array<Cell> cells = card.getPrevParent().getCells();
         restoringCycle(cells, card);
@@ -268,7 +267,7 @@ public final class CycleCardContainer extends CardContainer {
         restoreCheck(cells, i);
     }
 
-    public void restoringCycle (Array<Cell> cells, Card card) {
+    private void restoringCycle(Array<Cell> cells, Card card) {
         for (int i = 0; i < cells.size; i++) {
             if (cells.get(i).getActor() == null) {
                 if ((i > 0 && cells.get(i - 1).getActor() != null && ((Card) cells.get(i - 1).getActor()).getGameCard() != null)
@@ -276,7 +275,7 @@ public final class CycleCardContainer extends CardContainer {
                         && ((Card) cells.get(i + 1).getActor()).getGameCard() != null)) {
                     cells.get(i).setActor(null);
                 } else if (card != null)
-                    cells.get(i).setActor(((CycleCardContainer) card.getPrevParent()).getCycleCards()[i]);
+                    cells.get(i).setActor(((CycleCardContainer) card.getPrevParent()).cycleCards[i]);
             } else if (((Card) cells.get(i).getActor()).getGameCard() == null) {
                 if (i % 2 != 0 && i > 1 && cells.get(i - 2).getActor() != null
                         && ((Card) cells.get(i - 2).getActor()).getGameCard() != null)
@@ -293,7 +292,7 @@ public final class CycleCardContainer extends CardContainer {
         }
     }
 
-    public void restoreCheck(Array<Cell> cells, int i) {
+    private void restoreCheck(Array<Cell> cells, int i) {
         if (i % 2 == 0) {
             if (i > 0 && cells.get(i - 2).getActor() != null && ((Card) cells.get(i - 2).getActor()).getGameCard() != null)
                 cells.get(i - 2).spaceBottom(PAD);
@@ -308,16 +307,12 @@ public final class CycleCardContainer extends CardContainer {
             padTop(PAD);
     }
 
-    public Card[] getCycleCards() {
-        return cycleCards;
-    }
-
     @Override
     public void clearChildren() {
         zeroingPoints();
     }
 
-    public void settingCellEnabled (Card card, boolean cellEnabled) {
+    private void settingCellEnabled(Card card, boolean cellEnabled) {
         if (card.getGameCard() == null) {
             if (cellEnabled && !card.isCellEnabled())
                 card.setDrawable(new TextureRegionDrawable(
@@ -331,7 +326,7 @@ public final class CycleCardContainer extends CardContainer {
         card.setCellEnabled(cellEnabled);
     }
 
-    public void updatePoints(Array<Cell> cells, boolean actionChanging) {
+    private void updatePoints(Array<Cell> cells, boolean actionChanging) {
         for (int i = 0; i < cycleCards.length; i++) {
             if (i < actionSizeToUse() + 1) {
                 cells.get(i).setActor(null);
@@ -355,14 +350,14 @@ public final class CycleCardContainer extends CardContainer {
         }
     }
 
-    public void zeroingPoints() {
+    void zeroingPoints() {
         padLeft(WIDTH).padBottom(0).padTop(PAD * 4);
 
         for (int i = 0; i < cycleCards.length; i++)
             getCells().get(i).setActor(null);
     }
 
-    public void drawLast() {
+    void drawLast() {
         padLeft(0);
         if (getPadTop() != PAD)
             padTop(PAD);
@@ -377,7 +372,7 @@ public final class CycleCardContainer extends CardContainer {
         getCells().get(i).setActor(cycleCards[i]);
     }
 
-    public void drawPoints(int prevSize, int currSize) {
+    void drawPoints(int prevSize, int currSize) {
         int i, n;
         Array<Cell> cells = getCells();
 
@@ -432,7 +427,7 @@ public final class CycleCardContainer extends CardContainer {
         updatePoints(cells, true);
     }
 
-    public int actionSizeToUse() {
+    int actionSizeToUse() {
         return cycleCards.length - 2 * gameController.getAlgorithmCardWindow().
                 getActionsCardContainer().getChildren().size;
     }

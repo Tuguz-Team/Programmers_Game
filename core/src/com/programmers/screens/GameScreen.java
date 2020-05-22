@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -23,7 +22,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
@@ -47,7 +45,6 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
     private final AssetManager assetManager;
 
     protected final PerspectiveCamera perspectiveCamera;
-    protected final OrthographicCamera orthographicCamera;
 
     private final Environment environment;
     private final ModelBatch modelBatch;
@@ -80,7 +77,7 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         perspectiveCamera.far = 100f;
         perspectiveCamera.update();
 
-        orthographicCamera = new OrthographicCamera();
+        OrthographicCamera orthographicCamera = new OrthographicCamera();
         orthographicCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         setViewport(new FillViewport(1600, 900, orthographicCamera));
@@ -164,43 +161,14 @@ public abstract class GameScreen extends Stage implements Screen, InputProcessor
         addCardWindows();
     }
 
-    private void addAxises() {
-        Vector3 start = new Vector3(0f, size / 2f, 0f), end = new Vector3();
-
-        ModelBuilder modelBuilder1 = new ModelBuilder();
-        modelBuilder1.begin();
-        MeshPartBuilder builder1 = modelBuilder1.part("Y", 1, 3, new Material());
-        builder1.setColor(Color.GREEN);
-        end.set(start).add(new Vector3(Vector3.Y).scl(size / 3f));
-        builder1.line(start.x, start.y, start.z, end.x, end.y, end.z);
-        instances.add(new ModelInstance(modelBuilder1.end()));
-
-        ModelBuilder modelBuilder2 = new ModelBuilder();
-        modelBuilder2.begin();
-        MeshPartBuilder builder2 = modelBuilder2.part("X", 1, 3, new Material());
-        builder2.setColor(Color.RED);
-        end.set(start).add(new Vector3(Vector3.X).scl(size / 3f));
-        builder2.line(start.x, start.y, start.z, end.x, end.y, end.z);
-        instances.add(new ModelInstance(modelBuilder2.end()));
-
-        ModelBuilder modelBuilder3 = new ModelBuilder();
-        modelBuilder3.begin();
-        MeshPartBuilder builder3 = modelBuilder3.part("Z", 1, 3, new Material());
-        builder3.setColor(Color.BLUE);
-        end.set(start).add(new Vector3(Vector3.Z).scl(size / 3f));
-        builder3.line(start.x, start.y, start.z, end.x, end.y, end.z);
-        instances.add(new ModelInstance(modelBuilder3.end()));
-    }
-
     protected void loadGame() {
         loadModels();
         gameInputProcessor.unlockCamera();
         addUI();
-        addAxises();
         setCameraPosition();
     }
 
-    protected void exit() {
+    private void exit() {
         dispose();
 
         ScreenLoader.getMusicManager().getGameTheme().pause();

@@ -1,13 +1,10 @@
 package com.programmers.ui_elements;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.programmers.game.Player;
 import com.programmers.game.online.OnlineGame;
 import com.programmers.game.online.OnlineGameController;
 import com.programmers.game_objects.Car;
-import com.programmers.game_objects.Life;
 import com.programmers.interfaces.NetworkManager;
 import com.programmers.screens.ScreenLoader;
 

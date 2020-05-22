@@ -28,7 +28,7 @@ public final class NewGameScreen extends ReturnableScreen {
     private static final Skin skin = ScreenLoader.getGameSkin();
     private final Dialog waitDialog;
 
-    public NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
+    NewGameScreen(final ScreenLoader screenLoader, final Screen previousScreen, final boolean isHotseat) {
         super(screenLoader, previousScreen);
 
         Table ui = new Table();
@@ -131,6 +131,15 @@ public final class NewGameScreen extends ReturnableScreen {
     }
 
     @Override
+    public void dispose() {
+        if (room != null && !launchOnline) {
+            screenLoader.networkManager.removeRoomChangedListener();
+            screenLoader.networkManager.deleteRoom(room);
+        }
+        super.dispose();
+    }
+
+    @Override
     public void render(float delta) {
         super.render(delta);
         if (launchOnline) {
@@ -142,14 +151,6 @@ public final class NewGameScreen extends ReturnableScreen {
 
             screenLoader.setScreen(new OnlineGame(screenLoader, room, true));
         }
-    }
-
-    @Override
-    public void dispose() {
-        if (room != null && !launchOnline) {
-            screenLoader.networkManager.deleteRoom(room);
-        }
-        super.dispose();
     }
 
     private class NewRoomDialog extends Dialog {

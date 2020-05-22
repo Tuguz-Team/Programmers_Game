@@ -6,7 +6,6 @@ import com.programmers.enums.CardType;
 import com.programmers.enums.Difficulty;
 import com.programmers.enums.Direction;
 import com.programmers.game.Field;
-import com.programmers.game.GameCard;
 import com.programmers.game.GameController;
 import com.programmers.game.Player;
 import com.programmers.game.hotseat.HotseatGameController;
@@ -59,12 +58,8 @@ public interface NetworkManager {
     void addPlayersDataChangedListener(Room room, GameData.PlayersData playersData,
                                        Procedure exists, Procedure doesNotExist);
 
-    void removePlayersDataChangedListener();
-
     void addCardsDataChangedListener(Room room, GameData.CardsData cardsData,
                                      Procedure exists, Procedure doesNotExist);
-
-    void removeCardsDataChangedListener();
 
     final class Room {
         private String name;
@@ -107,10 +102,6 @@ public interface NetworkManager {
 
         public void setName(String name) {
             this.name = name;
-        }
-
-        public void setPlayersCount(int playersCount) {
-            this.playersCount = playersCount;
         }
 
         public void setDifficulty(Difficulty difficulty) {
@@ -203,7 +194,7 @@ public interface NetworkManager {
 
             public GameObject() { }
 
-            public GameObject(com.programmers.game_objects.GameObject gameObject) {
+            GameObject(com.programmers.game_objects.GameObject gameObject) {
                 x = gameObject.getX();
                 y = gameObject.getY();
                 z = gameObject.getZ();
@@ -364,7 +355,7 @@ public interface NetworkManager {
 
             public PlayersData() { }
 
-            public PlayersData(HotseatGameController hotseatGameController) {
+            PlayersData(HotseatGameController hotseatGameController) {
                 for (com.programmers.game.Player player : hotseatGameController.getPlayers()) {
                     players.add(new Player(player));
                 }
@@ -523,7 +514,7 @@ public interface NetworkManager {
 
             public AlgorithmCardWindow() { }
 
-            public AlgorithmCardWindow(com.programmers.ui_elements.AlgorithmCardWindow algorithmCardWindow) {
+            AlgorithmCardWindow(com.programmers.ui_elements.AlgorithmCardWindow algorithmCardWindow) {
                 actions = new LinkedList<>();
                 for (Cell cell : algorithmCardWindow.getActionsCardContainer().getCells()) {
                     if (cell.getActor() != null) {

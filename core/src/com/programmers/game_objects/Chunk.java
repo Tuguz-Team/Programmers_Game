@@ -34,7 +34,7 @@ public class Chunk extends GameObject {
         return lift;
     }
 
-    public void setLift(final Chunk lift) {
+    void setLift(final Chunk lift) {
         this.lift = lift;
     }
 
@@ -66,7 +66,7 @@ public class Chunk extends GameObject {
         return wallForward;
     }
 
-    public void setWallForward(Wall wallForward) {
+    void setWallForward(Wall wallForward) {
         this.wallForward = wallForward;
     }
 
@@ -74,7 +74,7 @@ public class Chunk extends GameObject {
         return wallBack;
     }
 
-    public void setWallBack(Wall wallBack) {
+    void setWallBack(Wall wallBack) {
         this.wallBack = wallBack;
     }
 
@@ -82,7 +82,7 @@ public class Chunk extends GameObject {
         return wallLeft;
     }
 
-    public void setWallLeft(Wall wallLeft) {
+    void setWallLeft(Wall wallLeft) {
         this.wallLeft = wallLeft;
     }
 
@@ -90,7 +90,7 @@ public class Chunk extends GameObject {
         return wallRight;
     }
 
-    public void setWallRight(Wall wallRight) {
+    void setWallRight(Wall wallRight) {
         this.wallRight = wallRight;
     }
 

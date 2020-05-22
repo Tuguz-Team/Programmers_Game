@@ -19,14 +19,12 @@ public final class PlayerCardWindow extends Table {
     private final GameController gameController;
 
     private final Button discardButton;
-    private AssetManager assetManager;
 
     public PlayerCardWindow(final String name, final CardContainer cardContainer,
                             final GameController gameController, final AssetManager assetManager) {
         setFillParent(true);
         this.gameController = gameController;
         this.cardContainer = cardContainer;
-        this.assetManager = assetManager;
         final Table tableTemp = new Table();
         final Table table = new Table();
         discardButton = new Button(

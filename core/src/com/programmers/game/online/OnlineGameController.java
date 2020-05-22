@@ -37,8 +37,8 @@ public final class OnlineGameController extends GameController {
     private final Car[] cars;
     private OnlineGameInfo onlineGameInfo;
 
-    public OnlineGameController(NetworkManager networkManager, HotseatGameController hotseatGameController,
-                                NetworkManager.Room room, OnlineGame onlineGame, Field field, Car[] cars) {
+    OnlineGameController(NetworkManager networkManager, HotseatGameController hotseatGameController,
+                         NetworkManager.Room room, OnlineGame onlineGame, Field field, Car[] cars) {
         super(onlineGame, field);
         this.networkManager = networkManager;
         this.room = room;
@@ -66,8 +66,8 @@ public final class OnlineGameController extends GameController {
         networkManager.launchRoom(room);
     }
 
-    public OnlineGameController(NetworkManager networkManager, NetworkManager.GameData gameData,
-                                NetworkManager.Room room, OnlineGame onlineGame, Field field, Car[] cars) {
+    OnlineGameController(NetworkManager networkManager, NetworkManager.GameData gameData,
+                         NetworkManager.Room room, OnlineGame onlineGame, Field field, Car[] cars) {
         super(onlineGame, field);
         this.networkManager = networkManager;
         this.room = room;
@@ -146,7 +146,7 @@ public final class OnlineGameController extends GameController {
         this.onlineGameInfo = onlineGameInfo;
     }
 
-    public Car.Color getWinnerColor(NetworkManager.GameData.PlayersData playersData) {
+    private Car.Color getWinnerColor(NetworkManager.GameData.PlayersData playersData) {
         List<NetworkManager.GameData.Player> players = playersData.getPlayers();
         for (NetworkManager.GameData.Player player : players) {
             if ((getDifficulty() == Difficulty.Easy && player.getScore() >= 7)

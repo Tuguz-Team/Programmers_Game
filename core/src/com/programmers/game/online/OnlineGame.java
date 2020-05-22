@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.badlogic.gdx.math.MathUtils.random;
 
-public class OnlineGame extends GameScreen {
+public final class OnlineGame extends GameScreen {
 
     private OnlineGameController onlineGameController;
     private final NetworkManager.Room room;
@@ -181,7 +181,7 @@ public class OnlineGame extends GameScreen {
         super.dispose();
     }
 
-    public void initDataListener() {
+    private void initDataListener() {
         screenLoader.networkManager.addRoomChangedListener(
                 room, new Procedure() {
                     @Override
@@ -195,9 +195,5 @@ public class OnlineGame extends GameScreen {
                     public void call() { }
                 }
         );
-    }
-
-    public Dialog getWaitDialog() {
-        return waitDialog;
     }
 }

@@ -25,8 +25,8 @@ public final class HotseatGameController extends GameController {
     private final Difficulty difficulty;
     private HotseatGameInfo hotseatGameInfo;
 
-    protected HotseatGameController(final Player[] players, final Field field,
-                                    final GameScreen gameScreen, final Void v) {
+    private HotseatGameController(final Player[] players, final Field field,
+                                  final GameScreen gameScreen, final Void v) {
         super(gameScreen, field);
         this.players = players;
         difficulty = field.getGameScreen().getDifficulty();
@@ -71,7 +71,7 @@ public final class HotseatGameController extends GameController {
         return difficulty;
     }
 
-    public Car.Color getWinnerColor() {
+    private Car.Color getWinnerColor() {
         for (Player player : players) {
             if ((getDifficulty() == Difficulty.Easy && player.getScore() >= 7)
                     || (getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {

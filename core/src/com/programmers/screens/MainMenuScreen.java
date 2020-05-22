@@ -21,7 +21,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
     private boolean isYesNoDialogHidden = true;
     private OrthographicCamera camera;
 
-    public MainMenuScreen(final ScreenLoader screenLoader) {
+    MainMenuScreen(final ScreenLoader screenLoader) {
         Image main = new Image((Texture) screenLoader.getAssetManager().get("Sprites/Background/main.jpg"));
         main.setFillParent(true);
         addActor(main);
@@ -84,6 +84,7 @@ public final class MainMenuScreen extends Stage implements Screen, InputProcesso
         mainButtons.center().space(75);
 
         screenLoader.networkManager.registerAnon();
+        screenLoader.networkManager.onDisconnect();
     }
 
     @Override

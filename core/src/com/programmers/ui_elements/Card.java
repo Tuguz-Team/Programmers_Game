@@ -26,7 +26,7 @@ public final class Card extends Image implements Comparable<Card> {
             enabled = true, replaced = false;
     private int indexForCycles;
 
-    public Card(final String name, AssetManager assetManager) {
+    Card(final String name, AssetManager assetManager) {
         super((Texture) assetManager.get(name));
         this.assetManager = assetManager;
         this.gameCard = null;
@@ -75,7 +75,7 @@ public final class Card extends Image implements Comparable<Card> {
                     if (x >= stagePos.x && x < stagePos.x + container.getWidth()
                             && y >= stagePos.y && y < stagePos.y + container.getHeight())
                     {
-                        if (container.getChildren().size < 5 && !thisCard.isReplaced()) {
+                        if (container.getChildren().size < 5 && !thisCard.replaced) {
                             cardContainer = container;
                             break;
                         } else if (container instanceof CycleCardContainer) {
@@ -99,7 +99,7 @@ public final class Card extends Image implements Comparable<Card> {
                     final Card card = (Card) cardContainer.getChild(i);
                     stagePos = card.localToStageCoordinates(new Vector2());
                     if (x >= stagePos.x && x < stagePos.x + card.getWidth() && y >= stagePos.y
-                            && y < stagePos.y + card.getHeight() && !card.isEnabled() && !Card.this.isReplaced()
+                            && y < stagePos.y + card.getHeight() && !card.isEnabled() && !Card.this.replaced
                             && card.getParent() == Card.this.getPrevParent()) {
                         YesNoDialog dialog = new YesNoDialog("   Do you want to replace card from " +
                                 "previous move with your's new card? This change is irreversible.   ", getGameSkin()) {
@@ -111,7 +111,7 @@ public final class Card extends Image implements Comparable<Card> {
                                         getActionsCardContainer().getCells().removeValue(cell, true);
                                 invalidate();
 
-                                Card.this.setReplaced(true);
+                                Card.this.replaced = true;
                                 ((CardContainer) Card.this.getParent()).getGameController().getDiscardPile().add(card.getGameCard());
                             }
                         };
@@ -140,53 +140,41 @@ public final class Card extends Image implements Comparable<Card> {
         return gameCard;
     }
 
-    public CardContainer getPrevParent() {
+    CardContainer getPrevParent() {
         return prevParent;
     }
 
-    public Cell<Card> getCell() {
+    Cell<Card> getCell() {
         return cell;
     }
 
-    public void setCell(Cell<Card> cell) {
+    void setCell(Cell<Card> cell) {
         this.cell = cell;
     }
 
-    public void setIndexForCycles(int indexForCycles) {
+    void setIndexForCycles(int indexForCycles) {
         this.indexForCycles = indexForCycles;
     }
 
-    public int getIndexForCycles() {
+    int getIndexForCycles() {
         return indexForCycles;
     }
 
-    public boolean isCellEnabled() {
+    boolean isCellEnabled() {
         return cellEnabled;
     }
 
-    public void setCellEnabled(boolean cellEnabled) {
+    void setCellEnabled(boolean cellEnabled) {
         this.cellEnabled = cellEnabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean isEnabled() {
+    private boolean isEnabled() {
         return enabled;
-    }
-
-    public boolean isReplaced() {
-        return replaced;
-    }
-
-    public void setReplaced(boolean replaced) {
-        this.replaced = replaced;
     }
 
     public void setActionToPrevious(final CardContainer container) {
         if (this.getGameCard() != null) {
-            this.setEnabled(false);
+            this.enabled = false;
             this.setDrawable(new TextureRegionDrawable((Texture) assetManager.get("Sprites/DisabledCards/"
                     + this.getGameCard().getCardType().toString() + ".png")));
             this.removeListener(this.getListeners().get(0));

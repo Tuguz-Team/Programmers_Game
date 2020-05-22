@@ -18,11 +18,11 @@ import com.programmers.ui_elements.MyButton;
 
 public abstract class ReturnableScreen extends Stage implements Screen, InputProcessor {
 
-    protected final ScreenLoader screenLoader;
+    final ScreenLoader screenLoader;
     private final Screen previousScreen;
     private final OrthographicCamera camera;
 
-    public ReturnableScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
+    ReturnableScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
         this.screenLoader = screenLoader;
         this.previousScreen = previousScreen;
 
@@ -53,7 +53,7 @@ public abstract class ReturnableScreen extends Stage implements Screen, InputPro
         returnButton.setPosition(1270, 710, Align.topRight);
     }
 
-    public void returnToPreviousScreen() {
+    private void returnToPreviousScreen() {
         dispose();
         if (!(previousScreen instanceof ReturnableScreen)) {
             ScreenLoader.getMusicManager().getMenuTheme().pause();

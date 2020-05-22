@@ -61,7 +61,7 @@ public class CardContainer extends Table {
         setTouchable();
     }
 
-    public void setActionToPrevious() {
+    void setActionToPrevious() {
         for (int i = 0; i < getChildren().size; i++) {
             Card card = (Card) getChild(i);
             if (card != null)
@@ -69,7 +69,7 @@ public class CardContainer extends Table {
         }
     }
 
-    public void controlEmpty() {
+    void controlEmpty() {
         if (content != null) {
             if (getChildren().size > 1)
                 removeEmpty();
@@ -78,7 +78,7 @@ public class CardContainer extends Table {
         }
     }
 
-    public void removeEmpty() {
+    void removeEmpty() {
         Cell cell = getCell(emptyCard);
         emptyCard.remove();
         getCells().removeValue(cell, true);
@@ -94,7 +94,7 @@ public class CardContainer extends Table {
         }
     }
 
-    public void addEmpty() {
+    void addEmpty() {
         add(emptyCard).row();
     }
 
@@ -130,7 +130,7 @@ public class CardContainer extends Table {
         controlEmpty();
     }
 
-    public GameController getGameController() {
+    GameController getGameController() {
         return gameController;
     }
 

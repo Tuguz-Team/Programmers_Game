@@ -3,7 +3,6 @@ package com.mygdx.game;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.badlogic.gdx.Gdx;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -19,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.programmers.enums.Difficulty;
-import com.programmers.game.GameCard;
 import com.programmers.game.Player;
 import com.programmers.game.hotseat.HotseatGameController;
 import com.programmers.game.online.OnlineGameController;
@@ -238,12 +236,10 @@ public final class AndroidNetworkManager implements NetworkManager {
         }
     }
 
-    private ListenerRegistration playersDataListener;
-
     @Override
     public void addPlayersDataChangedListener(Room room, final GameData.PlayersData playersData,
                                               final Procedure exists, final Procedure doesNotExist) {
-        playersDataListener = firebaseFirestore.collection(rooms)
+        firebaseFirestore.collection(rooms)
                 .document(room.getName()).collection(gameData)
                 .document(AndroidNetworkManager.playersData).addSnapshotListener(
                         new EventListener<DocumentSnapshot>() {
@@ -267,19 +263,9 @@ public final class AndroidNetworkManager implements NetworkManager {
     }
 
     @Override
-    public void removePlayersDataChangedListener() {
-        if (playersDataListener != null) {
-            playersDataListener.remove();
-            playersDataListener = null;
-        }
-    }
-
-    private ListenerRegistration cardsDataListener;
-
-    @Override
     public void addCardsDataChangedListener(Room room, final GameData.CardsData cardsData,
                                             final Procedure exists, final Procedure doesNotExist) {
-        cardsDataListener = firebaseFirestore.collection(rooms)
+        firebaseFirestore.collection(rooms)
                 .document(room.getName()).collection(gameData)
                 .document(AndroidNetworkManager.cardsData).addSnapshotListener(
                         new EventListener<DocumentSnapshot>() {
@@ -300,14 +286,6 @@ public final class AndroidNetworkManager implements NetworkManager {
                             }
                         }
                 );
-    }
-
-    @Override
-    public void removeCardsDataChangedListener() {
-        if (cardsDataListener != null) {
-            cardsDataListener.remove();
-            cardsDataListener = null;
-        }
     }
 
     @Override

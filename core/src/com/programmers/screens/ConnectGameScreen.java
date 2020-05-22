@@ -28,7 +28,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
     private final Label label;
     private final VerticalGroup existingGames;
 
-    public ConnectGameScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
+    ConnectGameScreen(final ScreenLoader screenLoader, final Screen previousScreen) {
         super(screenLoader, previousScreen);
 
         final Skin skin = ScreenLoader.getGameSkin();
@@ -114,6 +114,15 @@ public final class ConnectGameScreen extends ReturnableScreen {
     }
 
     @Override
+    public void dispose() {
+        if (room != null && !launchOnline) {
+            screenLoader.networkManager.removeRoomChangedListener();
+            screenLoader.networkManager.removePlayerFromRoom(room);
+        }
+        super.dispose();
+    }
+
+    @Override
     public void render(float delta) {
         super.render(delta);
         if (launchOnline) {
@@ -122,6 +131,7 @@ public final class ConnectGameScreen extends ReturnableScreen {
             ScreenLoader.getMusicManager().getGameTheme().stop();
             ScreenLoader.getMusicManager().getGameTheme().play();
 
+            dispose();
             screenLoader.setScreen(new OnlineGame(screenLoader, room, false));
         }
     }

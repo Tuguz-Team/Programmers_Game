@@ -2,13 +2,12 @@ package com.programmers.ui_elements;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.programmers.interfaces.Procedure;
 
 public abstract class YesNoDialog extends Dialog implements Procedure {
 
-    public YesNoDialog(String title, Skin skin) {
+    protected YesNoDialog(String title, Skin skin) {
         super(title, skin);
         button("   YES   ", true).button("   NO   ", false);
 
