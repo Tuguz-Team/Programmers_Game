@@ -92,6 +92,9 @@ public final class HotseatGameController extends GameController {
 
     private Car.Color getWinnerColor() {
         for (Player player : players) {
+            if (!player.getCar().getLives().isEmpty()) {
+                return null;
+            }
             if ((getDifficulty() == Difficulty.Easy && player.getScore() >= 7)
                     || (getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {
                 return player.getCar().getBase().getBaseColor();

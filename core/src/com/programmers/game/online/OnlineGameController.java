@@ -151,6 +151,9 @@ public final class OnlineGameController extends GameController {
     private Car.Color getWinnerColor(NetworkManager.GameData.PlayersData playersData) {
         List<NetworkManager.GameData.Player> players = playersData.getPlayers();
         for (NetworkManager.GameData.Player player : players) {
+            if (!player.getCar().getLives().isEmpty()) {
+                return null;
+            }
             if ((getDifficulty() == Difficulty.Easy && player.getScore() >= 7)
                     || (getDifficulty() == Difficulty.Hard && player.getScore() >= 9)) {
                 return player.getCar().getBase().getBaseColor();
