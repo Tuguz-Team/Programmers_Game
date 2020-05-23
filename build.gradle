@@ -73,6 +73,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+        implementation "org.mini2Dx:universal-tween-engine:6.3.3"
     }
 }
 

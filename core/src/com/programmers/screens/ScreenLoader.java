@@ -1,13 +1,9 @@
 package com.programmers.screens;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.programmers.interfaces.NetworkManager;
-import com.programmers.game.GameAssets;
 import com.programmers.game.SkyBox;
 
 public final class ScreenLoader extends Game {
@@ -15,6 +11,7 @@ public final class ScreenLoader extends Game {
     private MainMenuScreen mainMenu;
     private AssetManager assetManager;
     private SkyBox skyBox;
+    private SplashScreen splashScreen;
 
     private static MusicManager musicManager;
     private static Skin gameSkin;
@@ -26,23 +23,8 @@ public final class ScreenLoader extends Game {
 
     @Override
     public void create() {
-        musicManager = new MusicManager();
-        Gdx.input.setCatchKey(Input.Keys.BACK, true);
-
-        assetManager = new GameAssets();
-        while (!assetManager.update());
-
-        skyBox = new SkyBox(
-                (Texture) assetManager.get("Sprites/SkyBox/Right.png"),
-                (Texture) assetManager.get("Sprites/SkyBox/Left.png"),
-                (Texture) assetManager.get("Sprites/SkyBox/Bottom.png"),
-                (Texture) assetManager.get("Sprites/SkyBox/Front.png"),
-                (Texture) assetManager.get("Sprites/SkyBox/Back.png")
-        );
-        gameSkin = assetManager.get("GameSkin/GameSkin.json");
-
-        mainMenu = new MainMenuScreen(this);
-        setScreen(mainMenu);
+        splashScreen = new SplashScreen(this);
+        setScreen(splashScreen);
     }
 
     @Override
@@ -71,5 +53,25 @@ public final class ScreenLoader extends Game {
 
     SkyBox getSkyBox() {
         return skyBox;
+    }
+
+    static void setMusicManager(MusicManager musicManager) {
+        ScreenLoader.musicManager = musicManager;
+    }
+
+    void setAssetManager(AssetManager assetManager) {
+        this.assetManager = assetManager;
+    }
+
+    static void setGameSkin(Skin gameSkin) {
+        ScreenLoader.gameSkin = gameSkin;
+    }
+
+    void setMainMenu(MainMenuScreen mainMenu) {
+        this.mainMenu = mainMenu;
+    }
+
+    void setSkyBox(SkyBox skyBox) {
+        this.skyBox = skyBox;
     }
 }
