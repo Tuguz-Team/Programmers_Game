@@ -436,43 +436,39 @@ public final class Car extends GameObject implements ICard {
     public void teleport() {
         int impulse;
         final int height = getY();
-        boolean isInBounds = true;
+        boolean isInBounds;
         Chunk nextChunk;
         switch (direction) {
             case Forward:
                 impulse = getZ() + 1;
                 isInBounds = impulse < size;
-                if (isInBounds)
+                if (!isInBounds)
                     return;
                 nextChunk = base.getField().getChunks()[getX()][impulse];
                 break;
             case Back:
                 impulse = getZ() - 1;
+                isInBounds = impulse > 0;
+                if (!isInBounds)
+                    return;
                 nextChunk = base.getField().getChunks()[getX()][impulse];
                 break;
             case Left:
                 impulse = getX() + 1;
                 isInBounds = impulse < size;
-                if (isInBounds)
+                if (!isInBounds)
                     return;
                 nextChunk = base.getField().getChunks()[impulse][getZ()];
                 break;
             case Right:
             default:
                 impulse = getX() - 1;
+                isInBounds = impulse > 0;
+                if (!isInBounds)
+                    return;
                 nextChunk = base.getField().getChunks()[impulse][getZ()];
         }
         while (isInBounds && nextChunk.getY() < height) {
-            switch (direction) {
-                case Forward:
-                case Back:
-                    nextChunk = base.getField().getChunks()[getX()][impulse];
-                    break;
-                case Right:
-                case Left:
-                default:
-                    nextChunk = base.getField().getChunks()[impulse][getZ()];
-            }
             if (nextChunk.getY() == height - 1) {
                 if (nextChunk.getCar() != null) {
                     if (nextChunk.getCar().base.getCar() == null) {
@@ -524,10 +520,22 @@ public final class Car extends GameObject implements ICard {
                     impulse--;
                     isInBounds = impulse >= 0;
             }
+            switch (direction) {
+                case Forward:
+                case Back:
+                    if (isInBounds)
+                        nextChunk = base.getField().getChunks()[getX()][impulse];
+                    break;
+                case Right:
+                case Left:
+                default:
+                    if (isInBounds)
+                        nextChunk = base.getField().getChunks()[impulse][getZ()];
+            }
         }
     }
 
-    public void compensation(final Car other) {
+    private void compensation(final Car other) {
         if (!compensated) {
             if (lives.size < 3 && !other.lives.isEmpty()) {
                 lives.add(other.lives.get(other.lives.size - 1));
